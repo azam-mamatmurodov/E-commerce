@@ -11,7 +11,7 @@ class ProductFilter(django_filters.FilterSet):
 
     class Meta:
         model = store_models.Product
-        fields = ['available_in_stock',
+        fields = [
                   'brand',
                   'featured',
                   'new',

@@ -7,14 +7,13 @@ from apps.app import models as app_models
 
 class Product(models.Model):
     title = models.CharField(max_length=250)
-    cost = models.FloatField()
-    costDollar = models.FloatField()
+    price = models.FloatField(verbose_name='Price')
     image = models.ImageField(verbose_name='Main image')
     category = TreeForeignKey(app_models.Category, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=254)
     brand = models.ForeignKey(app_models.Brand, null=True, blank=True, on_delete=models.CASCADE, related_name='products')
     description = models.TextField(null=True, blank=True)
-    available_in_stock = models.BooleanField(default=True)
+    quantity = models.IntegerField(default=1)
 
     featured = models.BooleanField(default=False)
     new = models.BooleanField(default=False)
@@ -32,12 +31,20 @@ class ProductImage(models.Model):
         return "{}".format(self.product.title)
 
 
-class Specification(models.Model):
-    name = models.TextField()
-    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='specifications')
+class SpecificationType(models.Model):
+    name = models.CharField(max_length=254)
 
     def __str__(self):
         return "{}".format(self.name)
+
+
+class Specification(models.Model):
+    specification_type = models.ForeignKey(SpecificationType, null=True, on_delete=models.CASCADE)
+    info = models.CharField(max_length=250, null=True)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='specifications')
+
+    def __str__(self):
+        return "{}".format(self.info)
 
 
 class Review(models.Model):

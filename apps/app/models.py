@@ -8,12 +8,17 @@ class Category(MPTTModel):
     slug = models.SlugField(max_length=255, null=True)
     parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
     tree = models.BooleanField(default=False, verbose_name='As tree ?')
+    icon = models.ImageField(null=True, blank=True)
 
     def __str__(self):
         return self.title
 
     class MPTTMeta:
         order_insertion_by = ['title']
+
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
 
 
 class Brand(models.Model):
@@ -22,3 +27,7 @@ class Brand(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Slider(models.Model):
+    image = models.ImageField(upload_to='sliders/')
