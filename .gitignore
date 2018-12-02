@@ -3,7 +3,7 @@ __pycache__/
 # Translations
 *.mo
 *.pot
-media/
+assets/
 .venv
 .env
 .idea
