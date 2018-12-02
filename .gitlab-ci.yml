@@ -1,0 +1,16 @@
+stages:
+  - test
+  - deploy
+
+test:
+  stage: test
+  script: echo "Running tests"
+
+deploy_staging:
+  stage: deploy
+  script:
+    - echo "Deploy to staging server"
+  environment:
+    name: staging
+  only:
+  - master
