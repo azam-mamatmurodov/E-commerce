@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+# Translations
+*.mo
+*.pot
+media/
+.venv
+.env
+.idea
