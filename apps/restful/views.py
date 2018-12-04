@@ -18,10 +18,10 @@ class CategoryListView(generics.ListAPIView):
 
 class CategoryDetailView(generics.RetrieveAPIView):
     serializer_class = restful_serializer.CategorySerializer
-    lookup_url_kwarg = 'id'
+    lookup_url_kwarg = 'slug'
 
     def get_object(self):
-        return get_object_or_404(app_models.Category, **{'id': self.kwargs.get('id')})
+        return get_object_or_404(app_models.Category, **{'slug': self.kwargs.get('slug')})
 
 
 class CategoryTreeView(views.APIView):
@@ -29,29 +29,51 @@ class CategoryTreeView(views.APIView):
     def get(self, request, *args, **kwargs):
         resp = {}
         print(request)
-        print('ID: ' + self.kwargs.get('id'))
-        if self.kwargs.get('id') == 'all':
+        print('ID: ' + self.kwargs.get('slug'))
+        if self.kwargs.get('slug') == 'all':
             resp['title'] = 'Barcha mahsulotlar'
             resp['id'] = 'all'
+            resp['slug'] = 'all'
             return response.Response(resp)
-        obj = get_object_or_404(app_models.Category, **{'id': self.kwargs.get('id')})
+        obj = get_object_or_404(app_models.Category, **{'slug': self.kwargs.get('slug')})
         if obj.parent:
             resp['title'] = obj.parent.title
             resp['id'] = obj.parent.id
+            resp['slug'] = obj.parent.slug
             resp['child'] = {}
             resp['child']['title'] = obj.title
             resp['child']['id'] = obj.id
+            resp['child']['slug'] = obj.slug
         else:
             resp['title'] = obj.title
             resp['id'] = obj.id
+            resp['slug'] = obj.slug
         return response.Response(resp)
+
+
+class BrandListView(generics.ListAPIView):
+    queryset = app_models.Brand.objects.all()
+    serializer_class = restful_serializer.BrandSerializer
+    search_fields = ['title', 'category__title', ]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if 'cat' in self.request.GET:
+            cat = self.request.GET['cat']
+            category = app_models.Category.objects.get(pk=cat)
+            cats = [cat]
+            if category.children:
+                for child_cat in category.children.all():
+                    cats.append(child_cat.pk)
+            queryset = queryset.filter(category_id__in=cats)
+        return queryset
 
 
 class ProductListView(generics.ListAPIView):
     queryset = store_models.Product.objects.all()
     serializer_class = restful_serializer.ProductSerializer
     search_fields = ['title', 'brand__title', 'category__title', ]
-    ordering_fields = ('id', 'cost',)
+    ordering_fields = ('id', 'price',)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,
                        filters.OrderingFilter,
                        filters.SearchFilter,
@@ -75,24 +97,6 @@ class ProductDetailView(generics.RetrieveAPIView):
             return instance.first()
         else:
             raise Http404()
-
-
-class BrandListView(generics.ListAPIView):
-    queryset = app_models.Brand.objects.all()
-    serializer_class = restful_serializer.BrandSerializer
-    search_fields = ['title', 'category__title', ]
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        if 'cat' in self.request.GET:
-            cat = self.request.GET['cat']
-            category = app_models.Category.objects.get(pk=cat)
-            cats = [cat]
-            if category.children:
-                for child_cat in category.children.all():
-                    cats.append(child_cat.pk)
-            queryset = queryset.filter(category_id__in=cats)
-        return queryset
 
 
 class ProductReviewsView(generics.ListAPIView):

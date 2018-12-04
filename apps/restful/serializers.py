@@ -15,16 +15,20 @@ class SpecificationSerializer(serializers.ModelSerializer):
         fields = ['name', ]
 
 
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = store_models.ProductImage
+        fields = ['image']
+
+
 class ProductSerializer(serializers.ModelSerializer):
-    brand = serializers.CharField(source='brand.title')
     category = serializers.CharField(source='category.title')
     category_id = serializers.CharField(source='category.id')
     specifications = serializers.SerializerMethodField()
-    cost = serializers.SerializerMethodField()
-    real_cost = serializers.FloatField(source='cost')
+    price_with_currency = serializers.SerializerMethodField()
     qty_rev = serializers.SerializerMethodField()
+    images = serializers.SerializerMethodField()
 
-    url = serializers.HyperlinkedIdentityField(view_name='restful:product_detail', lookup_url_kwarg='slug')
     reviews = serializers.SerializerMethodField()
     short_description = serializers.SerializerMethodField()
 
@@ -38,11 +42,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_specifications(obj):
-        return [item.name for item in obj.specifications.all()]
+        return [{"specification_type": item.specification_type.name, "info": item.info} for item in obj.specifications.all()]
 
     @staticmethod
-    def get_cost(obj):
-        return "{} so'm".format(str(intcomma(floatformat(obj.cost))).replace(',', ' '))
+    def get_price_with_currency(obj):
+        return "{} so'm".format(str(intcomma(floatformat(obj.price))).replace(',', ' '))
 
     @staticmethod
     def get_qty_rev(obj):
@@ -52,14 +56,16 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_short_description(obj):
         return obj.description[0:50]
 
+    def get_images(self, obj):
+        return [self.context['request'].build_absolute_uri(image_instance.image.url) for image_instance in obj.colors.all()]
+
 
 class CategorySerializer(serializers.ModelSerializer):
     children = RecursiveField(many=True, required=False, )
 
     class Meta:
         model = app_models.Category
-        fields = '__all__'
-        extra_fields = ['children']
+        fields = ['id', 'title', 'slug', 'icon', 'tree', 'parent', 'children']
 
 
 class BrandSerializer(serializers.ModelSerializer):
