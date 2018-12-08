@@ -22,8 +22,10 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    brand = serializers.SerializerMethodField()
     category = serializers.CharField(source='category.title')
     category_id = serializers.CharField(source='category.id')
+    category_root = serializers.SerializerMethodField()
     specifications = serializers.SerializerMethodField()
     price_with_currency = serializers.SerializerMethodField()
     qty_rev = serializers.SerializerMethodField()
@@ -35,7 +37,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = store_models.Product
         fields = '__all__'
-        extra_fields = ['url']
+        extra_fields = ['url', 'category_root', ]
 
     def get_reviews(self, obj):
         return self.context['request'].build_absolute_uri(reverse('restful:product_reviews', args=[obj.pk]))
@@ -58,6 +60,24 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_images(self, obj):
         return [self.context['request'].build_absolute_uri(image_instance.image.url) for image_instance in obj.colors.all()]
+
+    @staticmethod
+    def get_category_root(obj):
+        return [
+            {
+                'id': cat.id,
+                'slug': cat.slug,
+                'title': cat.title
+            }
+            for cat in obj.category.get_family()
+        ]
+
+    @staticmethod
+    def get_brand(obj):
+        return {
+            'title': obj.brand.title,
+            'id': obj.brand.id
+        } or None
 
 
 class CategorySerializer(serializers.ModelSerializer):
