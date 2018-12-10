@@ -23,7 +23,7 @@ class ProductFilter(django_filters.FilterSet):
     def qs(self):
         _qs = super().qs
         cat = self.request.GET.get('cat', None)
-        if cat:
+        if cat and cat != 'all':
             if cat.isnumeric():
                 category = app_models.Category.objects.get(id=cat)
             else:
