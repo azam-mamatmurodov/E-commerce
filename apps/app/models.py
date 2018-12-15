@@ -1,6 +1,7 @@
 from django.db import models
 from mptt.models import MPTTModel
 from mptt.fields import TreeForeignKey
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 class Category(MPTTModel):
@@ -31,3 +32,12 @@ class Brand(models.Model):
 
 class Slider(models.Model):
     image = models.ImageField(upload_to='sliders/')
+
+
+class Content(models.Model):
+    title = models.CharField(max_length=250)
+    body = RichTextUploadingField()
+    slug = models.SlugField(max_length=255)
+
+    def __str__(self):
+        return self.title
