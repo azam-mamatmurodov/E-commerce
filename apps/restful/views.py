@@ -104,3 +104,8 @@ class ProductReviewsView(generics.ListAPIView):
 
     def get_queryset(self):
         return store_models.Review.objects.filter(product_id=self.kwargs.get('pk'))
+
+
+class SlidersView(generics.ListAPIView):
+    queryset = app_models.Slider.objects.all()
+    serializer_class = restful_serializer.SliderSerializer

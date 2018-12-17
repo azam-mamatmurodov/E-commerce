@@ -109,3 +109,10 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = store_models.Review
         fields = ['author', 'date_of_created', 'rate', 'comment']
+
+
+class SliderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = app_models.Slider
+        fields = ['image']
