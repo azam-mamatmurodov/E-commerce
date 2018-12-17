@@ -25,6 +25,7 @@ class ProductSerializer(serializers.ModelSerializer):
     brand = serializers.SerializerMethodField()
     category = serializers.CharField(source='category.title')
     category_id = serializers.CharField(source='category.id')
+    category_slug = serializers.CharField(source='category.slug')
     category_root = serializers.SerializerMethodField()
     specifications = serializers.SerializerMethodField()
     price_with_currency = serializers.SerializerMethodField()
@@ -37,7 +38,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = store_models.Product
         fields = '__all__'
-        extra_fields = ['url', 'category_root', ]
+        extra_fields = ['url', 'category_root', 'category_slug', ]
 
     def get_reviews(self, obj):
         return self.context['request'].build_absolute_uri(reverse('restful:product_reviews', args=[obj.pk]))
