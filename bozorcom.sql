@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.10
--- Dumped by pg_dump version 9.6.10
+-- Dumped from database version 9.6.11
+-- Dumped by pg_dump version 9.6.11
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -110,6 +110,41 @@ ALTER TABLE public.app_category_id_seq OWNER TO bozorcom;
 --
 
 ALTER SEQUENCE public.app_category_id_seq OWNED BY public.app_category.id;
+
+
+--
+-- Name: app_content; Type: TABLE; Schema: public; Owner: bozorcom
+--
+
+CREATE TABLE public.app_content (
+    id integer NOT NULL,
+    title character varying(250) NOT NULL,
+    body text NOT NULL,
+    slug character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.app_content OWNER TO bozorcom;
+
+--
+-- Name: app_content_id_seq; Type: SEQUENCE; Schema: public; Owner: bozorcom
+--
+
+CREATE SEQUENCE public.app_content_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.app_content_id_seq OWNER TO bozorcom;
+
+--
+-- Name: app_content_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bozorcom
+--
+
+ALTER SEQUENCE public.app_content_id_seq OWNED BY public.app_content.id;
 
 
 --
@@ -677,6 +712,13 @@ ALTER TABLE ONLY public.app_category ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
+-- Name: app_content id; Type: DEFAULT; Schema: public; Owner: bozorcom
+--
+
+ALTER TABLE ONLY public.app_content ALTER COLUMN id SET DEFAULT nextval('public.app_content_id_seq'::regclass);
+
+
+--
 -- Name: app_slider id; Type: DEFAULT; Schema: public; Owner: bozorcom
 --
 
@@ -789,6 +831,9 @@ COPY public.app_brand (id, title, category_id) FROM stdin;
 1	Apple	1
 2	Samsung	1
 3	Xiaomi	1
+4	Meizu	21
+5	Huawei	22
+6	LG	20
 \.
 
 
@@ -796,7 +841,7 @@ COPY public.app_brand (id, title, category_id) FROM stdin;
 -- Name: app_brand_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.app_brand_id_seq', 3, true);
+SELECT pg_catalog.setval('public.app_brand_id_seq', 6, true);
 
 
 --
@@ -837,10 +882,29 @@ SELECT pg_catalog.setval('public.app_category_id_seq', 22, true);
 
 
 --
+-- Data for Name: app_content; Type: TABLE DATA; Schema: public; Owner: bozorcom
+--
+
+COPY public.app_content (id, title, body, slug) FROM stdin;
+\.
+
+
+--
+-- Name: app_content_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
+--
+
+SELECT pg_catalog.setval('public.app_content_id_seq', 1, false);
+
+
+--
 -- Data for Name: app_slider; Type: TABLE DATA; Schema: public; Owner: bozorcom
 --
 
 COPY public.app_slider (id, image) FROM stdin;
+4	sliders/2528c9d8f11c8d86d9bc84cbfc53ee38.jpg
+3	sliders/0673c41ce20e250a94a4584a149e0e16.jpg
+2	sliders/7b16aaf18d76c863b527ea19d77ae32b.jpg
+1	sliders/4_2.jpg
 \.
 
 
@@ -848,7 +912,7 @@ COPY public.app_slider (id, image) FROM stdin;
 -- Name: app_slider_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.app_slider_id_seq', 1, false);
+SELECT pg_catalog.setval('public.app_slider_id_seq', 4, true);
 
 
 --
@@ -942,6 +1006,10 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 54	Can change specification type	14	change_specificationtype
 55	Can delete specification type	14	delete_specificationtype
 56	Can view specification type	14	view_specificationtype
+57	Can add content	15	add_content
+58	Can change content	15	change_content
+59	Can delete content	15	delete_content
+60	Can view content	15	view_content
 \.
 
 
@@ -949,7 +1017,7 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 -- Name: auth_permission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.auth_permission_id_seq', 56, true);
+SELECT pg_catalog.setval('public.auth_permission_id_seq', 60, true);
 
 
 --
@@ -957,8 +1025,8 @@ SELECT pg_catalog.setval('public.auth_permission_id_seq', 56, true);
 --
 
 COPY public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
-1	pbkdf2_sha256$120000$SWix4a9g86Dx$xF0oCkdgIlCkgBa3sArolCHnu6ZIRWeMecvmnrtyy24=	2018-12-02 14:08:33.438275+00	t	admin			azam.mamatmurodov@gmail.com	t	t	2018-12-02 13:02:49.398795+00
-2	pbkdf2_sha256$120000$dn8yEjFumgbb$+BmUaLQb2ueo5PZ3zW7O1E7/RSaYMZHLI1lptExTM3Y=	2018-12-06 12:06:18.446757+00	f	moderator	Bozorcom	Moderator	info@bozor.com	t	t	2018-12-02 13:15:17+00
+1	pbkdf2_sha256$120000$SWix4a9g86Dx$xF0oCkdgIlCkgBa3sArolCHnu6ZIRWeMecvmnrtyy24=	2018-12-17 12:02:27.038955+00	t	admin			azam.mamatmurodov@gmail.com	t	t	2018-12-02 13:02:49.398795+00
+2	pbkdf2_sha256$120000$dn8yEjFumgbb$+BmUaLQb2ueo5PZ3zW7O1E7/RSaYMZHLI1lptExTM3Y=	2018-12-17 14:54:43.155071+00	f	moderator	Bozorcom	Moderator	info@bozor.com	t	t	2018-12-02 13:15:17+00
 \.
 
 
@@ -1130,6 +1198,84 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 99	2018-12-06 12:57:52.08248+00	60	Xiaomi Mi 6 6/64GB Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Xiaomi Mi 6 6/64GB Black"}}, {"added": {"name": "product image", "object": "Xiaomi Mi 6 6/64GB Black"}}, {"added": {"name": "product image", "object": "Xiaomi Mi 6 6/64GB Black"}}, {"added": {"name": "product image", "object": "Xiaomi Mi 6 6/64GB Black"}}, {"added": {"name": "product image", "object": "Xiaomi Mi 6 6/64GB Black"}}, {"added": {"name": "specification", "object": "Android 7.1"}}, {"added": {"name": "specification", "object": "\\"Snapdragon 835,   2.45 \\u0413\\u0413\\u0446 + 1.9 \\u0413\\u0413\\u0446, 8 \\u0442\\u0430\\""}}, {"added": {"name": "specification", "object": "64 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "6 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f + 12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "IPS"}}, {"added": {"name": "specification", "object": "5.15 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "3350 \\u043c\\u0410h"}}, {"added": {"name": "specification", "object": "168 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "145.2 x 70.5 x 7.5 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G (EDGE), 3G(WCDMA/UMTS), 4G (LTE)"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
 100	2018-12-06 13:00:54.886135+00	61	Samsung Galaxy J200 (J2) Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.3 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "8 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "1 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2000 mAh"}}, {"added": {"name": "specification", "object": "129 \\u0433"}}, {"added": {"name": "specification", "object": "136.5 x 69.0 x 8.4"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "GSM, 3G"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
 101	2018-12-06 13:05:38.68413+00	62	Samsung Galaxy J200 (J2) Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J200 (J2) Gold"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.3 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "8 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "1 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2000 mAh"}}, {"added": {"name": "specification", "object": "129 \\u0433"}}, {"added": {"name": "specification", "object": "136.5 x 69.0 x 8.4"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "GSM, 3G"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+102	2018-12-07 04:20:48.658143+00	60	Xiaomi Mi 6 6/64GB Black	2	[{"changed": {"fields": ["image"]}}]	10	2
+103	2018-12-07 04:25:13.23924+00	60	Xiaomi Mi 6 6/64GB Black	2	[{"changed": {"fields": ["image"]}}, {"added": {"name": "product image", "object": "Xiaomi Mi 6 6/64GB Black"}}, {"added": {"name": "product image", "object": "Xiaomi Mi 6 6/64GB Black"}}]	10	2
+104	2018-12-11 09:29:32.855652+00	63	iPhone X 64GB Grey	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone X 64GB Grey"}}, {"added": {"name": "product image", "object": "iPhone X 64GB Grey"}}, {"added": {"name": "product image", "object": "iPhone X 64GB Grey"}}, {"added": {"name": "product image", "object": "iPhone X 64GB Grey"}}, {"added": {"name": "product image", "object": "iPhone X 64GB Grey"}}, {"added": {"name": "product image", "object": "iPhone X 64GB Grey"}}, {"added": {"name": "product image", "object": "iPhone X 64GB Grey"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic,  4+2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "64 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f + 12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "OLED (Super Retina HD)"}}, {"added": {"name": "specification", "object": "5.8 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2716 mAh"}}, {"added": {"name": "specification", "object": "174 \\u0433"}}, {"added": {"name": "specification", "object": "143.6 \\u0445 70.9 \\u0445 7.7 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G, 3G, 4G LTE, GSM"}}, {"added": {"name": "specification", "object": "Grey"}}]	10	2
+105	2018-12-11 09:34:18.362686+00	64	iPhone X 256GB Silver	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone X 256GB Silver"}}, {"added": {"name": "product image", "object": "iPhone X 256GB Silver"}}, {"added": {"name": "product image", "object": "iPhone X 256GB Silver"}}, {"added": {"name": "product image", "object": "iPhone X 256GB Silver"}}, {"added": {"name": "product image", "object": "iPhone X 256GB Silver"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic, 4+2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "256 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f + 12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "OLED (Super Retina HD)"}}, {"added": {"name": "specification", "object": "5.8 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2716 mAh"}}, {"added": {"name": "specification", "object": "174 \\u0433"}}, {"added": {"name": "specification", "object": "143.6 \\u0445 70.9 \\u0445 7.7 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G, 3G, 4G LTE, GSM"}}, {"added": {"name": "specification", "object": "Silver"}}]	10	2
+106	2018-12-11 09:36:36.985067+00	65	Samsung Galaxy J250M (J2 Pro) Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) Black"}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) Black"}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) Black"}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) Black"}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1,4 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "1,5 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "5 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2600 mAh"}}, {"added": {"name": "specification", "object": "153 \\u0433"}}, {"added": {"name": "specification", "object": "143.8 x 72.3 x 8.4"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+107	2018-12-11 09:38:12.684013+00	66	iPhone X 256GB Grey	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone X 256GB Grey"}}, {"added": {"name": "product image", "object": "iPhone X 256GB Grey"}}, {"added": {"name": "product image", "object": "iPhone X 256GB Grey"}}, {"added": {"name": "product image", "object": "iPhone X 256GB Grey"}}, {"added": {"name": "product image", "object": "iPhone X 256GB Grey"}}, {"added": {"name": "product image", "object": "iPhone X 256GB Grey"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic, 4+2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "256 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f + 12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "OLED (Super Retina HD)"}}, {"added": {"name": "specification", "object": "5.8 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2716 mAh"}}, {"added": {"name": "specification", "object": "174 \\u0433"}}, {"added": {"name": "specification", "object": "143.6 \\u0445 70.9 \\u0445 7.7 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G, 3G, 4G LTE, GSM"}}, {"added": {"name": "specification", "object": "Grey"}}]	10	2
+108	2018-12-11 09:40:07.547789+00	67	Samsung Galaxy J250M (J2 Pro) gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) gold"}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) gold"}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) gold"}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) gold"}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) gold"}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) gold"}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) gold"}}, {"added": {"name": "product image", "object": "Samsung\\u00a0Galaxy J250M (J2 Pro) gold"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.4 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "1,5 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "5 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2600 mAh"}}, {"added": {"name": "specification", "object": "153 \\u0433"}}, {"added": {"name": "specification", "object": "143.8 x 72.3 x 8.4"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+109	2018-12-11 09:42:45.803126+00	68	iPhone SE 32GB Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone SE 32GB Gold"}}, {"added": {"name": "product image", "object": "iPhone SE 32GB Gold"}}, {"added": {"name": "product image", "object": "iPhone SE 32GB Gold"}}, {"added": {"name": "product image", "object": "iPhone SE 32GB Gold"}}, {"added": {"name": "product image", "object": "iPhone SE 32GB Gold"}}, {"added": {"name": "product image", "object": "iPhone SE 32GB Gold"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A9 + \\u0441\\u043e\\u043f\\u0440\\u043e\\u0446\\u0435\\u0441\\u0441\\u043e\\u0440 M9, 2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "1.2 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "\\u0440\\u0430\\u043d\\u0433\\u043b\\u0438 IPS, \\u0441\\u0435\\u043d\\u0441\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "5 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2716 mAh"}}, {"added": {"name": "specification", "object": "113 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "123.8x58.6x7.6 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G (EDGE) 3G (WCDMA/UMTS) 4G (LTE)"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+110	2018-12-11 09:46:41.364784+00	69	iPhone 6 32GB Grey	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 6 32GB Grey"}}, {"added": {"name": "product image", "object": "iPhone 6 32GB Grey"}}, {"added": {"name": "product image", "object": "iPhone 6 32GB Grey"}}, {"added": {"name": "product image", "object": "iPhone 6 32GB Grey"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A8 + \\u0441\\u043e\\u043f\\u0440\\u043e\\u0446\\u0435\\u0441\\u0441\\u043e\\u0440 M8, 1.4 \\u0413\\u0413\\u0446, 2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "1 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "1.2 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "IPS"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1810 \\u043c\\u0410h"}}, {"added": {"name": "specification", "object": "129 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138.1 x 67 x 6.9 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G (EDGE) 3G (WCDMA/UMTS) 4G (LTE)"}}, {"added": {"name": "specification", "object": "Grey"}}]	10	2
+111	2018-12-11 09:53:03.113435+00	70	iPhone 7 32GB Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 7 32GB Black"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB Black"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB Black"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB Black"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB Black"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A10, 2.3 \\u0413\\u0413\\u0446, 4 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1960 mAh"}}, {"added": {"name": "specification", "object": "138 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138,3x67,1x7,1 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+112	2018-12-11 09:55:45.21151+00	71	Samsung Galaxy J320 (J3) Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy J320 (J3) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J320 (J3) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J320 (J3) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J320 (J3) Gold"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.5 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "8 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "1.5 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "8.0 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "5.0 M\\u041f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "5.0 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2600 mAh"}}, {"added": {"name": "specification", "object": "138\\u00a0\\u0433"}}, {"added": {"name": "specification", "object": "142.7 x 70.1 x 8.9"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G, 3G, 4G LTE, GSM"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+113	2018-12-11 09:58:02.781486+00	72	iPhone 7 32GB Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 7 32GB Gold"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB Gold"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB Gold"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB Gold"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB Gold"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A10, 2.3 \\u0413\\u0413\\u0446, 4 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1960 mAh"}}, {"added": {"name": "specification", "object": "138 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138,3x67,1x7,1 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+114	2018-12-11 10:01:42.823033+00	73	iPhone 7 32GB RoseGold	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 7 32GB RoseGold"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB RoseGold"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB RoseGold"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB RoseGold"}}, {"added": {"name": "product image", "object": "iPhone 7 32GB RoseGold"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A10, 2.3 \\u0413\\u0413\\u0446, 4 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1960 mAh"}}, {"added": {"name": "specification", "object": "138 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138,3x67,1x7,1 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "RoseGold"}}]	10	2
+115	2018-12-11 10:05:39.394143+00	74	iPhone 7 128GB Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 7 128GB Gold"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB Gold"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB Gold"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB Gold"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB Gold"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A10, 2.3 \\u0413\\u0413\\u0446, 4 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "128 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1960 mAh"}}, {"added": {"name": "specification", "object": "138 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138,3x67,1x7,1 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+116	2018-12-11 10:09:09.980588+00	75	iPhone 7 128GB RoseGold	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 7 128GB RoseGold"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB RoseGold"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB RoseGold"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB RoseGold"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A10, 2.3 \\u0413\\u0413\\u0446, 4 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "128 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1960 mAh"}}, {"added": {"name": "specification", "object": "138 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138,3x67,1x7,1 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "RoseGold"}}]	10	2
+117	2018-12-11 10:12:51.971673+00	76	iPhone 7 128GB Silver	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 7 128GB Silver"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB Silver"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB Silver"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB Silver"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB Silver"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A10, 2.3 \\u0413\\u0413\\u0446, 4 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "128 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1960 mAh"}}, {"added": {"name": "specification", "object": "138 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138,3x67,1x7,1 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Silver"}}]	10	2
+118	2018-12-11 10:17:03.738802+00	77	iPhone 7 128GB\tRed	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 7 128GB\\tRed"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB\\tRed"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB\\tRed"}}, {"added": {"name": "product image", "object": "iPhone 7 128GB\\tRed"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A10, 2.3 \\u0413\\u0413\\u0446, 4 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "128 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1960 mAh"}}, {"added": {"name": "specification", "object": "138 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138,3x67,1x7,1 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Red"}}]	10	2
+119	2018-12-11 10:21:55.087523+00	78	iPhone 7 plus 32GB Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 7 plus 32GB Black"}}, {"added": {"name": "product image", "object": "iPhone 7 plus 32GB Black"}}, {"added": {"name": "product image", "object": "iPhone 7 plus 32GB Black"}}, {"added": {"name": "product image", "object": "iPhone 7 plus 32GB Black"}}, {"added": {"name": "product image", "object": "iPhone 7 plus 32GB Black"}}, {"added": {"name": "product image", "object": "iPhone 7 plus 32GB Black"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A10, 2.3 \\u0413\\u0413\\u0446, 4 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina"}}, {"added": {"name": "specification", "object": "5.5 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2900 mAh"}}, {"added": {"name": "specification", "object": "188 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "158,2\\u044577,9\\u04457,3 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+120	2018-12-11 10:25:38.595289+00	79	iPhone 7 plus 32GB\tGold	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 7 plus 32GB\\tGold"}}, {"added": {"name": "product image", "object": "iPhone 7 plus 32GB\\tGold"}}, {"added": {"name": "product image", "object": "iPhone 7 plus 32GB\\tGold"}}, {"added": {"name": "product image", "object": "iPhone 7 plus 32GB\\tGold"}}, {"added": {"name": "product image", "object": "iPhone 7 plus 32GB\\tGold"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A10, 2.3 \\u0413\\u0413\\u0446, 4 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina"}}, {"added": {"name": "specification", "object": "5.5\\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2900 mAh"}}, {"added": {"name": "specification", "object": "188 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "155.4\\u00d775.8\\u00d77.3 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+121	2018-12-11 10:30:38.906962+00	80	iPhone 8  64GB\tGrey	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 8  64GB\\tGrey"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB\\tGrey"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB\\tGrey"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB\\tGrey"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB\\tGrey"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB\\tGrey"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic, 2.3 \\u0413\\u0413\\u0446, 6 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "64 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1821 mAh"}}, {"added": {"name": "specification", "object": "148 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138.4 \\u0445 67.3 \\u0445 7.3 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Grey"}}]	10	2
+122	2018-12-11 10:33:48.89376+00	81	iPhone 8  64GB Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Gold"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Gold"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Gold"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Gold"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic, 2.3 \\u0413\\u0413\\u0446, 6 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "64 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1821 mAh"}}, {"added": {"name": "specification", "object": "148 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138.4 \\u0445 67.3 \\u0445 7.3 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+123	2018-12-11 10:34:24.638598+00	82	Samsung Galaxy J701 (J7) Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy J701 (J7) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J701 (J7) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J701 (J7) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J701 (J7) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J701 (J7) Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1,6 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "5.0 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "5.5 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "3000 mAh"}}, {"added": {"name": "specification", "object": "170 \\u0433"}}, {"added": {"name": "specification", "object": "152.4 x 78.6 x 7.6"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+124	2018-12-11 10:36:35.041852+00	83	iPhone 8  64GB Silver	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Silver"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Silver"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Silver"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Silver"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic, 2.3 \\u0413\\u0413\\u0446, 6 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "64 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1821 mAh"}}, {"added": {"name": "specification", "object": "148 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138.4 \\u0445 67.3 \\u0445 7.3 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Silver"}}]	10	2
+125	2018-12-11 10:37:20.169479+00	84	Samsung Galaxy J701 (J7) Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy J701 (J7) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J701 (J7) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J701 (J7) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J701 (J7) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J701 (J7) Gold"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1,6 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "5.5 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "3000 mAh"}}, {"added": {"name": "specification", "object": "170 \\u0433"}}, {"added": {"name": "specification", "object": "152.4 x 78.6 x 7.6"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+126	2018-12-11 10:39:14.759409+00	85	iPhone 8  64GB Red	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Red"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Red"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Red"}}, {"added": {"name": "product image", "object": "iPhone 8  64GB Red"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic, 2.3 \\u0413\\u0413\\u0446, 6 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "64 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1821 mAh"}}, {"added": {"name": "specification", "object": "148 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138.4 \\u0445 67.3 \\u0445 7.3 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Red"}}]	10	2
+127	2018-12-11 10:40:38.181294+00	86	Samsung Galaxy J330 (J3) Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy J330 (J3) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J330 (J3) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J330 (J3) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J330 (J3) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J330 (J3) Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1,4 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "5.0 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "5.0 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2400 mAh"}}, {"added": {"name": "specification", "object": "142 \\u0433"}}, {"added": {"name": "specification", "object": "143.2 x 70.3 x 8.2"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+128	2018-12-11 10:43:25.584571+00	87	Samsung Galaxy J330 (J3) Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy J330 (J3) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J330 (J3) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J330 (J3) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J330 (J3) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J330 (J3) Gold"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.4 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "5 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2400mAh"}}, {"added": {"name": "specification", "object": "142 \\u0433"}}, {"added": {"name": "specification", "object": "143.2 x 70.3 x 8.2"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+129	2018-12-11 10:44:09.649305+00	88	iPhone 8  256GB\tGrey	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 8  256GB\\tGrey"}}, {"added": {"name": "product image", "object": "iPhone 8  256GB\\tGrey"}}, {"added": {"name": "product image", "object": "iPhone 8  256GB\\tGrey"}}, {"added": {"name": "product image", "object": "iPhone 8  256GB\\tGrey"}}, {"added": {"name": "product image", "object": "iPhone 8  256GB\\tGrey"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic + \\u041c11, 2.3 \\u0413\\u0413\\u0446, 6 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "256 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1821 mAh"}}, {"added": {"name": "specification", "object": "148 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138.4 \\u0445 67.3 \\u0445 7.3 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Grey"}}]	10	2
+130	2018-12-11 10:46:51.360704+00	89	Samsung Galaxy  J530 (J5 ) Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy  J530 (J5 ) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy  J530 (J5 ) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy  J530 (J5 ) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy  J530 (J5 ) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy  J530 (J5 ) Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.6\\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "5.2 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "3000 mAh"}}, {"added": {"name": "specification", "object": "160 \\u0433"}}, {"added": {"name": "specification", "object": "146.2 x 71.3 x 8.0"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+131	2018-12-11 10:47:42.954317+00	90	iPhone 8  256GB\tRed	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 8  256GB\\tRed"}}, {"added": {"name": "product image", "object": "iPhone 8  256GB\\tRed"}}, {"added": {"name": "product image", "object": "iPhone 8  256GB\\tRed"}}, {"added": {"name": "product image", "object": "iPhone 8  256GB\\tRed"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic + \\u041c11, 2.3 \\u0413\\u0413\\u0446, 6 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "256 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "4.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "1821 mAh"}}, {"added": {"name": "specification", "object": "148 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "138.4 \\u0445 67.3 \\u0445 7.3 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Red"}}]	10	2
+132	2018-12-11 10:49:37.693311+00	91	Samsung Galaxy J530 (J5 ) Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy J530 (J5 ) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J530 (J5 ) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J530 (J5 ) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J530 (J5 ) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J530 (J5 ) Gold"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.6 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "5.2 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "3000 mAh"}}, {"added": {"name": "specification", "object": "160 \\u0433"}}, {"added": {"name": "specification", "object": "146.2 x 71.3 x 8.0"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+133	2018-12-11 10:51:25.767327+00	92	iPhone 8  plus 64GB Grey	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 8  plus 64GB Grey"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 64GB Grey"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 64GB Grey"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 64GB Grey"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 64GB Grey"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic + \\u041c11, 2.3 \\u0413\\u0413\\u0446, 6 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "64 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "5.5\\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2691 mAh"}}, {"added": {"name": "specification", "object": "202 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "158.4 \\u0445 78.1 \\u0445 7.5 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Grey"}}]	10	2
+134	2018-12-11 10:52:14.586189+00	89	Samsung Galaxy  J530 (J5 ) Black	2	[{"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}]	10	2
+135	2018-12-11 10:52:34.978702+00	91	Samsung Galaxy J530 (J5 ) Gold	2	[{"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}]	10	2
+136	2018-12-11 10:54:18.864739+00	93	iPhone 8  plus 64GB\tSilver	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 8  plus 64GB\\tSilver"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 64GB\\tSilver"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 64GB\\tSilver"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 64GB\\tSilver"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 64GB\\tSilver"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic + \\u041c11, 2.3 \\u0413\\u0413\\u0446, 6 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "64 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "5.5\\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2691 mAh"}}, {"added": {"name": "specification", "object": "202 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "158.4 \\u0445 78.1 \\u0445 7.5 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Silver"}}]	10	2
+137	2018-12-11 10:54:37.066815+00	94	Samsung Galaxy  J730 (J7) Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy  J730 (J7) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy  J730 (J7) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy  J730 (J7) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy  J730 (J7) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy  J730 (J7) Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.6\\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "5.5 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "3600 mAh"}}, {"added": {"name": "specification", "object": "181 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "152.5 x 74.8 x 8.0"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+138	2018-12-11 11:36:03.684637+00	95	Samsung Galaxy J730 (J7) Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy J730 (J7) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J730 (J7) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J730 (J7) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J730 (J7) Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy J730 (J7) Gold"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.6\\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "5.5 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "3600 mAh"}}, {"added": {"name": "specification", "object": "181 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "152.5 x 74.8 x 8.0"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+139	2018-12-11 11:36:44.944139+00	96	iPhone 8  plus 256GB Grey	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 8  plus 256GB Grey"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 256GB Grey"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 256GB Grey"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 256GB Grey"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic + \\u041c11, 2.3 \\u0413\\u0413\\u0446, 6 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "256 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "5.5\\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2691 mAh"}}, {"added": {"name": "specification", "object": "202 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "158.4 \\u0445 78.1 \\u0445 7.5 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Grey"}}]	10	2
+140	2018-12-11 11:39:26.94157+00	97	iPhone 8  plus 256GB Red	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPhone 8  plus 256GB Red"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 256GB Red"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 256GB Red"}}, {"added": {"name": "product image", "object": "iPhone 8  plus 256GB Red"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A11 Bionic + \\u041c11, 2.3 \\u0413\\u0413\\u0446, 6 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "256 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "7 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "5.5\\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "2691 mAh"}}, {"added": {"name": "specification", "object": "202 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "158.4 \\u0445 78.1 \\u0445 7.5 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "GSM, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Red"}}]	10	2
+141	2018-12-11 11:42:20.565719+00	98	Samsung Galaxy N950 Note 8 Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy N950 Note 8 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy N950 Note 8 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy N950 Note 8 Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "2,5 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "64 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "6 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "6.2 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "3300 mAh"}}, {"added": {"name": "specification", "object": "195 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "162.5 x 74.8 x 8.6 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G, 3G, 4G LTE, GSM"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+142	2018-12-11 11:45:54.361476+00	99	Samsung Galaxy N950 Note 8 Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy N950 Note 8 Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy N950 Note 8 Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy N950 Note 8 Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy N950 Note 8 Gold"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "2,5 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "64 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "6 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "12 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "6.2 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "3300mAh"}}, {"added": {"name": "specification", "object": "195 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "162.5 x 74.8 x 8.6 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "2G, 3G, 4G LTE, GSM"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+143	2018-12-11 11:48:29.860671+00	100	iPad mini 4 128GB  WiFi+4G Silver	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Silver"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Silver"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Silver"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Silver"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Silver"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Silver"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A8, 1,5 \\u0413\\u0413\\u0446, 2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "128 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "1 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "1.2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "7.9 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "19.1 mAh"}}, {"added": {"name": "specification", "object": "304 \\u0433"}}, {"added": {"name": "specification", "object": "203,2 \\u0445 134,8 \\u0445 6,1 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G 3G 4G(LTE)"}}, {"added": {"name": "specification", "object": "Silver"}}]	10	2
+144	2018-12-11 11:48:50.625382+00	101	iPad mini 4 128GB  WiFi+4G Grey	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Grey"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Grey"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Grey"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Grey"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Grey"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Grey"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Grey"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Grey"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A8, 1,5 \\u0413\\u0413\\u0446, 2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "128 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "1 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "1.2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "7.9 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "19.1 mAh"}}, {"added": {"name": "specification", "object": "304 \\u0433"}}, {"added": {"name": "specification", "object": "203,2 \\u0445 134,8 \\u0445 6,1 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G, 3G, 4G (LTE)"}}, {"added": {"name": "specification", "object": "Grey"}}]	10	2
+145	2018-12-11 11:52:22.044226+00	102	iPad mini 4 128GB  WiFi+4G Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Gold"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Gold"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Gold"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Gold"}}, {"added": {"name": "product image", "object": "iPad mini 4 128GB  WiFi+4G Gold"}}, {"added": {"name": "specification", "object": "iOS 11"}}, {"added": {"name": "specification", "object": "Apple A8, 1,5 \\u0413\\u0413\\u0446, 2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "128 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "1 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "1.2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Retina HD"}}, {"added": {"name": "specification", "object": "7.9 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "19.1 mAh"}}, {"added": {"name": "specification", "object": "304 \\u0433"}}, {"added": {"name": "specification", "object": "203,2 \\u0445 134,8 \\u0445 6,1 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G 3G 4G(LTE)"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+146	2018-12-11 11:52:53.8769+00	103	Samsung Galaxy Tab S3 SM-T825 Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S3 SM-T825 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S3 SM-T825 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S3 SM-T825 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S3 SM-T825 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S3 SM-T825 Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "2.15 \\u0413\\u0413\\u0446, 1,6 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "4 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "9.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "6000 mAh"}}, {"added": {"name": "specification", "object": "434 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "237.3 x 169.0 x 6.0"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+147	2018-12-11 11:56:29.42087+00	104	Samsung Galaxy Tab S3 SM-T825 Silver	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S3 SM-T825 Silver"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S3 SM-T825 Silver"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S3 SM-T825 Silver"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S3 SM-T825 Silver"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S3 SM-T825 Silver"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "2.15 \\u0413\\u0413\\u0446, 1,6 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "4 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "13 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "9.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "6000 mAh"}}, {"added": {"name": "specification", "object": "434 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "237.3 x 169.0 x 6.0"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD"}}, {"added": {"name": "specification", "object": "Silver"}}]	10	2
+148	2018-12-11 12:03:30.911945+00	105	Samsung Galaxy Tab S2 8.0 [SM-T719] Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S2 8.0 [SM-T719] Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S2 8.0 [SM-T719] Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S2 8.0 [SM-T719] Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S2 8.0 [SM-T719] Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S2 8.0 [SM-T719] Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S2 8.0 [SM-T719] Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.8 \\u0413\\u0413\\u0446, 1.4\\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "2.1 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "8.0 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "4000 mAh"}}, {"added": {"name": "specification", "object": "267 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "198.6 x 134.8 x 5.6"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+149	2018-12-11 12:08:40.9186+00	106	Samsung Galaxy Tab S2 8.0 [SM-T719] Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S2 8.0 [SM-T719] Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S2 8.0 [SM-T719] Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S2 8.0 [SM-T719] Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S2 8.0 [SM-T719] Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab S2 8.0 [SM-T719] Gold"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.8 \\u0413\\u0413\\u0446, 1.4 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "3 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "2.1 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "Super AMOLED"}}, {"added": {"name": "specification", "object": "8.0 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "4000 mAh"}}, {"added": {"name": "specification", "object": "267 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "198.6 x 134.8 x 5.6"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+150	2018-12-11 12:13:59.250443+00	107	iPad new wi-fi 2017 32GB\tSilver	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 32GB\\tSilver"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 32GB\\tSilver"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 32GB\\tSilver"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 32GB\\tSilver"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 32GB\\tSilver"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A9, 1,8 \\u0413\\u0413\\u0446, 2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "1.2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "IPS"}}, {"added": {"name": "specification", "object": "9.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "8610 \\u043c\\u0410h"}}, {"added": {"name": "specification", "object": "469 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "170 x 240 x 7.5 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "Wi-Fi (802.11a/b/g/n/ac) / \\u0434\\u0432\\u0443\\u0445\\u043a\\u0430\\u043d\\u0430\\u043b\\u044c\\u043d\\u044b\\u0439 2.4GHz \\u0438 5GHz, MIMO / Bluetooth 4.2 / GPS"}}, {"added": {"name": "specification", "object": "Silver"}}]	10	2
+151	2018-12-11 12:14:01.627969+00	108	iPad new wi-fi 2017 32GB\tGold	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 32GB\\tGold"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 32GB\\tGold"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 32GB\\tGold"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 32GB\\tGold"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 32GB\\tGold"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A9, 1,8 \\u0413\\u0413\\u0446, 2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "1.2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "IPS"}}, {"added": {"name": "specification", "object": "9.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "8610 \\u043c\\u0410h"}}, {"added": {"name": "specification", "object": "469 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "170 x 240 x 7.5 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "Wi-Fi (802.11a/b/g/n/ac) / \\u0434\\u0432\\u0443\\u0445\\u043a\\u0430\\u043d\\u0430\\u043b\\u044c\\u043d\\u044b\\u0439 2.4GHz \\u0438 5GHz, MIMO / Bluetooth 4.2 / GPS"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+152	2018-12-11 12:17:55.14123+00	109	Samsung Galaxy Tab E (SM-T561) Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.3 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "8 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "1,5 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "TFT"}}, {"added": {"name": "specification", "object": "9.6 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "5000 mAh"}}, {"added": {"name": "specification", "object": "495 \\u0433"}}, {"added": {"name": "specification", "object": "241.9 x 149.5 x 8.5"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+153	2018-12-11 12:19:50.370652+00	110	iPad new wi-fi 2017 128GB Silver	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 128GB Silver"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 128GB Silver"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 128GB Silver"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A9, 1,8 \\u0413\\u0413\\u0446, 2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "128 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "1.2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "IPS"}}, {"added": {"name": "specification", "object": "9.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "8610 \\u043c\\u0410h"}}, {"added": {"name": "specification", "object": "469 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "170 x 240 x 7.5 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "Wi-Fi (802.11a/b/g/n/ac) / \\u0434\\u0432\\u0443\\u0445\\u043a\\u0430\\u043d\\u0430\\u043b\\u044c\\u043d\\u044b\\u0439 2.4GHz \\u0438 5GHz, MIMO / Bluetooth 4.2 / GPS"}}, {"added": {"name": "specification", "object": "Silver"}}]	10	2
+154	2018-12-11 12:21:25.363604+00	111	Samsung Galaxy Tab E (SM-T561) Brown	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Brown"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Brown"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Brown"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Brown"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Brown"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab E (SM-T561) Brown"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.3 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "8 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "1,5 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "TFT"}}, {"added": {"name": "specification", "object": "9.6 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "5000 mAh"}}, {"added": {"name": "specification", "object": "495 \\u0433"}}, {"added": {"name": "specification", "object": "241.9 x 149.5 x 8.5"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA"}}, {"added": {"name": "specification", "object": "Brown"}}]	10	2
+155	2018-12-11 12:22:38.265276+00	112	iPad new wi-fi 2017 128GB Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 128GB Gold"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 128GB Gold"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 128GB Gold"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A9, 1,8 \\u0413\\u0413\\u0446, 2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "128 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "1.2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "IPS"}}, {"added": {"name": "specification", "object": "9.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "8610 \\u043c\\u0410h"}}, {"added": {"name": "specification", "object": "469 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "8610 \\u043c\\u0410h"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "Wi-Fi (802.11a/b/g/n/ac) / \\u0434\\u0432\\u0443\\u0445\\u043a\\u0430\\u043d\\u0430\\u043b\\u044c\\u043d\\u044b\\u0439 2.4GHz \\u0438 5GHz, MIMO / Bluetooth 4.2 / GPS"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+156	2018-12-11 12:24:44.212495+00	113	Samsung Galaxy Tab A 8.0 LTE SM-T385 Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1,4 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "TFT"}}, {"added": {"name": "specification", "object": "8 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "5000 mAh"}}, {"added": {"name": "specification", "object": "364 \\u0433"}}, {"added": {"name": "specification", "object": "212.1 x 124.1 x 8.9"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+157	2018-12-11 12:25:39.743427+00	114	iPad new wi-fi 2017 128GB Grey	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 128GB Grey"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 128GB Grey"}}, {"added": {"name": "product image", "object": "iPad new wi-fi 2017 128GB Grey"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A9, 1,8 \\u0413\\u0413\\u0446, 2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "128 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "1.2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "IPS"}}, {"added": {"name": "specification", "object": "9.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "8610 \\u043c\\u0410h"}}, {"added": {"name": "specification", "object": "469 \\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u0430\\u0440\\u043c\\u043e\\u049b \\u0438\\u0437\\u0438 \\u0441\\u043a\\u0430\\u043d\\u0435\\u0440\\u0438"}}, {"added": {"name": "specification", "object": "170 x 240 x 7.5 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "Wi-Fi (802.11a/b/g/n/ac) / \\u0434\\u0432\\u0443\\u0445\\u043a\\u0430\\u043d\\u0430\\u043b\\u044c\\u043d\\u044b\\u0439 2.4GHz \\u0438 5GHz, MIMO / Bluetooth 4.2 / GPS"}}, {"added": {"name": "specification", "object": "Grey"}}]	10	2
+158	2018-12-11 12:27:59.906337+00	115	Samsung Galaxy Tab A 8.0 LTE SM-T385 Gold	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Gold"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 8.0 LTE SM-T385 Gold"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1.4 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "16 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "TFT"}}, {"added": {"name": "specification", "object": "8 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "5000 mAh"}}, {"added": {"name": "specification", "object": "364 \\u0433"}}, {"added": {"name": "specification", "object": "212.1 x 124.1 x 8.9"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD"}}, {"added": {"name": "specification", "object": "Gold"}}]	10	2
+159	2018-12-11 12:31:37.23574+00	116	Samsung Galaxy Tab A 7 8GB 4G SM-T285 Black	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 Black"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 Black"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1,5 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "8 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "1,5 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "TFT"}}, {"added": {"name": "specification", "object": "7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "4000 mAh"}}, {"added": {"name": "specification", "object": "289 \\u0433"}}, {"added": {"name": "specification", "object": "186.9 x 108.8 x 8.7"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G, 3G, 4G LTE, GSM"}}, {"added": {"name": "specification", "object": "Black"}}]	10	2
+160	2018-12-11 12:36:21.367925+00	117	Samsung Galaxy Tab A 7 8GB 4G SM-T285 Silver	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 Silver"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 Silver"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 Silver"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 Silver"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 Silver"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1,5 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "8 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "1,5 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "TFT"}}, {"added": {"name": "specification", "object": "7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "4000 mAh"}}, {"added": {"name": "specification", "object": "289 \\u0433"}}, {"added": {"name": "specification", "object": "186.9 x 108.8 x 8.7"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G, 3G, 4G LTE, GSM"}}, {"added": {"name": "specification", "object": "White"}}]	10	2
+161	2018-12-11 12:36:24.913284+00	118	iPad new 4G 2017 32GB Grey	1	[{"added": {}}, {"added": {"name": "product image", "object": "iPad new 4G 2017 32GB Grey"}}, {"added": {"name": "product image", "object": "iPad new 4G 2017 32GB Grey"}}, {"added": {"name": "product image", "object": "iPad new 4G 2017 32GB Grey"}}, {"added": {"name": "product image", "object": "iPad new 4G 2017 32GB Grey"}}, {"added": {"name": "product image", "object": "iPad new 4G 2017 32GB Grey"}}, {"added": {"name": "specification", "object": "iOS 10"}}, {"added": {"name": "specification", "object": "Apple A9, 1,8 \\u0413\\u0413\\u0446, 2 \\u044f\\u0434\\u0440\\u043e"}}, {"added": {"name": "specification", "object": "32 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "2 \\u0413\\u0431"}}, {"added": {"name": "specification", "object": "8 \\u041c\\u041f"}}, {"added": {"name": "specification", "object": "1.2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "IPS"}}, {"added": {"name": "specification", "object": "9.7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "32,9 \\u0412\\u0442\\u00b7\\u0447"}}, {"added": {"name": "specification", "object": "478 \\u0433"}}, {"added": {"name": "specification", "object": "240 x 169.5 x 7.5 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "UMTS/HSPA/HSPA+/DC-HSDPA GSM/EDGE"}}, {"added": {"name": "specification", "object": "Grey"}}]	10	2
+162	2018-12-11 12:36:49.288602+00	117	Samsung Galaxy Tab A 7 8GB 4G SM-T285 Silver	2	[{"changed": {"name": "specification", "object": "Silver", "fields": ["info"]}}]	10	2
+163	2018-12-11 12:41:21.40602+00	4	Meizu	1	[{"added": {}}]	7	2
+164	2018-12-11 12:41:49.398833+00	119	Samsung Galaxy Tab A 7 8GB 4G SM-T285 White	1	[{"added": {}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 White"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 White"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 White"}}, {"added": {"name": "product image", "object": "Samsung Galaxy Tab A 7 8GB 4G SM-T285 White"}}, {"added": {"name": "specification", "object": "Android"}}, {"added": {"name": "specification", "object": "1,5 \\u0413\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "8 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "1,5 \\u0413\\u0411"}}, {"added": {"name": "specification", "object": "5 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "2 \\u041c\\u043f"}}, {"added": {"name": "specification", "object": "TFT"}}, {"added": {"name": "specification", "object": "7 \\u0434\\u044e\\u0439\\u043c"}}, {"added": {"name": "specification", "object": "4000 mAh"}}, {"added": {"name": "specification", "object": "289 \\u0433"}}, {"added": {"name": "specification", "object": "186.9 x 108.8 x 8.7"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "2G, 3G, 4G LTE, GSM"}}, {"added": {"name": "specification", "object": "White"}}]	10	2
+165	2018-12-17 12:03:04.19575+00	1	Slider object (1)	1	[{"added": {}}]	9	1
+166	2018-12-17 12:03:26.705803+00	2	Slider object (2)	1	[{"added": {}}]	9	1
+167	2018-12-17 12:03:35.535055+00	3	Slider object (3)	1	[{"added": {}}]	9	1
+168	2018-12-17 14:57:47.769344+00	1	Slider object (1)	2	[{"changed": {"fields": ["image"]}}]	9	2
+169	2018-12-17 15:00:20.540151+00	4	Slider object (4)	1	[{"added": {}}]	9	2
+170	2018-12-17 15:04:08.066367+00	1	Slider object (1)	2	[{"changed": {"fields": ["image"]}}]	9	2
+171	2018-12-17 15:06:23.148958+00	3	Slider object (3)	2	[{"changed": {"fields": ["image"]}}]	9	2
+172	2018-12-17 15:06:47.738843+00	2	Slider object (2)	2	[{"changed": {"fields": ["image"]}}]	9	2
+173	2018-12-18 05:19:51.799631+00	1	Slider object (1)	2	[{"changed": {"fields": ["image"]}}]	9	2
+174	2018-12-18 05:24:53.978586+00	4	Slider object (4)	2	[{"changed": {"fields": ["image"]}}]	9	2
+175	2018-12-18 05:25:13.671499+00	3	Slider object (3)	2	[{"changed": {"fields": ["image"]}}]	9	2
+176	2018-12-18 05:25:27.517+00	2	Slider object (2)	2	[{"changed": {"fields": ["image"]}}]	9	2
+177	2018-12-18 07:20:04.606781+00	1	Slider object (1)	2	[{"changed": {"fields": ["image"]}}]	9	2
+178	2018-12-19 07:22:03.513964+00	5	Huawei	1	[{"added": {}}]	7	2
+179	2018-12-19 07:22:26.548673+00	6	LG	1	[{"added": {}}]	7	2
 \.
 
 
@@ -1137,7 +1283,7 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 101, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 179, true);
 
 
 --
@@ -1159,6 +1305,7 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 12	store	review
 13	store	specification
 14	store	specificationtype
+15	app	content
 \.
 
 
@@ -1166,7 +1313,7 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 -- Name: django_content_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.django_content_type_id_seq', 14, true);
+SELECT pg_catalog.setval('public.django_content_type_id_seq', 15, true);
 
 
 --
@@ -1191,6 +1338,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 15	auth	0009_alter_user_last_name_max_length	2018-12-02 13:01:42.82164+00
 16	sessions	0001_initial	2018-12-02 13:01:42.988691+00
 17	store	0001_initial	2018-12-02 13:01:43.789123+00
+18	app	0002_content	2018-12-15 14:43:04.538636+00
 \.
 
 
@@ -1198,7 +1346,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 17, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 18, true);
 
 
 --
@@ -1214,6 +1362,8 @@ p9s3jcrg7xp2gyk6l9pb75920kif7ibv	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJ
 j1mubnn48thd4o5qm1onb8cqbkupgf9b	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2018-12-17 03:48:39.266736+00
 9thyiblenzu8gmgbzplr4parr3tlgr09	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2018-12-17 14:25:24.655576+00
 n7dmlbcpueoy6ztws7176eltylq5geqv	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2018-12-20 05:02:42.572019+00
+cccyyy9uhcbpmdcc0csx6kwjuv79k2an	ZTNiZmEyYWU0MzZlZTU1ZmEwYjVlOWJlYTgzODY5MGI0YjkzYmRhMjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiI4ZWRjZGZlODMyZmFiYTc1M2IwNzRmNmY0MTU1ZmQwNjU4NDZmOWVlIn0=	2018-12-31 12:02:27.044502+00
+132bu6c86azo2sjbz9tau0pokvkau92e	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2018-12-31 14:54:43.157264+00
 \.
 
 
@@ -1280,9 +1430,66 @@ COPY public.store_product (id, title, price, image, slug, description, quantity,
 57	Xiaomi RedMi Note 5 32GB Gold	1	0_zkFJrix.jpg	xiaomi-redmi-note-5-32gb-gold		1	f	f	f	3	17
 58	Samsung Galaxy J110 (J1 Ace) White	1	1_PJx5r6B.jpg	samsung-galaxy-j110-j1-ace-white		1	f	f	f	2	18
 59	Xiaomi RedMi Note 5 64GB Black	1	0_ey0HmPx.jpg	xiaomi-redmi-note-5-64gb-black		1	f	f	f	3	17
-60	Xiaomi Mi 6 6/64GB Black	1	2_sHbUp5X.png	xiaomi-mi-6-664gb-black		1	f	f	f	3	17
 61	Samsung Galaxy J200 (J2) Black	1	1_5eUSTcN.jpg	samsung-galaxy-j200-j2-black		1	f	f	f	2	18
 62	Samsung Galaxy J200 (J2) Gold	1	1_jFuLaxA.jpg	samsung-galaxy-j200-j2-gold		1	f	f	f	2	18
+60	Xiaomi Mi 6 6/64GB Black	1	xiaomi_mi6_664_blk_images_2027581644_Nwo27WH.jpg	xiaomi-mi-6-664gb-black		1	f	f	f	3	17
+63	iPhone X 64GB Grey	1	0_WfWAUM7.jpg	iphone-x-64gb-grey		1	f	f	f	1	19
+64	iPhone X 256GB Silver	1	0_OO1TAOm.jpg	iphone-x-256gb-silver		1	f	f	f	1	19
+65	Samsung Galaxy J250M (J2 Pro) Black	1	1_MUBf7dI.jpg	samsung-galaxy-j250m-j2-pro-black		1	f	f	f	2	18
+66	iPhone X 256GB Grey	1	0_macW3cN.jpg	iphone-x-256gb-grey		1	f	f	f	1	19
+67	Samsung Galaxy J250M (J2 Pro) gold	1	1_1I1s16r.jpg	samsung-galaxy-j250m-j2-pro-gold		1	f	f	f	2	18
+68	iPhone SE 32GB Gold	1	1_y4DRmHa.jpg	iphone-se-32gb-gold		1	f	f	f	1	19
+69	iPhone 6 32GB Grey	1	1_vmNlSZa.jpg	iphone-6-32gb-grey		1	f	f	f	1	19
+70	iPhone 7 32GB Black	1	0_AxUmjhR.jpg	iphone-7-32gb-black		1	f	f	f	1	19
+71	Samsung Galaxy J320 (J3) Gold	1	1_rpA24Yu.jpg	samsung-galaxy-j320-j3-gold		1	f	f	f	2	18
+72	iPhone 7 32GB Gold	1	apple_iphone_7_gold_1_3.jpg	iphone-7-32gb-gold		1	f	f	f	1	19
+73	iPhone 7 32GB RoseGold	1	apple_iphone_7_rose_1_3.jpg	iphone-7-32gb-rosegold		1	f	f	f	1	19
+74	iPhone 7 128GB Gold	1	apple_iphone_7_gold_1_3_BnS7qbS.jpg	iphone-7-128gb-gold		1	f	f	f	1	19
+75	iPhone 7 128GB RoseGold	1	apple_iphone_7_rose_1_3_pzmt1oD.jpg	iphone-7-128gb-rosegold		1	f	f	f	1	19
+76	iPhone 7 128GB Silver	1	apple_iphone_7_silver_0_1.jpg	iphone-7-128gb-silver		1	f	f	f	1	19
+77	iPhone 7 128GB\tRed	1	1_563_11.jpg	iphone-7-128gb-red		1	f	f	f	1	19
+78	iPhone 7 plus 32GB Black	1	apple_iphone_7_plus_black_1_2.jpg	iphone-7-plus-32gb-black		1	f	f	f	1	19
+79	iPhone 7 plus 32GB\tGold	1	apple_iphone_7_plus_gold_1_2.jpg	iphone-7-plus-32gb-gold		1	f	f	f	1	19
+80	iPhone 8  64GB\tGrey	1	iphone8-plus-spgray-select-2017_1.jpg	iphone-8-64gb-grey		1	f	f	f	1	19
+81	iPhone 8  64GB Gold	1	3_306_19_1.jpg	iphone-8-64gb-gold		1	f	f	f	1	19
+82	Samsung Galaxy J701 (J7) Black	1	1_BSPNb50.jpg	samsung-galaxy-j701-j7-black		1	f	f	f	2	18
+83	iPhone 8  64GB Silver	1	apple_iphone_8_silver_3_1_1_1.jpeg	iphone-8-64gb-silver		1	f	f	f	1	19
+84	Samsung Galaxy J701 (J7) Gold	1	1_uIY0FIv.jpg	samsung-galaxy-j701-j7-gold		1	f	f	f	2	18
+85	iPhone 8  64GB Red	1	1_j89THmU.jpg	iphone-8-64gb-red		1	f	f	f	1	19
+86	Samsung Galaxy J330 (J3) Black	1	1_4FlBwMH.jpg	samsung-galaxy-j330-j3-black		1	f	f	f	2	18
+87	Samsung Galaxy J330 (J3) Gold	1	1_qjeQY5g.jpg	samsung-galaxy-j330-j3-gold		1	f	f	f	2	18
+88	iPhone 8  256GB\tGrey	1	iphone8-plus-spgray-select-2017_1_M2bS61x.jpg	iphone-8-256gb-grey		1	f	f	f	1	19
+90	iPhone 8  256GB\tRed	1	1_2gD59Ch.jpg	iphone-8-256gb-red		1	f	f	f	1	19
+92	iPhone 8  plus 64GB Grey	1	0_2XbCY6y.jpg	iphone-8-plus-64gb-grey		1	f	f	f	1	19
+89	Samsung Galaxy  J530 (J5 ) Black	1	1_Gm5Vlzh.jpg	samsung-galaxy-j530-j5-black		1	f	f	f	2	18
+91	Samsung Galaxy J530 (J5 ) Gold	1	1_BVskbCj.jpg	samsung-galaxy-j530-j5-gold		1	f	f	f	2	18
+93	iPhone 8  plus 64GB\tSilver	1	0_SOvMvfP.jpeg	iphone-8-plus-64gb-silver		1	f	f	f	1	19
+94	Samsung Galaxy  J730 (J7) Black	1	1_4kMVbym.jpg	samsung-galaxy-j730-j7-black		1	f	f	f	2	18
+95	Samsung Galaxy J730 (J7) Gold	1	1_wi70z6p.jpg	samsung-galaxy-j730-j7-gold		1	f	f	f	2	18
+96	iPhone 8  plus 256GB Grey	1	30030155b.jpg	iphone-8-plus-256gb-grey		1	f	f	f	1	19
+97	iPhone 8  plus 256GB Red	1	2_UN5yHQs.jpg	iphone-8-plus-256gb-red		1	f	f	f	1	19
+98	Samsung Galaxy N950 Note 8 Black	1	1_jnDIL6C.jpg	samsung-galaxy-n950-note-8-black		1	f	f	f	2	18
+99	Samsung Galaxy N950 Note 8 Gold	1	3_guASVES.jpg	samsung-galaxy-n950-note-8-gold		1	f	f	f	2	18
+100	iPad mini 4 128GB  WiFi+4G Silver	1	c78c549a4e77e4377a63851b5f96efec.jpg	ipad-mini-4-128gb-wifi4g-silver		1	f	f	f	1	1
+101	iPad mini 4 128GB  WiFi+4G Grey	1	10e0766b0549a9ca686b94aa3b3802da.jpg	ipad-mini-4-128gb-wifi4g-grey		1	f	f	f	1	19
+102	iPad mini 4 128GB  WiFi+4G Gold	1	00675971b0c380026b5568fe23f6c0d7.jpg	ipad-mini-4-128gb-wifi4g-gold		1	f	f	f	1	19
+103	Samsung Galaxy Tab S3 SM-T825 Black	1	1_4zsarSZ.jpg	samsung-galaxy-tab-s3-sm-t825-black		1	f	f	f	2	18
+104	Samsung Galaxy Tab S3 SM-T825 Silver	1	1_0bToUAy.jpg	samsung-galaxy-tab-s3-sm-t825-silver		1	f	f	f	2	18
+105	Samsung Galaxy Tab S2 8.0 [SM-T719] Black	1	1_xGoaQfU.jpg	samsung-galaxy-tab-s2-80-sm-t719-black		1	f	f	f	2	18
+106	Samsung Galaxy Tab S2 8.0 [SM-T719] Gold	1	1_dtQLmY2.jpg	samsung-galaxy-tab-s2-80-sm-t719-gold		1	f	f	f	2	18
+107	iPad new wi-fi 2017 32GB\tSilver	1	03790bdd4af5cf77c82426e2a41dab67.jpg	ipad-new-wi-fi-2017-32gb-silver		1	f	f	f	1	19
+108	iPad new wi-fi 2017 32GB\tGold	1	f2919e49336397654546d142a6deab1e.jpg	ipad-new-wi-fi-2017-32gb-gold		1	f	f	f	1	19
+109	Samsung Galaxy Tab E (SM-T561) Black	1	1_zhic6nw.jpg	samsung-galaxy-tab-e-sm-t561-black		1	f	f	f	2	18
+110	iPad new wi-fi 2017 128GB Silver	1	9c090312d462edcbeb924c3841a6f15b.jpg	ipad-new-wi-fi-2017-128gb-silver		1	f	f	f	1	19
+111	Samsung Galaxy Tab E (SM-T561) Brown	1	1_P6BG3K0.jpg	samsung-galaxy-tab-e-sm-t561-brown		1	f	f	f	2	18
+112	iPad new wi-fi 2017 128GB Gold	1	e53083945de2aecb757febb0565384ff.jpg	ipad-new-wi-fi-2017-128gb-gold		1	f	f	f	1	19
+113	Samsung Galaxy Tab A 8.0 LTE SM-T385 Black	1	1_6MVuqqN.jpg	samsung-galaxy-tab-80-lte-sm-t385-black		1	f	f	f	2	18
+114	iPad new wi-fi 2017 128GB Grey	1	9a09478449eaec2c07c38a1887987ef7.jpg	ipad-new-wi-fi-2017-128gb-grey		1	f	f	f	1	19
+115	Samsung Galaxy Tab A 8.0 LTE SM-T385 Gold	1	1_ORXxnRx.jpg	samsung-galaxy-tab-80-lte-sm-t385-gold		1	f	f	f	2	18
+116	Samsung Galaxy Tab A 7 8GB 4G SM-T285 Black	1	1_DXE9geW.jpg	samsung-galaxy-tab-7-8gb-4g-sm-t285-black		1	f	f	f	2	18
+118	iPad new 4G 2017 32GB Grey	1	screenshot_1_193_153_1.jpg	ipad-new-4g-2017-32gb-grey		1	f	f	f	1	19
+117	Samsung Galaxy Tab A 7 8GB 4G SM-T285 Silver	1	1_MP6LosC.jpg	samsung-galaxy-tab-7-8gb-4g-sm-t285-silver		1	f	f	f	2	18
+119	Samsung Galaxy Tab A 7 8GB 4G SM-T285 White	1	1_kcMQW5X.jpg	samsung-galaxy-tab-7-8gb-4g-sm-t285-white		1	f	f	f	2	18
 \.
 
 
@@ -1290,7 +1497,7 @@ COPY public.store_product (id, title, price, image, slug, description, quantity,
 -- Name: store_product_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.store_product_id_seq', 62, true);
+SELECT pg_catalog.setval('public.store_product_id_seq', 119, true);
 
 
 --
@@ -1658,6 +1865,291 @@ COPY public.store_productimage (id, image, product_id) FROM stdin;
 368	7_673wvTy.jpg	62
 369	8_LCTwbxt.jpg	62
 370	5_PAt9l5u.jpg	62
+371	xiaomi_mi6_664_blk_images_2027581572.jpg	60
+372	xiaomi_mi6_664_blk_images_2027581728_DRvFbCt.jpg	60
+373	1_fbHXuZy.jpg	63
+374	2_ZWUdfad.jpg	63
+375	3_yEnwAfw.jpg	63
+376	4_4TqVix0.jpg	63
+377	5_FeLcecy.jpg	63
+378	6_kXaRCDI.jpg	63
+379	0_2TExvgW.jpg	63
+380	1_2UW8SgH.jpg	64
+381	2_SGYx5ud.jpg	64
+382	3_TSk7xOQ.jpg	64
+383	4_GmlOGmG.jpg	64
+384	5_BCbU01z.jpg	64
+385	2_QA1SWXv.jpg	65
+386	3_iYawtrq.jpg	65
+387	4_slgeg8Q.jpg	65
+388	7_dJS1Eth.jpg	65
+389	8_0aeqDCx.jpg	65
+390	1_i0WX2Zz.jpg	66
+391	2_qZTxKXy.jpg	66
+392	9_JkIyEYZ.jpg	66
+393	3_e8xUdIU.jpg	66
+394	4_zSjU02F.jpg	66
+395	5_MiyllaI.jpg	66
+396	2_WptQ9qU.jpg	67
+397	3_cTAsLxc.jpg	67
+398	4_zl0RlWJ.jpg	67
+399	5_cfgedfD.jpg	67
+400	6_CHbUDVN.jpg	67
+401	7_Lm0UXqa.jpg	67
+402	8_aVeeow4.jpg	67
+403	9_UK4dYQF.jpg	67
+404	2_6p4I1QW.jpg	68
+405	3_UAUmoqh.jpg	68
+406	5_zv0fkL1.jpg	68
+407	6_2bvPdO1.jpg	68
+408	4_PQobCSA.jpg	68
+409	1_nagVrw9.jpg	68
+410	0_VoDp8vd.jpg	69
+411	2_O2psMe2.jpg	69
+412	3_rz68df4.jpg	69
+413	0_2H3oU4V.jpg	69
+414	1_yHPOo7U.jpg	70
+415	2_fRqsXMa.jpg	70
+416	3_BIjyLwx.jpg	70
+417	4_Xgk25vi.jpg	70
+418	0_UduYbrH.jpg	70
+419	2_ZWLA6k1.jpg	71
+420	3_LndxFkz.jpg	71
+421	4_ooAnZuV.jpg	71
+422	5_nvNFkCZ.jpg	71
+423	apple_iphone_7_gold_2_3.jpg	72
+424	apple_iphone_7_gold_4_3.jpg	72
+425	apple_iphone_7_gold_3_3.jpg	72
+426	apple_iphone_7_gold_1_3_MgGVdg2.jpg	72
+427	apple_iphone_7_gold_6_3.jpg	72
+428	apple_iphone_7_rose_1_3_9j7MaYJ.jpg	73
+429	apple_iphone_7_rose_2_3.jpg	73
+430	apple_iphone_7_rose_3_3.jpg	73
+431	apple_iphone_7_rose_5_3.jpg	73
+432	iphone7-plus-rosegold-select-2016_AV1.png	73
+433	apple_iphone_7_gold_2_3_lcxBj0Y.jpg	74
+434	apple_iphone_7_gold_1_3_T0kDfKr.jpg	74
+435	apple_iphone_7_gold_3_3_d66YLtt.jpg	74
+436	apple_iphone_7_gold_4_3_V0XHc1z.jpg	74
+437	apple_iphone_7_gold_6_3_omee0Tn.jpg	74
+438	apple_iphone_7_rose_1_3_Jjxvcqe.jpg	75
+439	apple_iphone_7_rose_2_3_B8pDgUk.jpg	75
+440	apple_iphone_7_rose_3_3_CIlpNyR.jpg	75
+441	apple_iphone_7_rose_5_3_2PNDYX9.jpg	75
+442	apple_iphone_7_silver_0_1_CX1lHhO.jpg	76
+443	apple_iphone_7_silver_1_1.jpg	76
+444	apple_iphone_7_silver_2_1.jpg	76
+445	apple_iphone_7_silver_3_1.jpg	76
+446	apple_iphone_7_silver_4_1.jpg	76
+447	1_563_11_3nkzU3q.jpg	77
+448	2_412_52.jpg	77
+449	4_187_37.jpg	77
+450	3_306_13.jpg	77
+451	apple_iphone_7_plus_black_1_2_CBbY7BT.jpg	78
+452	apple_iphone_7_plus_black_2_2.jpg	78
+453	apple_iphone_7_plus_black_3_2.jpg	78
+454	apple_iphone_7_plus_black_4_2.jpg	78
+455	apple_iphone_7_plus_black_5_2.jpg	78
+456	apple_iphone_7_plus_black_7_2.jpg	78
+457	apple_iphone_7_plus_gold_1_2_Qqkq7b5.jpg	79
+458	apple_iphone_7_plus_gold_2_2.jpg	79
+459	apple_iphone_7_plus_gold_3_2.jpg	79
+460	apple_iphone_7_plus_gold_4_2.jpg	79
+461	apple_iphone_7_plus_gold_6_2.jpg	79
+462	_-1_6_10_1.jpg	80
+463	100618_p_8_1.jpg	80
+464	100618_p_21.png	80
+465	iphone8-plus-spgray-select-2017_1_W7c20J3.jpg	80
+466	u_10168678_1.jpg	80
+467	_-2_2_6_1.jpg	80
+468	1_563_16_1.jpg	81
+469	2_412_58_1.jpg	81
+470	3_306_19_1_oa1EJ9v.jpg	81
+471	4_187_41_1.jpg	81
+472	2_IlJJEBs.jpg	82
+473	3_Cn7wRck.jpg	82
+474	4_YDFuY2M.jpg	82
+475	5_53zSwSa.jpg	82
+476	6_NGMW1d1.jpg	82
+477	apple_iphone_8_silver_1_1_1.jpeg	83
+478	apple_iphone_8_silver_2_1_1_1.jpeg	83
+479	apple_iphone_8_silver_3_1_1_1_6YQ21nA.jpeg	83
+480	apple_iphone_8_silver_4_1_1_1.jpeg	83
+481	2_YoG7IQv.jpg	84
+482	3_IvmlFVi.jpg	84
+483	4_3NqM5Is.jpg	84
+484	5_aepK6zN.jpg	84
+485	6_Emxu1lg.jpg	84
+486	1_Fg4oHhe.jpg	85
+487	2_KU7ZvBI.jpg	85
+488	3_1BduW17.jpg	85
+489	4_PV9tBkL.jpg	85
+490	2_4CUdEVm.jpg	86
+491	3_8gnKC5F.jpg	86
+492	4_OaHWrSd.jpg	86
+493	5_uDPy6hu.jpg	86
+494	6_44fNpaq.jpg	86
+495	2_lwQWN7z.jpg	87
+496	3_nA9UQNa.jpg	87
+497	4_PhykvNo.jpg	87
+498	5_010AvIz.jpg	87
+499	6_LL8w9Oo.jpg	87
+500	100618_p_8_1_mc3Mfex.jpg	88
+501	iphone8-plus-spgray-select-2017_1_enePv9v.jpg	88
+502	_-1_6_10_1_u4ZabGN.jpg	88
+503	l_10168678_001_1.jpg	88
+504	_-2_2_6_1_cf3eO72.jpg	88
+505	2_KahvOkt.jpg	89
+506	3_gXlnrI7.jpg	89
+507	4_RjmvLGx.jpg	89
+508	5_pyDWmiM.jpg	89
+509	6_hfd7wzN.jpg	89
+510	2_kzz3JQW.jpg	90
+511	3_ZCQFZ8M.jpg	90
+512	4_VSbyYer.jpg	90
+513	1_MuoETP5.jpg	90
+514	2_3tubPLK.jpg	91
+515	3_14J9Yiq.jpg	91
+516	4_W9OyX2r.jpg	91
+517	5_UiQRPco.jpg	91
+518	6_8y87Fb1.jpg	91
+519	0_NrK2CCW.jpg	92
+520	1_11iKPC3.jpg	92
+521	2_I801udy.jpg	92
+522	3_1q5IXlR.jpg	92
+523	4_0oo623L.jpg	92
+524	0_swWyz8m.jpeg	93
+525	1_0soR8dG.jpg	93
+526	2_NQFqIAZ.jpg	93
+527	3_hdC7xBr.jpg	93
+528	4_VnWABEx.jpg	93
+529	2_poIOPun.jpg	94
+530	3_ZiFJHyd.jpg	94
+531	4_LsD7UdR.jpg	94
+532	5_8nU9TfZ.jpg	94
+533	6_RjMjpR7.jpg	94
+534	2_oGggw27.jpg	95
+535	3_wr31pdR.jpg	95
+536	4_WvgWeVv.jpg	95
+537	5_ZkAajWv.jpg	95
+538	6_385d7C7.jpg	95
+539	30030155b_LhdYCMg.jpg	96
+540	30030155b1.jpg	96
+541	30030155b2.jpg	96
+542	30030155b3.jpg	96
+543	2_40RnqEU.jpg	97
+544	4_ojhfZIe.jpg	97
+545	3_WJsv5jR.jpg	97
+546	1_IoApyC4.jpg	97
+547	2_Doev3Yg.jpg	98
+548	3_ISTxxxD.jpg	98
+549	4_LrRwR0K.jpg	98
+550	5_Buxd3fq.jpg	99
+551	8_RX5P9DR.jpg	99
+552	7_Z62NcbT.jpg	99
+553	4_LUgisR7.jpg	99
+554	c78c549a4e77e4377a63851b5f96efec_iVJx68q.jpg	100
+555	Без_названия_1.jpg	100
+556	Без_названия_2.jpg	100
+557	7053eec3f09d312f61321a879f5e10b4.jpg	100
+558	Без_названия_3.jpg	100
+559	591f0ca55c323c9b6d39591a3157a1a4.jpg	100
+560	10e0766b0549a9ca686b94aa3b3802da_G3DneNW.jpg	101
+561	165b3a6425b1f8300818c2c6f9e39bc2.jpg	101
+562	bc839a2d35e6c88cf4ce1181d5afdb4f.jpg	101
+563	eecc417c082df33e6fbf25cd373c4648.jpg	101
+564	f7beab3f438a93a0ad1cd1be783c478d.jpg	101
+565	Без_названия_1_MgxesHt.jpg	101
+566	Без_названия_2_rFors3M.jpg	101
+567	Без_названия_3_vsi2unv.jpg	101
+568	189ef6e3e3a2aca31c8d8b0df577ae4c.jpg	102
+569	421d41a24a0f7a29b641139b492f1e4b.jpg	102
+570	Без_названия_1_rBZgYe4.jpg	102
+571	2191212ce3f34d7d952dcbe5f5b93d0d.jpg	102
+572	Без_названия_2_7qPCLXj.jpg	102
+573	2_S5P1AXF.jpg	103
+574	3_dDuVSKJ.jpg	103
+575	4_UvvUDuY.jpg	103
+576	5_Ef0TIfr.jpg	103
+577	6_XDp6lsx.jpg	103
+578	2_97SCZAA.jpg	104
+579	3_P4P3aPG.jpg	104
+580	4_4aSacgN.jpg	104
+581	5_5WJWZN8.jpg	104
+582	6_FHMdrGS.jpg	104
+583	2_mnL5JOc.jpg	105
+584	3_8wKDMZy.jpg	105
+585	4_VyvnVhU.jpg	105
+586	5_bsJB99y.jpg	105
+587	6_8akrpbc.jpg	105
+588	9_oF1c690.jpg	105
+589	2_WA3dggM.jpg	106
+590	5_Sfj6K9z.jpg	106
+591	6_bl4wlLd.jpg	106
+592	3_W652CpE.jpg	106
+593	4_LsusCRA.jpg	106
+594	03790bdd4af5cf77c82426e2a41dab67_eVwGEfp.jpg	107
+595	screenshot_7_38_148.jpg	107
+596	screenshot_6_47_36_1.jpg	107
+597	2_415_10.jpg	107
+598	1_567_4.jpg	107
+599	f2919e49336397654546d142a6deab1e_v0nr8N3.jpg	108
+600	screenshot_4_83_179_1.jpg	108
+601	2_415_13.jpg	108
+602	1_567_5.jpg	108
+603	fcf2e661adc11351ff4650b1b0e69775.jpg	108
+604	2_xJ9abtH.jpg	109
+605	3_Gn6mEZw.jpg	109
+606	4_CtoHi1l.jpg	109
+607	5_JC3INpk.jpg	109
+608	6_eG1vyea.jpg	109
+609	8_kzS3Bzp.jpg	109
+610	9c090312d462edcbeb924c3841a6f15b_tv9MqHV.jpg	110
+611	8285464fde0a45c976dde6be7a57ba43.jpg	110
+612	906f758b688af10d0b68e6786906e641.jpg	110
+613	2_Ix4REWg.jpg	111
+614	3_1kI7FJl.jpg	111
+615	4_SkDHiFx.jpg	111
+616	5_frTxX6T.jpg	111
+617	6_WV0REFO.jpg	111
+618	7_5kemX8e.jpg	111
+619	e53083945de2aecb757febb0565384ff_Zkdp2Jo.jpg	112
+620	31c51e4233ae8d88f98b5d6e59f43408.jpg	112
+621	8ba5652b1327efa76c4777abe87de9a3.jpg	112
+622	2_72zmNxp.jpg	113
+623	3_aVsdWVT.jpg	113
+624	4_0DILg99.jpg	113
+625	5_LGxqDUk.jpg	113
+626	6_DPbQlSt.jpg	113
+627	7_zqhd1Ai.jpg	113
+628	9a09478449eaec2c07c38a1887987ef7_2nuUs9Z.jpg	114
+629	dbf52ab98af14a7ce47d3ae4bd5c8ae7.jpg	114
+630	8ba5652b1327efa76c4777abe87de9a3_kz089I8.jpg	114
+631	2_uGkwc0h.jpg	115
+632	3_T2zNz21.jpg	115
+633	4_OgGkTxU.jpg	115
+634	5_q6PY9PX.jpg	115
+635	6_8lm6nNE.jpg	115
+636	7_SxWE2cn.jpg	115
+637	2_qGiwrDJ.jpg	116
+638	3_eu0rYS9.jpg	116
+639	4_AlQA7OP.jpg	116
+640	5_ayHaCOr.jpg	116
+641	6_PzHuTUu.jpg	116
+642	2_DnBUL8u.png	117
+643	3_PuPIWmi.png	117
+644	4_YL5JM5l.png	117
+645	5_M0VZKxr.png	117
+646	6.png	117
+647	screenshot_1_193_153_1_sdNbo4A.jpg	118
+648	_-1_10_3.jpg	118
+649	screenshot_3_118_190_1_1_1.jpg	118
+650	screenshot_2_137_202_1_1.jpg	118
+651	_-2_3_10.jpg	118
+652	2_XINHJVV.jpg	119
+653	3_Thg0vVr.jpg	119
+654	4_wksueYk.jpg	119
+655	5_9jalmGa.jpg	119
 \.
 
 
@@ -1665,7 +2157,7 @@ COPY public.store_productimage (id, image, product_id) FROM stdin;
 -- Name: store_productimage_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.store_productimage_id_seq', 370, true);
+SELECT pg_catalog.setval('public.store_productimage_id_seq', 655, true);
 
 
 --
@@ -2595,6 +3087,840 @@ COPY public.store_specification (id, info, product_id, specification_type_id) FR
 906	2	62	13
 907	GSM, 3G	62	14
 908	Gold	62	15
+909	iOS 11	63	1
+910	Apple A11 Bionic,  4+2 ядро	63	2
+911	64 Гб	63	3
+912	3 Гб	63	4
+913	12 Мп + 12 Мп	63	5
+914	7 Мп	63	6
+915	OLED (Super Retina HD)	63	7
+916	5.8 дюйм	63	8
+917	2716 mAh	63	9
+918	174 г	63	10
+919	143.6 х 70.9 х 7.7 мм	63	12
+920	1	63	13
+921	2G, 3G, 4G LTE, GSM	63	14
+922	Grey	63	15
+923	iOS 11	64	1
+924	Apple A11 Bionic, 4+2 ядро	64	2
+925	256 ГБ	64	3
+926	3 Гб	64	4
+927	12 Мп + 12 Мп	64	5
+928	7 Мп	64	6
+929	OLED (Super Retina HD)	64	7
+930	5.8 дюйм	64	8
+931	2716 mAh	64	9
+932	174 г	64	10
+933	143.6 х 70.9 х 7.7 мм	64	12
+934	1	64	13
+935	2G, 3G, 4G LTE, GSM	64	14
+936	Silver	64	15
+937	Android	65	1
+938	1,4 ГГц	65	2
+939	16 ГБ	65	3
+940	1,5 ГБ	65	4
+941	8 Мп	65	5
+942	5 Мп	65	6
+943	Super AMOLED	65	7
+944	5 дюйм	65	8
+945	2600 mAh	65	9
+946	153 г	65	10
+947	143.8 x 72.3 x 8.4	65	12
+948	2	65	13
+949	2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD	65	14
+950	Black	65	15
+951	iOS 11	66	1
+952	Apple A11 Bionic, 4+2 ядро	66	2
+953	256 ГБ	66	3
+954	3 Гб	66	4
+955	12 Мп + 12 Мп	66	5
+956	7 Мп	66	6
+957	OLED (Super Retina HD)	66	7
+958	5.8 дюйм	66	8
+959	2716 mAh	66	9
+960	174 г	66	10
+961	143.6 х 70.9 х 7.7 мм	66	12
+962	1	66	13
+963	2G, 3G, 4G LTE, GSM	66	14
+964	Grey	66	15
+965	Android	67	1
+966	1.4 ГГц	67	2
+967	16 ГБ	67	3
+968	1,5 ГБ	67	4
+969	8 Мп	67	5
+970	5 Мп	67	6
+971	Super AMOLED	67	7
+972	5 дюйм	67	8
+973	2600 mAh	67	9
+974	153 г	67	10
+975	143.8 x 72.3 x 8.4	67	12
+976	2	67	13
+977	2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD	67	14
+978	Gold	67	15
+979	iOS 11	68	1
+980	Apple A9 + сопроцессор M9, 2 ядро	68	2
+981	32 Гб	68	3
+982	2 Гб	68	4
+983	12 МП	68	5
+984	1.2 МП	68	6
+985	рангли IPS, сенсор	68	7
+986	5 дюйм	68	8
+987	2716 mAh	68	9
+988	113 г	68	10
+989	Бармоқ изи сканери	68	11
+990	123.8x58.6x7.6 мм	68	12
+991	1	68	13
+992	2G (EDGE) 3G (WCDMA/UMTS) 4G (LTE)	68	14
+993	Gold	68	15
+994	iOS 11	69	1
+995	Apple A8 + сопроцессор M8, 1.4 ГГц, 2 ядро	69	2
+996	32 Гб	69	3
+997	1 Гб	69	4
+998	8 МП	69	5
+999	1.2 МП	69	6
+1000	IPS	69	7
+1001	4.7 дюйм	69	8
+1002	1810 мАh	69	9
+1003	129 г	69	10
+1004	Бармоқ изи сканери	69	11
+1005	138.1 x 67 x 6.9 мм	69	12
+1006	1	69	13
+1007	2G (EDGE) 3G (WCDMA/UMTS) 4G (LTE)	69	14
+1008	Grey	69	15
+1009	iOS 10	70	1
+1010	Apple A10, 2.3 ГГц, 4 ядро	70	2
+1011	32 Гб	70	3
+1012	2 Гб	70	4
+1013	12 Мп	70	5
+1014	7 Мп	70	6
+1015	Retina	70	7
+1016	4.7 дюйм	70	8
+1017	1960 mAh	70	9
+1018	138 г	70	10
+1019	Бармоқ изи сканери	70	11
+1020	138,3x67,1x7,1 мм	70	12
+1021	1	70	13
+1022	GSM, 3G, 4G (LTE)	70	14
+1023	Black	70	15
+1024	Android	71	1
+1025	1.5 ГГц	71	2
+1026	8 Гб	71	3
+1027	1.5 ГБ	71	4
+1028	8.0 МП	71	5
+1029	5.0 MП	71	6
+1030	Super AMOLED	71	7
+1031	5.0 дюйм	71	8
+1032	2600 mAh	71	9
+1033	138 г	71	10
+1034	142.7 x 70.1 x 8.9	71	12
+1035	2	71	13
+1036	2G, 3G, 4G LTE, GSM	71	14
+1037	Gold	71	15
+1038	iOS 10	72	1
+1039	Apple A10, 2.3 ГГц, 4 ядро	72	2
+1040	32 Гб	72	3
+1041	2 Гб	72	4
+1042	12 Мп	72	5
+1043	7 Мп	72	6
+1044	Retina	72	7
+1045	4.7 дюйм	72	8
+1046	1960 mAh	72	9
+1047	138 г	72	10
+1048	Бармоқ изи сканери	72	11
+1049	138,3x67,1x7,1 мм	72	12
+1050	1	72	13
+1051	GSM, 3G, 4G (LTE)	72	14
+1052	Gold	72	15
+1053	iOS 10	73	1
+1054	Apple A10, 2.3 ГГц, 4 ядро	73	2
+1055	32 Гб	73	3
+1056	2 Гб	73	4
+1057	12 Мп	73	5
+1058	7 Мп	73	6
+1059	Retina	73	7
+1060	4.7 дюйм	73	8
+1061	1960 mAh	73	9
+1062	138 г	73	10
+1063	Бармоқ изи сканери	73	11
+1064	138,3x67,1x7,1 мм	73	12
+1065	1	73	13
+1066	GSM, 3G, 4G (LTE)	73	14
+1067	RoseGold	73	15
+1068	iOS 10	74	1
+1069	Apple A10, 2.3 ГГц, 4 ядро	74	2
+1070	128 Гб	74	3
+1071	2 Гб	74	4
+1072	12 Мп	74	5
+1073	7 Мп	74	6
+1074	Retina	74	7
+1075	4.7 дюйм	74	8
+1076	1960 mAh	74	9
+1077	138 г	74	10
+1078	Бармоқ изи сканери	74	11
+1079	138,3x67,1x7,1 мм	74	12
+1080	1	74	13
+1081	GSM, 3G, 4G (LTE)	74	14
+1082	Gold	74	15
+1083	iOS 10	75	1
+1084	Apple A10, 2.3 ГГц, 4 ядро	75	2
+1085	128 Гб	75	3
+1086	2 Гб	75	4
+1087	12 Мп	75	5
+1088	7 Мп	75	6
+1089	Retina	75	7
+1090	4.7 дюйм	75	8
+1091	1960 mAh	75	9
+1092	138 г	75	10
+1093	Бармоқ изи сканери	75	11
+1094	138,3x67,1x7,1 мм	75	12
+1095	1	75	13
+1096	GSM, 3G, 4G (LTE)	75	14
+1097	RoseGold	75	15
+1098	iOS 10	76	1
+1099	Apple A10, 2.3 ГГц, 4 ядро	76	2
+1100	128 Гб	76	3
+1101	2 Гб	76	4
+1102	12 Мп	76	5
+1103	7 Мп	76	6
+1104	Retina	76	7
+1105	4.7 дюйм	76	8
+1106	1960 mAh	76	9
+1107	138 г	76	10
+1108	Бармоқ изи сканери	76	11
+1109	138,3x67,1x7,1 мм	76	12
+1110	1	76	13
+1111	GSM, 3G, 4G (LTE)	76	14
+1112	Silver	76	15
+1113	iOS 10	77	1
+1114	Apple A10, 2.3 ГГц, 4 ядро	77	2
+1115	128 Гб	77	3
+1116	2 Гб	77	4
+1117	12 Мп	77	5
+1118	7 Мп	77	6
+1119	Retina	77	7
+1120	4.7 дюйм	77	8
+1121	1960 mAh	77	9
+1122	138 г	77	10
+1123	Бармоқ изи сканери	77	11
+1124	138,3x67,1x7,1 мм	77	12
+1125	1	77	13
+1126	GSM, 3G, 4G (LTE)	77	14
+1127	Red	77	15
+1128	iOS 10	78	1
+1129	Apple A10, 2.3 ГГц, 4 ядро	78	2
+1130	32 Гб	78	3
+1131	3 Гб	78	4
+1132	12 Мп	78	5
+1133	7 Мп	78	6
+1134	Retina	78	7
+1135	5.5 дюйм	78	8
+1136	2900 mAh	78	9
+1137	188 г	78	10
+1138	Бармоқ изи сканери	78	11
+1139	158,2х77,9х7,3 мм	78	12
+1140	1	78	13
+1141	GSM, 3G, 4G (LTE)	78	14
+1142	Black	78	15
+1143	iOS 10	79	1
+1144	Apple A10, 2.3 ГГц, 4 ядро	79	2
+1145	32 Гб	79	3
+1146	3 Гб	79	4
+1147	12 Мп	79	5
+1148	7 Мп	79	6
+1149	Retina	79	7
+1150	5.5дюйм	79	8
+1151	2900 mAh	79	9
+1152	188 г	79	10
+1153	Бармоқ изи сканери	79	11
+1154	155.4×75.8×7.3 мм	79	12
+1155	1	79	13
+1156	GSM, 3G, 4G (LTE)	79	14
+1157	Gold	79	15
+1158	iOS 11	80	1
+1159	Apple A11 Bionic, 2.3 ГГц, 6 ядро	80	2
+1160	64 Гб	80	3
+1161	2 Гб	80	4
+1162	12 Мп	80	5
+1163	7 Мп	80	6
+1164	Retina HD	80	7
+1165	4.7 дюйм	80	8
+1166	1821 mAh	80	9
+1167	148 г	80	10
+1168	Бармоқ изи сканери	80	11
+1169	138.4 х 67.3 х 7.3 мм	80	12
+1170	1	80	13
+1171	GSM, 3G, 4G (LTE)	80	14
+1172	Grey	80	15
+1173	iOS 11	81	1
+1174	Apple A11 Bionic, 2.3 ГГц, 6 ядро	81	2
+1175	64 Гб	81	3
+1176	2 Гб	81	4
+1177	12 Мп	81	5
+1178	7 Мп	81	6
+1179	Retina HD	81	7
+1180	4.7 дюйм	81	8
+1181	1821 mAh	81	9
+1182	148 г	81	10
+1183	Бармоқ изи сканери	81	11
+1184	138.4 х 67.3 х 7.3 мм	81	12
+1185	1	81	13
+1186	GSM, 3G, 4G (LTE)	81	14
+1187	Gold	81	15
+1188	Android	82	1
+1189	1,6 ГГц	82	2
+1190	16 ГБ	82	3
+1191	2 ГБ	82	4
+1192	13 Мп	82	5
+1193	5.0 Мп	82	6
+1194	Super AMOLED	82	7
+1195	5.5 дюйм	82	8
+1196	3000 mAh	82	9
+1197	170 г	82	10
+1198	152.4 x 78.6 x 7.6	82	12
+1199	2	82	13
+1200	2G GSM, 3G WCDMA, 4G LTE FDD, 4G	82	14
+1201	Black	82	15
+1202	iOS 11	83	1
+1203	Apple A11 Bionic, 2.3 ГГц, 6 ядро	83	2
+1204	64 Гб	83	3
+1205	2 Гб	83	4
+1206	12 Мп	83	5
+1207	7 Мп	83	6
+1208	Retina HD	83	7
+1209	4.7 дюйм	83	8
+1210	1821 mAh	83	9
+1211	148 г	83	10
+1212	Бармоқ изи сканери	83	11
+1213	138.4 х 67.3 х 7.3 мм	83	12
+1214	1	83	13
+1215	GSM, 3G, 4G (LTE)	83	14
+1216	Silver	83	15
+1217	Android	84	1
+1218	1,6 ГГц	84	2
+1219	16 ГБ	84	3
+1220	2 ГБ	84	4
+1221	13 Мп	84	5
+1222	5 Мп	84	6
+1223	Super AMOLED	84	7
+1224	5.5 дюйм	84	8
+1225	3000 mAh	84	9
+1226	170 г	84	10
+1227	152.4 x 78.6 x 7.6	84	12
+1228	2	84	13
+1229	2G GSM, 3G WCDMA, 4G LTE FDD, 4G	84	14
+1230	Gold	84	15
+1231	iOS 11	85	1
+1232	Apple A11 Bionic, 2.3 ГГц, 6 ядро	85	2
+1233	64 Гб	85	3
+1234	2 Гб	85	4
+1235	12 Мп	85	5
+1236	7 Мп	85	6
+1237	Retina HD	85	7
+1238	4.7 дюйм	85	8
+1239	1821 mAh	85	9
+1240	148 г	85	10
+1241	Бармоқ изи сканери	85	11
+1242	138.4 х 67.3 х 7.3 мм	85	12
+1243	1	85	13
+1244	GSM, 3G, 4G (LTE)	85	14
+1245	Red	85	15
+1246	Android	86	1
+1247	1,4 ГГц	86	2
+1248	16 ГБ	86	3
+1249	2 ГБ	86	4
+1250	13 Мп	86	5
+1251	5.0 Мп	86	6
+1252	Super AMOLED	86	7
+1253	5.0 дюйм	86	8
+1254	2400 mAh	86	9
+1255	142 г	86	10
+1256	143.2 x 70.3 x 8.2	86	12
+1257	2	86	13
+1258	2G GSM, 3G WCDMA, 4G LTE FDD, 4G	86	14
+1259	Black	86	15
+1260	Android	87	1
+1261	1.4 ГГц	87	2
+1262	16 ГБ	87	3
+1263	2 ГБ	87	4
+1264	13 Мп	87	5
+1265	5 Мп	87	6
+1266	Super AMOLED	87	7
+1267	5 дюйм	87	8
+1268	2400mAh	87	9
+1269	142 г	87	10
+1270	143.2 x 70.3 x 8.2	87	12
+1271	2	87	13
+1272	2G GSM, 3G WCDMA, 4G LTE FDD, 4G	87	14
+1273	Gold	87	15
+1274	iOS 11	88	1
+1275	Apple A11 Bionic + М11, 2.3 ГГц, 6 ядро	88	2
+1276	256 ГБ	88	3
+1277	2 Гб	88	4
+1278	12 Мп	88	5
+1279	7 Мп	88	6
+1280	Retina HD	88	7
+1281	4.7 дюйм	88	8
+1282	1821 mAh	88	9
+1283	148 г	88	10
+1284	Бармоқ изи сканери	88	11
+1285	138.4 х 67.3 х 7.3 мм	88	12
+1286	1	88	13
+1287	GSM, 3G, 4G (LTE)	88	14
+1288	Grey	88	15
+1289	Android	89	1
+1290	1.6ГГц	89	2
+1291	16 ГБ	89	3
+1292	2 ГБ	89	4
+1293	13 Мп	89	5
+1294	13 Мп	89	6
+1295	Super AMOLED	89	7
+1296	5.2 дюйм	89	8
+1297	3000 mAh	89	9
+1298	160 г	89	10
+1299	146.2 x 71.3 x 8.0	89	12
+1300	2	89	13
+1301	2G GSM, 3G WCDMA, 4G LTE FDD, 4G	89	14
+1302	Black	89	15
+1303	iOS 11	90	1
+1304	Apple A11 Bionic + М11, 2.3 ГГц, 6 ядро	90	2
+1305	256 ГБ	90	3
+1306	2 Гб	90	4
+1307	12 Мп	90	5
+1308	7	90	6
+1309	Retina HD	90	7
+1310	4.7 дюйм	90	8
+1311	1821 mAh	90	9
+1312	148 г	90	10
+1313	Бармоқ изи сканери	90	11
+1314	138.4 х 67.3 х 7.3 мм	90	12
+1315	1	90	13
+1316	GSM, 3G, 4G (LTE)	90	14
+1317	Red	90	15
+1318	Android	91	1
+1319	1.6 ГГц	91	2
+1320	16 ГБ	91	3
+1321	2 ГБ	91	4
+1322	13 Мп	91	5
+1323	13 Мп	91	6
+1324	Super AMOLED	91	7
+1325	5.2 дюйм	91	8
+1326	3000 mAh	91	9
+1327	160 г	91	10
+1328	146.2 x 71.3 x 8.0	91	12
+1329	2	91	13
+1330	2G GSM, 3G WCDMA, 4G LTE FDD, 4G	91	14
+1331	Gold	91	15
+1332	iOS 11	92	1
+1333	Apple A11 Bionic + М11, 2.3 ГГц, 6 ядро	92	2
+1334	64 Гб	92	3
+1335	3 Гб	92	4
+1336	12 Мп	92	5
+1337	7 Мп	92	6
+1338	Retina HD	92	7
+1339	5.5дюйм	92	8
+1340	2691 mAh	92	9
+1341	202 г	92	10
+1342	Бармоқ изи сканери	92	11
+1343	158.4 х 78.1 х 7.5 мм	92	12
+1344	1	92	13
+1345	GSM, 3G, 4G (LTE)	92	14
+1346	Grey	92	15
+1347	Бармоқ изи сканери	89	11
+1348	Бармоқ изи сканери	91	11
+1349	iOS 11	93	1
+1350	Apple A11 Bionic + М11, 2.3 ГГц, 6 ядро	93	2
+1351	64 Гб	93	3
+1352	3 Гб	93	4
+1353	12 Мп	93	5
+1354	7 Мп	93	6
+1355	Retina HD	93	7
+1356	5.5дюйм	93	8
+1357	2691 mAh	93	9
+1358	202 г	93	10
+1359	Бармоқ изи сканери	93	11
+1360	158.4 х 78.1 х 7.5 мм	93	12
+1361	1	93	13
+1362	GSM, 3G, 4G (LTE)	93	14
+1363	Silver	93	15
+1364	Android	94	1
+1365	1.6ГГц	94	2
+1366	16 ГБ	94	3
+1367	3 ГБ	94	4
+1368	13 Мп	94	5
+1369	13 Мп	94	6
+1370	Super AMOLED	94	7
+1371	5.5 дюйм	94	8
+1372	3600 mAh	94	9
+1373	181 г	94	10
+1374	Бармоқ изи сканери	94	11
+1375	152.5 x 74.8 x 8.0	94	12
+1376	2	94	13
+1377	2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD	94	14
+1378	Black	94	15
+1379	Android	95	1
+1380	1.6ГГц	95	2
+1381	16 ГБ	95	3
+1382	3 ГБ	95	4
+1383	13 Мп	95	5
+1384	13 Мп	95	6
+1385	Super AMOLED	95	7
+1386	5.5 дюйм	95	8
+1387	3600 mAh	95	9
+1388	181 г	95	10
+1389	Бармоқ изи сканери	95	11
+1390	152.5 x 74.8 x 8.0	95	12
+1391	2	95	13
+1392	2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD	95	14
+1393	Gold	95	15
+1394	iOS 11	96	1
+1395	Apple A11 Bionic + М11, 2.3 ГГц, 6 ядро	96	2
+1396	256 ГБ	96	3
+1397	3 Гб	96	4
+1398	12 Мп	96	5
+1399	7 Мп	96	6
+1400	Retina HD	96	7
+1401	5.5дюйм	96	8
+1402	2691 mAh	96	9
+1403	202 г	96	10
+1404	Бармоқ изи сканери	96	11
+1405	158.4 х 78.1 х 7.5 мм	96	12
+1406	1	96	13
+1407	GSM, 3G, 4G (LTE)	96	14
+1408	Grey	96	15
+1409	iOS 11	97	1
+1410	Apple A11 Bionic + М11, 2.3 ГГц, 6 ядро	97	2
+1411	256 ГБ	97	3
+1412	3 Гб	97	4
+1413	12 Мп	97	5
+1414	7 Мп	97	6
+1415	Retina HD	97	7
+1416	5.5дюйм	97	8
+1417	2691 mAh	97	9
+1418	202 г	97	10
+1419	Бармоқ изи сканери	97	11
+1420	158.4 х 78.1 х 7.5 мм	97	12
+1421	1	97	13
+1422	GSM, 3G, 4G (LTE)	97	14
+1423	Red	97	15
+1424	Android	98	1
+1425	2,5 ГГц	98	2
+1426	64 ГБ	98	3
+1427	6 Гб	98	4
+1428	12 Мп	98	5
+1429	8 Мп	98	6
+1430	Super AMOLED	98	7
+1431	6.2 дюйм	98	8
+1432	3300 mAh	98	9
+1433	195 г	98	10
+1434	Бармоқ изи сканери	98	11
+1435	162.5 x 74.8 x 8.6 мм	98	12
+1436	2	98	13
+1437	2G, 3G, 4G LTE, GSM	98	14
+1438	Black	98	15
+1439	Android	99	1
+1440	2,5 ГГц	99	2
+1441	64 ГБ	99	3
+1442	6 ГБ	99	4
+1443	12 Мп	99	5
+1444	8 Мп	99	6
+1445	Super AMOLED	99	7
+1446	6.2 дюйм	99	8
+1447	3300mAh	99	9
+1448	195 г	99	10
+1449	Бармоқ изи сканери	99	11
+1450	162.5 x 74.8 x 8.6 мм	99	12
+1451	2	99	13
+1452	2G, 3G, 4G LTE, GSM	99	14
+1453	Gold	99	15
+1454	iOS 11	100	1
+1455	Apple A8, 1,5 ГГц, 2 ядро	100	2
+1456	128 Гб	100	3
+1457	1 Гб	100	4
+1458	8 МП	100	5
+1459	1.2 Мп	100	6
+1460	Retina HD	100	7
+1461	7.9 дюйм	100	8
+1462	19.1 mAh	100	9
+1463	304 г	100	10
+1464	203,2 х 134,8 х 6,1 мм	100	12
+1465	1	100	13
+1466	2G 3G 4G(LTE)	100	14
+1467	Silver	100	15
+1468	iOS 11	101	1
+1469	Apple A8, 1,5 ГГц, 2 ядро	101	2
+1470	128 Гб	101	3
+1471	1 Гб	101	4
+1472	8 МП	101	5
+1473	1.2 Мп	101	6
+1474	Retina HD	101	7
+1475	7.9 дюйм	101	8
+1476	19.1 mAh	101	9
+1477	304 г	101	10
+1478	203,2 х 134,8 х 6,1 мм	101	12
+1479	1	101	13
+1480	2G, 3G, 4G (LTE)	101	14
+1481	Grey	101	15
+1482	iOS 11	102	1
+1483	Apple A8, 1,5 ГГц, 2 ядро	102	2
+1484	128 Гб	102	3
+1485	1 Гб	102	4
+1486	8 МП	102	5
+1487	1.2 Мп	102	6
+1488	Retina HD	102	7
+1489	7.9 дюйм	102	8
+1490	19.1 mAh	102	9
+1491	304 г	102	10
+1492	203,2 х 134,8 х 6,1 мм	102	12
+1493	1	102	13
+1494	2G 3G 4G(LTE)	102	14
+1495	Gold	102	15
+1496	Android	103	1
+1497	2.15 ГГц, 1,6 ГГц	103	2
+1498	32 ГБ	103	3
+1499	4 ГБ	103	4
+1500	13 Мп	103	5
+1501	5 Мп	103	6
+1502	Super AMOLED	103	7
+1503	9.7 дюйм	103	8
+1504	6000 mAh	103	9
+1505	434 г	103	10
+1506	Бармоқ изи сканери	103	11
+1507	237.3 x 169.0 x 6.0	103	12
+1508	1	103	13
+1509	2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD	103	14
+1510	Black	103	15
+1511	Android	104	1
+1512	2.15 ГГц, 1,6 ГГц	104	2
+1513	32 ГБ	104	3
+1514	4 ГБ	104	4
+1515	13 Мп	104	5
+1516	5 Мп	104	6
+1517	Super AMOLED	104	7
+1518	9.7 дюйм	104	8
+1519	6000 mAh	104	9
+1520	434 г	104	10
+1521	Бармоқ изи сканери	104	11
+1522	237.3 x 169.0 x 6.0	104	12
+1523	1	104	13
+1524	2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD	104	14
+1525	Silver	104	15
+1526	Android	105	1
+1527	1.8 ГГц, 1.4ГГц	105	2
+1528	32 ГБ	105	3
+1529	3 ГБ	105	4
+1530	8 Мп	105	5
+1531	2.1 Мп	105	6
+1532	Super AMOLED	105	7
+1533	8.0 дюйм	105	8
+1534	4000 mAh	105	9
+1535	267 г	105	10
+1536	Бармоқ изи сканери	105	11
+1537	198.6 x 134.8 x 5.6	105	12
+1538	1	105	13
+1539	2G GSM, 3G WCDMA, 4G LTE FDD	105	14
+1540	Black	105	15
+1541	Android	106	1
+1542	1.8 ГГц, 1.4 ГГц	106	2
+1543	32 ГБ	106	3
+1544	3 ГБ	106	4
+1545	8 Мп	106	5
+1546	2.1 Мп	106	6
+1547	Super AMOLED	106	7
+1548	8.0 дюйм	106	8
+1549	4000 mAh	106	9
+1550	267 г	106	10
+1551	Бармоқ изи сканери	106	11
+1552	198.6 x 134.8 x 5.6	106	12
+1553	1	106	13
+1554	2G GSM, 3G WCDMA, 4G LTE FDD	106	14
+1555	Gold	106	15
+1556	iOS 10	107	1
+1557	Apple A9, 1,8 ГГц, 2 ядро	107	2
+1558	32 Гб	107	3
+1559	2 Гб	107	4
+1560	8 МП	107	5
+1561	1.2 Мп	107	6
+1562	IPS	107	7
+1563	9.7 дюйм	107	8
+1564	8610 мАh	107	9
+1565	469 г	107	10
+1566	Бармоқ изи сканери	107	11
+1567	170 x 240 x 7.5 мм	107	12
+1568	1	107	13
+1569	Wi-Fi (802.11a/b/g/n/ac) / двухканальный 2.4GHz и 5GHz, MIMO / Bluetooth 4.2 / GPS	107	14
+1570	Silver	107	15
+1571	iOS 10	108	1
+1572	Apple A9, 1,8 ГГц, 2 ядро	108	2
+1573	32 Гб	108	3
+1574	2 Гб	108	4
+1575	8 МП	108	5
+1576	1.2 Мп	108	6
+1577	IPS	108	7
+1578	9.7 дюйм	108	8
+1579	8610 мАh	108	9
+1580	469 г	108	10
+1581	Бармоқ изи сканери	108	11
+1582	170 x 240 x 7.5 мм	108	12
+1583	1	108	13
+1584	Wi-Fi (802.11a/b/g/n/ac) / двухканальный 2.4GHz и 5GHz, MIMO / Bluetooth 4.2 / GPS	108	14
+1585	Gold	108	15
+1586	Android	109	1
+1587	1.3 ГГц	109	2
+1588	8 Гб	109	3
+1589	1,5 ГБ	109	4
+1590	5 Мп	109	5
+1591	2 Мп	109	6
+1592	TFT	109	7
+1593	9.6 дюйм	109	8
+1594	5000 mAh	109	9
+1595	495 г	109	10
+1596	241.9 x 149.5 x 8.5	109	12
+1597	1	109	13
+1598	2G GSM, 3G WCDMA	109	14
+1599	Black	109	15
+1600	iOS 10	110	1
+1601	Apple A9, 1,8 ГГц, 2 ядро	110	2
+1602	128 Гб	110	3
+1603	2 Гб	110	4
+1604	8 МП	110	5
+1605	1.2 Мп	110	6
+1606	IPS	110	7
+1607	9.7 дюйм	110	8
+1608	8610 мАh	110	9
+1609	469 г	110	10
+1610	Бармоқ изи сканери	110	11
+1611	170 x 240 x 7.5 мм	110	12
+1612	1	110	13
+1613	Wi-Fi (802.11a/b/g/n/ac) / двухканальный 2.4GHz и 5GHz, MIMO / Bluetooth 4.2 / GPS	110	14
+1614	Silver	110	15
+1615	Android	111	1
+1616	1.3 ГГц	111	2
+1617	8 ГБ	111	3
+1618	1,5 ГБ	111	4
+1619	5 Мп	111	5
+1620	2 Мп	111	6
+1621	TFT	111	7
+1622	9.6 дюйм	111	8
+1623	5000 mAh	111	9
+1624	495 г	111	10
+1625	241.9 x 149.5 x 8.5	111	12
+1626	1	111	13
+1627	2G GSM, 3G WCDMA	111	14
+1628	Brown	111	15
+1629	iOS 10	112	1
+1630	Apple A9, 1,8 ГГц, 2 ядро	112	2
+1631	128 Гб	112	3
+1632	2 Гб	112	4
+1633	8 МП	112	5
+1634	1.2 Мп	112	6
+1635	IPS	112	7
+1636	9.7 дюйм	112	8
+1637	8610 мАh	112	9
+1638	469 г	112	10
+1639	Бармоқ изи сканери	112	11
+1640	8610 мАh	112	12
+1641	1	112	13
+1642	Wi-Fi (802.11a/b/g/n/ac) / двухканальный 2.4GHz и 5GHz, MIMO / Bluetooth 4.2 / GPS	112	14
+1643	Gold	112	15
+1644	Android	113	1
+1645	1,4 ГГц	113	2
+1646	16 ГБ	113	3
+1647	2 ГБ	113	4
+1648	8 Мп	113	5
+1649	5 Мп	113	6
+1650	TFT	113	7
+1651	8 дюйм	113	8
+1652	5000 mAh	113	9
+1653	364 г	113	10
+1654	212.1 x 124.1 x 8.9	113	12
+1655	1	113	13
+1656	2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD	113	14
+1657	Black	113	15
+1658	iOS 10	114	1
+1659	Apple A9, 1,8 ГГц, 2 ядро	114	2
+1660	128 Гб	114	3
+1661	2 Гб	114	4
+1662	8 МП	114	5
+1663	1.2 Мп	114	6
+1664	IPS	114	7
+1665	9.7 дюйм	114	8
+1666	8610 мАh	114	9
+1667	469 г	114	10
+1668	Бармоқ изи сканери	114	11
+1669	170 x 240 x 7.5 мм	114	12
+1670	1	114	13
+1671	Wi-Fi (802.11a/b/g/n/ac) / двухканальный 2.4GHz и 5GHz, MIMO / Bluetooth 4.2 / GPS	114	14
+1672	Grey	114	15
+1673	Android	115	1
+1674	1.4 ГГц	115	2
+1675	16 ГБ	115	3
+1676	2 ГБ	115	4
+1677	8 Мп	115	5
+1678	5 Мп	115	6
+1679	TFT	115	7
+1680	8 дюйм	115	8
+1681	5000 mAh	115	9
+1682	364 г	115	10
+1683	212.1 x 124.1 x 8.9	115	12
+1684	1	115	13
+1685	2G GSM, 3G WCDMA, 4G LTE FDD, 4G LTE TDD	115	14
+1686	Gold	115	15
+1687	Android	116	1
+1688	1,5 ГГц	116	2
+1689	8 ГБ	116	3
+1690	1,5 ГБ	116	4
+1691	5 Мп	116	5
+1692	2 Мп	116	6
+1693	TFT	116	7
+1694	7 дюйм	116	8
+1695	4000 mAh	116	9
+1696	289 г	116	10
+1697	186.9 x 108.8 x 8.7	116	12
+1698	1	116	13
+1699	2G, 3G, 4G LTE, GSM	116	14
+1700	Black	116	15
+1701	Android	117	1
+1702	1,5 ГГц	117	2
+1703	8 ГБ	117	3
+1704	1,5 ГБ	117	4
+1705	5 Мп	117	5
+1706	2 Мп	117	6
+1707	TFT	117	7
+1708	7 дюйм	117	8
+1709	4000 mAh	117	9
+1710	289 г	117	10
+1711	186.9 x 108.8 x 8.7	117	12
+1712	1	117	13
+1713	2G, 3G, 4G LTE, GSM	117	14
+1715	iOS 10	118	1
+1716	Apple A9, 1,8 ГГц, 2 ядро	118	2
+1717	32 Гб	118	3
+1718	2 Гб	118	4
+1719	8 МП	118	5
+1720	1.2 Мп	118	6
+1721	IPS	118	7
+1722	9.7 дюйм	118	8
+1723	32,9 Вт·ч	118	9
+1724	478 г	118	10
+1725	240 x 169.5 x 7.5 мм	118	12
+1726	1	118	13
+1727	UMTS/HSPA/HSPA+/DC-HSDPA GSM/EDGE	118	14
+1728	Grey	118	15
+1714	Silver	117	15
+1729	Android	119	1
+1730	1,5 ГГц	119	2
+1731	8 ГБ	119	4
+1732	1,5 ГБ	119	5
+1733	5 Мп	119	6
+1734	2 Мп	119	7
+1735	TFT	119	8
+1736	7 дюйм	119	9
+1737	4000 mAh	119	9
+1738	289 г	119	10
+1739	186.9 x 108.8 x 8.7	119	12
+1740	1	119	13
+1741	2G, 3G, 4G LTE, GSM	119	14
+1742	White	119	15
 \.
 
 
@@ -2602,7 +3928,7 @@ COPY public.store_specification (id, info, product_id, specification_type_id) FR
 -- Name: store_specification_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.store_specification_id_seq', 908, true);
+SELECT pg_catalog.setval('public.store_specification_id_seq', 1742, true);
 
 
 --
@@ -2649,6 +3975,14 @@ ALTER TABLE ONLY public.app_brand
 
 ALTER TABLE ONLY public.app_category
     ADD CONSTRAINT app_category_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: app_content app_content_pkey; Type: CONSTRAINT; Schema: public; Owner: bozorcom
+--
+
+ALTER TABLE ONLY public.app_content
+    ADD CONSTRAINT app_content_pkey PRIMARY KEY (id);
 
 
 --
@@ -2889,6 +4223,20 @@ CREATE INDEX app_category_slug_b059cea8_like ON public.app_category USING btree 
 --
 
 CREATE INDEX app_category_tree_id_d2e0173f ON public.app_category USING btree (tree_id);
+
+
+--
+-- Name: app_content_slug_b341e896; Type: INDEX; Schema: public; Owner: bozorcom
+--
+
+CREATE INDEX app_content_slug_b341e896 ON public.app_content USING btree (slug);
+
+
+--
+-- Name: app_content_slug_b341e896_like; Type: INDEX; Schema: public; Owner: bozorcom
+--
+
+CREATE INDEX app_content_slug_b341e896_like ON public.app_content USING btree (slug varchar_pattern_ops);
 
 
 --
