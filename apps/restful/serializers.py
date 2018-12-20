@@ -49,7 +49,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_price_with_currency(obj):
-        return "{} so'm".format(str(intcomma(floatformat(obj.price))).replace(',', ' '))
+        return "{} сўм".format(str(intcomma(floatformat(obj.price))).replace(',', ' '))
 
     @staticmethod
     def get_qty_rev(obj):
