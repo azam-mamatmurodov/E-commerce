@@ -31,7 +31,7 @@ class CategoryTreeView(views.APIView):
         print(request)
         print('ID: ' + self.kwargs.get('slug'))
         if self.kwargs.get('slug') == 'all':
-            resp['title'] = 'Barcha mahsulotlar'
+            resp['title'] = 'Барча маҳсулотлар'
             resp['id'] = 'all'
             resp['slug'] = 'all'
             return response.Response(resp)
