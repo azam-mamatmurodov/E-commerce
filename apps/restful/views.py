@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, Http404
-from rest_framework import generics, filters, views, response
+from rest_framework import generics, filters, views, response, permissions
 import django_filters
 
 from apps.app import models as app_models
@@ -109,3 +109,11 @@ class ProductReviewsView(generics.ListAPIView):
 class SlidersView(generics.ListAPIView):
     queryset = app_models.Slider.objects.all()
     serializer_class = restful_serializer.SliderSerializer
+
+
+class UserDetailView(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated, ]
+    serializer_class = restful_serializer.UserSerializer
+
+    def get_object(self):
+        return self.request.user

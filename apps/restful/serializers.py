@@ -1,6 +1,7 @@
 from django.urls import reverse
 from django.template.defaultfilters import floatformat
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework_recursive.fields import RecursiveField
 
@@ -117,3 +118,10 @@ class SliderSerializer(serializers.ModelSerializer):
     class Meta:
         model = app_models.Slider
         fields = ['image']
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', ]

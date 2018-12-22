@@ -20,4 +20,5 @@ urlpatterns = [
     path('products/<slug:slug>/', views.ProductDetailView.as_view(), name='product_detail'),
     path('products/<int:pk>/reviews/', views.ProductReviewsView.as_view(), name='product_reviews'),
     path('sliders/', views.SlidersView.as_view(), name='sliders'),
+    path('user/', views.UserDetailView.as_view(), name='user_detail'),
 ]
