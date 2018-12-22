@@ -1,10 +1,17 @@
 from django.urls import path
-
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView
+)
 from apps.restful import views
 
 app_name = 'restful'
 
 urlpatterns = [
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('categories/', views.CategoryListView.as_view(), name='categories'),
     path('categories/<slug:slug>/', views.CategoryDetailView.as_view(), name='category_detail'),
     path('categories/<slug>/root/', views.CategoryTreeView.as_view(), name='category_root_detail'),
