@@ -22,7 +22,8 @@ THIRD_PARTY_APPS = [
     'colorfield',
     'mptt',
     'ckeditor',
-    'ckeditor_uploader'
+    'ckeditor_uploader',
+    'import_export',
 ]
 
 
