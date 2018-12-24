@@ -53,3 +53,36 @@ class Review(models.Model):
     data_of_created = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='reviews')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+
+
+class Order(models.Model):
+    PENDING = 'pending'
+    IN_PROCESS = 'in_process'
+    DELIVERED = 'delivered'
+    CANCELLED = 'cancelled'
+
+    ORDER_STATUS = (
+        (PENDING, 'Pending'),
+        (IN_PROCESS, 'In process'),
+        (DELIVERED, 'Delivered'),
+        (CANCELLED, 'Cancelled'),
+    )
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    total_price = models.FloatField()
+    additional_info = models.TextField()
+    order_status = models.CharField(choices=ORDER_STATUS, default=PENDING, max_length=30)
+
+    def get_order_status(self, status_key):
+        status_value = status_key
+        for status in self.ORDER_STATUS:
+            if status[0] == status_key:
+                status_value = status[1]
+                break
+        return status_value
+
+
+class CartItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_items')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='cart_items')
+    quantity = models.IntegerField()
+    total_price = models.FloatField()

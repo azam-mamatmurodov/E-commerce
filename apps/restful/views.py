@@ -117,3 +117,11 @@ class UserDetailView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class OrdersView(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated, ]
+    serializer_class = restful_serializer.OrderSerializer
+
+    def get_queryset(self):
+        return store_models.Order.objects.filter(customer=self.request.user)

@@ -94,6 +94,15 @@ class ProductAdmin(ie_admin.ImportExportModelAdmin):
     prepopulated_fields = {'slug': ('title',), }
 
 
+class CartItemInlineAdmin(admin.StackedInline):
+    model = store_models.CartItem
+
+
+class OrderAdmin(admin.ModelAdmin):
+    inlines = [CartItemInlineAdmin, ]
+
+
 admin.site.register(store_models.Product, ProductAdmin)
 admin.site.register(store_models.Review, )
 admin.site.register(store_models.SpecificationType, )
+admin.site.register(store_models.Order, OrderAdmin)

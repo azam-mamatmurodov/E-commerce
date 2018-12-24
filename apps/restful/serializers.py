@@ -125,3 +125,36 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', ]
+
+
+class CartItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = store_models.CartItem
+        fields = ['product', 'quantity', 'total_price', ]
+
+    def to_representation(self, instance):
+        result = super().to_representation(instance)
+        result['product'] = instance.product.title
+        return result
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    cart_items = CartItemSerializer(many=True)
+    order_status = serializers.SerializerMethodField(read_only=True)
+
+    @staticmethod
+    def get_order_status(obj):
+        return obj.get_order_status(obj.order_status)
+
+    def create(self, validated_data):
+        cart_items = validated_data.pop('cart_items')
+        validated_data['customer'] = self.context['request'].user
+        order = store_models.Order.objects.create(**validated_data)
+        for cart_item in cart_items:
+            store_models.CartItem.objects.create(**cart_item, order=order)
+        return order
+
+    class Meta:
+        model = store_models.Order
+        exclude = ['customer', 'total_price', ]
