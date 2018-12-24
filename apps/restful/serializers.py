@@ -157,4 +157,4 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = store_models.Order
-        exclude = ['customer', 'total_price', ]
+        exclude = ['customer', ]
