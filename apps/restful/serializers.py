@@ -87,7 +87,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = app_models.Category
-        fields = ['id', 'title', 'slug', 'icon', 'tree', 'parent', 'children']
+        fields = ['id', 'title', 'slug', 'icon', 'tree', 'parent', 'children', 'is_url', 'url', ]
 
 
 class BrandSerializer(serializers.ModelSerializer):

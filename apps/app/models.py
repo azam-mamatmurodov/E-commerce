@@ -6,7 +6,9 @@ from ckeditor_uploader.fields import RichTextUploadingField
 
 class Category(MPTTModel):
     title = models.CharField(max_length=250)
-    slug = models.SlugField(max_length=255, null=True)
+    is_url = models.BooleanField(default=False)
+    url = models.CharField(null=True, blank=True, max_length=250)
+    slug = models.SlugField(max_length=255, null=True, blank=True)
     parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
     tree = models.BooleanField(default=False, verbose_name='As tree ?')
     icon = models.ImageField(null=True, blank=True)
