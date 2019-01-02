@@ -130,3 +130,4 @@ class OrdersView(generics.ListCreateAPIView):
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, ]
     serializer_class = restful_serializer.OrderSerializer
+    queryset = store_models.Order.objects.all()
