@@ -67,7 +67,9 @@ class Order(models.Model):
         (DELIVERED, 'Delivered'),
         (CANCELLED, 'Cancelled'),
     )
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', null=True, blank=True)
+    customer_full_name = models.CharField(max_length=250, null=True, blank=True)
+    customer_phone = models.CharField(max_length=60, null=True, blank=True)
     total_price = models.FloatField()
     additional_info = models.TextField()
     order_status = models.CharField(choices=ORDER_STATUS, default=PENDING, max_length=30)
