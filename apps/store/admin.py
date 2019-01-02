@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.text import slugify
 from import_export import admin as ie_admin
 from import_export import resources as ie_resources
 from import_export import fields as ie_fields
@@ -25,55 +26,19 @@ class ProductResource(ie_resources.ModelResource):
         column_name='price',
         widget=ie_widgets.FloatWidget()
     )
-    image = ie_fields.Field(
-        attribute='image',
-        column_name='image',
-        widget=ie_widgets.CharWidget()
-    )
-    category = ie_fields.Field(
-        attribute='category',
-        column_name='category',
-        widget=ie_widgets.ForeignKeyWidget(app_models.Category, )
-    )
-    slug = ie_fields.Field(
-        attribute='slug',
-        column_name='slug',
-        widget=ie_widgets.CharWidget()
-    )
-    brand = ie_fields.Field(
-        attribute='brand',
-        column_name='brand',
-        widget=ie_widgets.ForeignKeyWidget(app_models.Brand, )
-    )
-    description = ie_fields.Field(
-        attribute='description',
-        column_name='description',
-        widget=ie_widgets.CharWidget()
-    )
     quantity = ie_fields.Field(
         attribute='quantity',
         column_name='quantity',
         widget=ie_widgets.IntegerWidget()
     )
-    featured = ie_fields.Field(
-        attribute='featured',
-        column_name='featured',
-        widget=ie_widgets.BooleanWidget()
-    )
-    new = ie_fields.Field(
-        attribute='new',
-        column_name='new',
-        widget=ie_widgets.BooleanWidget()
-    )
-    top_rated = ie_fields.Field(
-        attribute='top_rated',
-        column_name='top_rated',
-        widget=ie_widgets.BooleanWidget()
-    )
 
     class Meta:
         model = store_models.Product
-        # fields = ['category', ]
+        fields = ['id', 'title', 'price', 'quantity', ]
+
+    def after_import_instance(self, instance, new, **kwargs):
+        instance.slug = slugify(instance.slug)
+        instance.save()
 
 
 class ProductSpecificationInline(admin.TabularInline):
@@ -89,7 +54,9 @@ class ProductImageInline(admin.StackedInline):
 class ProductAdmin(ie_admin.ImportExportModelAdmin):
     resource_class = ProductResource
     formats = [ie_formats.XLS, ]
-    list_display = ['title', 'quantity']
+    list_display = ['title', 'quantity', 'price', 'category', 'brand', 'featured', 'new', 'top_rated', ]
+    search_fields = ['title', 'slug', 'description', ]
+    list_filter = ['category', 'brand', 'featured', 'new', 'top_rated', ]
     inlines = [ProductImageInline, ProductSpecificationInline]
     prepopulated_fields = {'slug': ('title',), }
 
