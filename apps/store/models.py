@@ -73,6 +73,7 @@ class Order(models.Model):
     total_price = models.FloatField()
     additional_info = models.TextField()
     order_status = models.CharField(choices=ORDER_STATUS, default=PENDING, max_length=30)
+    created_at = models.DateTimeField(null=True, blank=True)
 
     def get_order_status(self, status_key):
         status_value = status_key
@@ -81,6 +82,9 @@ class Order(models.Model):
                 status_value = status[1]
                 break
         return status_value
+
+    def __str__(self):
+        return self.customer_full_name or ''
 
 
 class CartItem(models.Model):

@@ -111,7 +111,7 @@ class SlidersView(generics.ListAPIView):
     serializer_class = restful_serializer.SliderSerializer
 
 
-class UserDetailView(generics.RetrieveAPIView):
+class UserView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, ]
     serializer_class = restful_serializer.UserSerializer
 
@@ -130,4 +130,6 @@ class OrdersView(generics.ListCreateAPIView):
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, ]
     serializer_class = restful_serializer.OrderSerializer
-    queryset = store_models.Order.objects.all()
+
+    def get_queryset(self):
+        return store_models.Order.objects.filter(customer=self.request.user)

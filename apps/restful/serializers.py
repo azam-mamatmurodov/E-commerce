@@ -46,7 +46,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_specifications(obj):
-        return [{"specification_type": item.specification_type.name, "info": item.info} for item in obj.specifications.all()]
+        return [{"specification_type": item.specification_type.name, "info": item.info} for item in obj.specifications.all().order_by('pk')]
 
     @staticmethod
     def get_price_with_currency(obj):
@@ -121,10 +121,17 @@ class SliderSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    phone_number = serializers.CharField(source='profile.phone_number')
+    username = serializers.CharField(read_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', ]
+        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number']
+
+    def save(self, **kwargs):
+        profile = self.validated_data.pop('profile')
+        instance = super().save(**kwargs)
+        app_models.Profile.objects.update_or_create(user=instance, defaults=profile)
 
 
 class CartItemSerializer(serializers.ModelSerializer):
