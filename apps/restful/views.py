@@ -6,6 +6,7 @@ from apps.app import models as app_models
 from apps.store import models as store_models
 from apps.restful import serializers as restful_serializer
 from apps.restful import filters as restful_filters
+from apps.restful import permissions as restful_permissions
 from apps.restful.pagination import WithTotalPagesCountPagination
 
 
@@ -120,7 +121,7 @@ class UserView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class OrdersView(generics.ListCreateAPIView):
-    permission_classes = [permissions.IsAuthenticated, ]
+    permission_classes = [restful_permissions.DenyListAllowCreate, ]
     serializer_class = restful_serializer.OrderSerializer
 
     def get_queryset(self):

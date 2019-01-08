@@ -113,6 +113,13 @@ STATIC_DIRS = [
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+PRODUCTS_FOLDER = os.path.join(MEDIA_ROOT, 'products')
+THUMBNAILS_FOLDER = os.path.join(PRODUCTS_FOLDER, 'thumbnails')
+MEDIUMS_FOLDER = os.path.join(PRODUCTS_FOLDER, 'mediums')
+ORIGINALS_FOLDER = os.path.join(PRODUCTS_FOLDER, 'originals')
+
+
 CKEDITOR_UPLOAD_PATH = 'content/ckeditor/'
 
 REST_FRAMEWORK = {

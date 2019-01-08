@@ -31,6 +31,7 @@ class ProductSerializer(serializers.ModelSerializer):
     specifications = serializers.SerializerMethodField()
     price_with_currency = serializers.SerializerMethodField()
     qty_rev = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
 
     reviews = serializers.SerializerMethodField()
@@ -60,8 +61,25 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_short_description(obj):
         return obj.description[0:50]
 
+    def get_image(self, obj):
+        abs_uri = self.context['request'].build_absolute_uri
+
+        return {
+            'original': abs_uri(obj.image.url),
+            'thumbnail': abs_uri(obj.get_image_thumbnail()),
+            'medium': abs_uri(obj.get_image_medium())
+        }
+
     def get_images(self, obj):
-        return [self.context['request'].build_absolute_uri(image_instance.image.url) for image_instance in obj.colors.all()]
+        abs_uri = self.context['request'].build_absolute_uri
+        images = []
+        for image_instance in obj.images.all():
+            images.append({
+                'original': abs_uri(image_instance.image.url),
+                'thumbnail': abs_uri(image_instance.get_image_thumbnail()),
+                'medium': abs_uri(image_instance.get_image_medium())
+            })
+        return images
 
     @staticmethod
     def get_category_root(obj):
