@@ -150,6 +150,40 @@ ALTER SEQUENCE public.app_content_id_seq OWNED BY public.app_content.id;
 
 
 --
+-- Name: app_profile; Type: TABLE; Schema: public; Owner: bozorcom
+--
+
+CREATE TABLE public.app_profile (
+    id integer NOT NULL,
+    phone_number character varying(60) NOT NULL,
+    user_id integer NOT NULL
+);
+
+
+ALTER TABLE public.app_profile OWNER TO bozorcom;
+
+--
+-- Name: app_profile_id_seq; Type: SEQUENCE; Schema: public; Owner: bozorcom
+--
+
+CREATE SEQUENCE public.app_profile_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.app_profile_id_seq OWNER TO bozorcom;
+
+--
+-- Name: app_profile_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bozorcom
+--
+
+ALTER SEQUENCE public.app_profile_id_seq OWNED BY public.app_profile.id;
+
+
+--
 -- Name: app_slider; Type: TABLE; Schema: public; Owner: bozorcom
 --
 
@@ -563,7 +597,8 @@ CREATE TABLE public.store_order (
     order_status character varying(30) NOT NULL,
     customer_id integer,
     customer_full_name character varying(250),
-    customer_phone character varying(60)
+    customer_phone character varying(60),
+    created_at timestamp with time zone
 );
 
 
@@ -795,6 +830,13 @@ ALTER TABLE ONLY public.app_content ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: app_profile id; Type: DEFAULT; Schema: public; Owner: bozorcom
+--
+
+ALTER TABLE ONLY public.app_profile ALTER COLUMN id SET DEFAULT nextval('public.app_profile_id_seq'::regclass);
+
+
+--
 -- Name: app_slider id; Type: DEFAULT; Schema: public; Owner: bozorcom
 --
 
@@ -924,6 +966,8 @@ COPY public.app_brand (id, title, category_id) FROM stdin;
 4	Meizu	21
 5	Huawei	22
 6	LG	20
+7	Artel	2
+8	Avalon	3
 \.
 
 
@@ -931,7 +975,7 @@ COPY public.app_brand (id, title, category_id) FROM stdin;
 -- Name: app_brand_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.app_brand_id_seq', 6, true);
+SELECT pg_catalog.setval('public.app_brand_id_seq', 8, true);
 
 
 --
@@ -988,6 +1032,22 @@ COPY public.app_content (id, title, body, slug) FROM stdin;
 --
 
 SELECT pg_catalog.setval('public.app_content_id_seq', 1, false);
+
+
+--
+-- Data for Name: app_profile; Type: TABLE DATA; Schema: public; Owner: bozorcom
+--
+
+COPY public.app_profile (id, phone_number, user_id) FROM stdin;
+1	+998998389478	1
+\.
+
+
+--
+-- Name: app_profile_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
+--
+
+SELECT pg_catalog.setval('public.app_profile_id_seq', 1, true);
 
 
 --
@@ -1112,6 +1172,10 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 66	Can change cart item	17	change_cartitem
 67	Can delete cart item	17	delete_cartitem
 68	Can view cart item	17	view_cartitem
+69	Can add profile	18	add_profile
+70	Can change profile	18	change_profile
+71	Can delete profile	18	delete_profile
+72	Can view profile	18	view_profile
 \.
 
 
@@ -1119,7 +1183,7 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 -- Name: auth_permission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.auth_permission_id_seq', 68, true);
+SELECT pg_catalog.setval('public.auth_permission_id_seq', 72, true);
 
 
 --
@@ -1127,8 +1191,8 @@ SELECT pg_catalog.setval('public.auth_permission_id_seq', 68, true);
 --
 
 COPY public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
-2	pbkdf2_sha256$120000$dn8yEjFumgbb$+BmUaLQb2ueo5PZ3zW7O1E7/RSaYMZHLI1lptExTM3Y=	2018-12-26 09:13:00.506935+00	f	moderator	Bozorcom	Moderator	info@bozor.com	t	t	2018-12-02 13:15:17+00
-1	pbkdf2_sha256$120000$SWix4a9g86Dx$xF0oCkdgIlCkgBa3sArolCHnu6ZIRWeMecvmnrtyy24=	2019-01-02 10:18:25.916908+00	t	admin			azam.mamatmurodov@gmail.com	t	t	2018-12-02 13:02:49.398795+00
+1	pbkdf2_sha256$120000$SWix4a9g86Dx$xF0oCkdgIlCkgBa3sArolCHnu6ZIRWeMecvmnrtyy24=	2019-01-07 20:11:15.129229+00	t	admin	A'zam	Mamatmurodov	azam.mamatmurodov@gmail.com	t	t	2018-12-02 13:02:49.398795+00
+2	pbkdf2_sha256$120000$dn8yEjFumgbb$+BmUaLQb2ueo5PZ3zW7O1E7/RSaYMZHLI1lptExTM3Y=	2019-01-09 10:34:44.421827+00	f	moderator	Bozorcom	Moderator	info@bozor.com	t	t	2018-12-02 13:15:17+00
 \.
 
 
@@ -1877,6 +1941,123 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 676	2018-12-29 07:46:45.90397+00	1	Slider object (1)	2	[{"changed": {"fields": ["image"]}}]	9	2
 677	2018-12-29 10:50:03.399345+00	4	Slider object (4)	2	[{"changed": {"fields": ["image"]}}]	9	2
 678	2018-12-29 13:02:23.983934+00	3	Slider object (3)	2	[{"changed": {"fields": ["image"]}}]	9	2
+679	2019-01-07 06:22:54.754541+00	171	ME81KRW-1K/BW	2	[{"changed": {"fields": ["title"]}}]	10	2
+680	2019-01-07 06:23:30.023032+00	173	ME83KRS-1K/BW	2	[{"changed": {"fields": ["title"]}}]	10	2
+681	2019-01-07 06:40:14.325972+00	174	ME83KRW-1K/BW	1	[{"added": {}}, {"added": {"name": "product image", "object": "ME83KRW-1K/BW"}}, {"added": {"name": "product image", "object": "ME83KRW-1K/BW"}}, {"added": {"name": "product image", "object": "ME83KRW-1K/BW"}}, {"added": {"name": "product image", "object": "ME83KRW-1K/BW"}}, {"added": {"name": "specification", "object": "ME83KRW-1K/BW"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u041e\\u049b"}}, {"added": {"name": "specification", "object": "\\u041e\\u0434\\u0434\\u0438\\u0439 (\\u0441\\u043e\\u043b\\u043e)"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "28 \\u0445 49 \\u0445 36 \\u0441\\u043c"}}, {"added": {"name": "specification", "object": "11.5 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "23 \\u043b"}}, {"added": {"name": "specification", "object": "\\u0411\\u0438\\u043e\\u043a\\u0435\\u0440\\u0430\\u043c\\u0438\\u043a \\u044d\\u043c\\u0430\\u043b\\u044c"}}, {"added": {"name": "specification", "object": "\\u0411\\u043e\\u043b\\u0430\\u043b\\u0430\\u0440\\u0434\\u0430\\u043d \\u04b3\\u0438\\u043c\\u043e\\u044f, \\u0422\\u0430\\u0439\\u043c\\u0435\\u0440, \\u0421\\u043e\\u0430\\u0442, \\u0414\\u0438\\u0441\\u043f\\u043b\\u0435\\u0439"}}, {"added": {"name": "specification", "object": "800 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1150 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+682	2019-01-07 06:50:00.827771+00	175	MS23F301TAWKBW	1	[{"added": {}}, {"added": {"name": "product image", "object": "MS23F301TAWKBW"}}, {"added": {"name": "product image", "object": "MS23F301TAWKBW"}}, {"added": {"name": "product image", "object": "MS23F301TAWKBW"}}, {"added": {"name": "product image", "object": "MS23F301TAWKBW"}}, {"added": {"name": "product image", "object": "MS23F301TAWKBW"}}, {"added": {"name": "specification", "object": "MS23F301TAWKBW"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u041e\\u049b"}}, {"added": {"name": "specification", "object": "\\u041e\\u0434\\u0434\\u0438\\u0439 (\\u0441\\u043e\\u043b\\u043e)"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "38 \\u0445 49 \\u0445 28 \\u0441\\u043c"}}, {"added": {"name": "specification", "object": "11.5 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "23 \\u043b"}}, {"added": {"name": "specification", "object": "\\u0411\\u0438\\u043e\\u043a\\u0435\\u0440\\u0430\\u043c\\u0438\\u043a \\u044d\\u043c\\u0430\\u043b\\u044c"}}, {"added": {"name": "specification", "object": "800 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "\\u0411\\u043e\\u043b\\u0430\\u043b\\u0430\\u0440\\u0434\\u0430\\u043d \\u04b3\\u0438\\u043c\\u043e\\u044f, \\u0422\\u0430\\u0439\\u043c\\u0435\\u0440, \\u0414\\u0438\\u0441\\u043f\\u043b\\u0435\\u0439"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+683	2019-01-07 06:56:17.490548+00	176	MS23F302TASKBW	1	[{"added": {}}, {"added": {"name": "product image", "object": "MS23F302TASKBW"}}, {"added": {"name": "product image", "object": "MS23F302TASKBW"}}, {"added": {"name": "product image", "object": "MS23F302TASKBW"}}, {"added": {"name": "product image", "object": "MS23F302TASKBW"}}, {"added": {"name": "specification", "object": "MS23F302TASKBW"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u0411\\u0438\\u043d\\u0430\\u0444\\u0448\\u0430\\u0440\\u0430\\u043d\\u0433/\\u041a\\u0443\\u043b\\u0440\\u0430\\u043d\\u0433"}}, {"added": {"name": "specification", "object": "\\u041e\\u0434\\u0434\\u0438\\u0439 (\\u0441\\u043e\\u043b\\u043e)"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "21 \\u0445 33 \\u0445 32.4 \\u0441\\u043c"}}, {"added": {"name": "specification", "object": "12 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "23 \\u043b"}}, {"added": {"name": "specification", "object": "\\u0411\\u0438\\u043e\\u043a\\u0435\\u0440\\u0430\\u043c\\u0438\\u043a \\u044d\\u043c\\u0430\\u043b\\u044c"}}, {"added": {"name": "specification", "object": "\\u0422\\u043e\\u0432\\u0443\\u0448\\u043b\\u0438 \\u0441\\u0438\\u0433\\u043d\\u0430\\u043b, \\u0422\\u0430\\u0439\\u043c\\u0435\\u0440, \\u0421\\u043e\\u0430\\u0442, \\u0414\\u0438\\u0441\\u043f\\u043b\\u0435\\u0439"}}, {"added": {"name": "specification", "object": "800 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1150 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+695	2019-01-07 09:01:48.020302+00	186	SAMSUNG UE 55 M 5500	1	[{"added": {}}, {"added": {"name": "product image", "object": "SAMSUNG UE 55 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 55 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 55 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 55 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 55 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 55 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 55 M 5500"}}, {"added": {"name": "specification", "object": "SAMSUNG UE 55 M 5500"}}, {"added": {"name": "specification", "object": "LED \\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "55\\" (139 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "1920 x 1080(FullHD)"}}, {"added": {"name": "specification", "object": "1080p Full HD"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, WMA, MPEG4, DivX, MKV, JPEG"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi 802.11n, WiDi, Miracast"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "1242x786x294 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "17.6 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1242x721x55 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "16 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "108 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430 \\u0442\\u0438\\u0442\\u0430\\u043d"}}]	10	2
+684	2019-01-07 07:00:12.933602+00	177	MS23F302TAKKBW	1	[{"added": {}}, {"added": {"name": "product image", "object": "MS23F302TAKKBW"}}, {"added": {"name": "product image", "object": "MS23F302TAKKBW"}}, {"added": {"name": "product image", "object": "MS23F302TAKKBW"}}, {"added": {"name": "product image", "object": "MS23F302TAKKBW"}}, {"added": {"name": "specification", "object": "MS23F302TAKKBW"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u0411\\u0438\\u043d\\u0430\\u0444\\u0448\\u0430\\u0440\\u0430\\u043d\\u0433/\\u041a\\u0443\\u043b\\u0440\\u0430\\u043d\\u0433"}}, {"added": {"name": "specification", "object": "\\u041e\\u0434\\u0434\\u0438\\u0439 (\\u0441\\u043e\\u043b\\u043e)"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "21 \\u0445 33 \\u0445 32 \\u0441\\u043c"}}, {"added": {"name": "specification", "object": "11.5 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "23 \\u043b"}}, {"added": {"name": "specification", "object": "\\u0411\\u0438\\u043e\\u043a\\u0435\\u0440\\u0430\\u043c\\u0438\\u043a \\u044d\\u043c\\u0430\\u043b\\u044c"}}, {"added": {"name": "specification", "object": "\\u0422\\u0430\\u0439\\u043c\\u0435\\u0440, \\u0414\\u0438\\u0441\\u043f\\u043b\\u0435\\u0439"}}, {"added": {"name": "specification", "object": "800 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "800 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+685	2019-01-07 07:25:23.116075+00	178	SAMSUNG UE 40M 5070 Jedi	1	[{"added": {}}, {"added": {"name": "product image", "object": "SAMSUNG UE 40M 5070 Jedi"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 40M 5070 Jedi"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 40M 5070 Jedi"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 40M 5070 Jedi"}}, {"added": {"name": "specification", "object": "SAMSUNG UE 40M 5070 Jedi"}}, {"added": {"name": "specification", "object": "\\u0416\\u041a-\\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "40\\" (102 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:09"}}, {"added": {"name": "specification", "object": "1920x1080"}}, {"added": {"name": "specification", "object": "1080p Full HD \\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "MP3, WMA, MPEG4, DivX, MKV, JPEG"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x2, USB"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "923x553x170 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "7.2 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "7 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "105 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "923x531x73 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "2"}}]	10	2
+686	2019-01-07 07:36:58.267874+00	179	SAMSUNG UE 49M 5070 Jedi	1	[{"added": {}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49M 5070 Jedi"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49M 5070 Jedi"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49M 5070 Jedi"}}, {"added": {"name": "specification", "object": "SAMSUNG UE 49M 5070 Jedi"}}, {"added": {"name": "specification", "object": "LED \\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "48.5\\" (123 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:09"}}, {"added": {"name": "specification", "object": "1920x1080 (FullHD)"}}, {"added": {"name": "specification", "object": "1080p Full HD"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, WMA, JPEG, DivX, MPEG4, MKV"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x2, USB"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "1119 x 670 x 188 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "10.6 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1119 x 650 x 74 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "10.3 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "128 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+687	2019-01-07 08:09:31.852797+00	180	UE 40K 5100	1	[{"added": {}}, {"added": {"name": "product image", "object": "UE 40K 5100"}}, {"added": {"name": "product image", "object": "UE 40K 5100"}}, {"added": {"name": "product image", "object": "UE 40K 5100"}}, {"added": {"name": "product image", "object": "UE 40K 5100"}}, {"added": {"name": "product image", "object": "UE 40K 5100"}}, {"added": {"name": "product image", "object": "UE 40K 5100"}}, {"added": {"name": "product image", "object": "UE 40K 5100"}}, {"added": {"name": "specification", "object": "UE 40K 5100"}}, {"added": {"name": "specification", "object": "LED \\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "40\\" (102 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:09"}}, {"added": {"name": "specification", "object": "1920x1080 (FullHD)"}}, {"added": {"name": "specification", "object": "1080p Full HD"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, WMA, MPEG4, MKV, JPEG"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x2, USB"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "901 x 621 x 191 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "8.2 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "901 x 557 x 78 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "8.1 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "DVB-T2 \\u043d\\u0438 \\u049b\\u045e\\u043b\\u043b\\u0430\\u0431-\\u049b\\u0443\\u0432\\u0432\\u0430\\u0442\\u043b\\u0430\\u0448, DVB-S2 \\u043d\\u0438 \\u049b\\u045e\\u043b\\u043b\\u0430\\u0431-\\u049b\\u0443\\u0432\\u0432\\u0430\\u0442\\u043b\\u0430\\u0448, \\u0420\\u0430\\u0441\\u043c \\u0438\\u0447\\u0438\\u0434\\u0430 \\u0440\\u0430\\u0441\\u043c, \\u041a\\u0443\\u0442\\u0438\\u0448 \\u0442\\u0430\\u0439\\u043c\\u0435\\u0440\\u0438"}}]	10	2
+688	2019-01-07 08:15:33.828668+00	142	P20 lite blue	2	[{"changed": {"fields": ["image"]}}]	10	2
+689	2019-01-07 08:19:41.422013+00	142	P20 lite blue	2	[{"changed": {"name": "product image", "object": "P20 lite blue", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "P20 lite blue", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "P20 lite blue", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "P20 lite blue", "fields": ["image"]}}]	10	2
+690	2019-01-07 08:25:40.855182+00	181	UE 32M 5500	1	[{"added": {}}, {"added": {"name": "product image", "object": "UE 32M 5500"}}, {"added": {"name": "product image", "object": "UE 32M 5500"}}, {"added": {"name": "product image", "object": "UE 32M 5500"}}, {"added": {"name": "product image", "object": "UE 32M 5500"}}, {"added": {"name": "product image", "object": "UE 32M 5500"}}, {"added": {"name": "product image", "object": "UE 32M 5500"}}, {"added": {"name": "product image", "object": "UE 32M 5500"}}, {"added": {"name": "specification", "object": "UE 32M 5500"}}, {"added": {"name": "specification", "object": "LED \\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "31.5\\" (80 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:09"}}, {"added": {"name": "specification", "object": "1920x1080 (FullHD)"}}, {"added": {"name": "specification", "object": "1080p Full HD"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, WMA, MPEG4, DivX, MKV, JPEG"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi 802.11n, WiDi, Miracast"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "\\u0442\\u0435\\u043c\\u043d\\u044b\\u0439 \\u0442\\u0438\\u0442\\u0430\\u043d"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "730 x 488 x 208 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "9.5 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "730 x 434 x 55 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "6.2 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "65 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "\\u0401\\u0440\\u0438\\u0442\\u0438\\u0448 \\u0434\\u0430\\u0442\\u0447\\u0438\\u0433\\u0438, \\u0411\\u043e\\u043b\\u0430\\u043b\\u0430\\u0440\\u0434\\u0430\\u043d \\u04b3\\u0438\\u043c\\u043e\\u044f, \\u041a\\u0443\\u0442\\u0438\\u0448 \\u0442\\u0430\\u0439\\u043c\\u0435\\u0440\\u0438, \\u049a\\u0443\\u0440\\u0448\\u0430\\u043b\\u0433\\u0430\\u043d \\u0442\\u043e\\u0432\\u0443\\u0448, NICAM \\u0441\\u0442\\u0435\\u0440\\u0435\\u043e\\u0437\\u0432\\u0443\\u043a\\u0438\\u043d\\u0438 \\u049b\\u045e\\u043b\\u043b\\u0430\\u0448"}}]	10	2
+691	2019-01-07 08:33:26.975413+00	182	SAMSUNG UE 32 J 4500 smart	1	[{"added": {}}, {"added": {"name": "product image", "object": "SAMSUNG UE 32 J 4500 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 32 J 4500 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 32 J 4500 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 32 J 4500 smart"}}, {"added": {"name": "specification", "object": "SAMSUNG UE 32 J 4500 smart"}}, {"added": {"name": "specification", "object": "LED \\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "32\\" (81 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "0.672916667"}}, {"added": {"name": "specification", "object": "1366x768 (FullHD)"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "10 \\u0412\\u0442 (2x5 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, WMA, FLAC, OGG, ACC, WAV, APE, ALAC, JPEG, BMP, PNG, MPO, DivX, MPEG4, MKV, AVI, MP4, WMV, TS, MOV, VOB, ASF, FLV, 3GP, H.264, VC-1"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x2, USB"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "745.4x464.6x150.5 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "4.0 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "745.4x442.2x69.0 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "3.91 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "59 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "\\u0420\\u0430\\u0441\\u043c \\u0438\\u0447\\u0438\\u0434\\u0430 \\u0440\\u0430\\u0441\\u043c, DVB-T2 \\u043d\\u0438 \\u049b\\u045e\\u043b\\u043b\\u0430\\u0431-\\u049b\\u0443\\u0432\\u0432\\u0430\\u0442\\u043b\\u0430\\u0448, Smart TV \\u043d\\u0438 \\u049b\\u045e\\u043b\\u043b\\u0430\\u0431-\\u049b\\u0443\\u0432\\u0432\\u0430\\u0442\\u043b\\u0430\\u0448"}}]	10	2
+692	2019-01-07 08:36:53.445055+00	183	SAMSUNG UE 55 M 6500 Curved	1	[{"added": {}}, {"added": {"name": "product image", "object": "SAMSUNG UE 55 M 6500 Curved"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 55 M 6500 Curved"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 55 M 6500 Curved"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 55 M 6500 Curved"}}, {"added": {"name": "specification", "object": "SAMSUNG UE 55 M 6500 Curved"}}, {"added": {"name": "specification", "object": "LED \\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "55\\" (140 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:09"}}, {"added": {"name": "specification", "object": "1920 x 1080(FullHD)"}}, {"added": {"name": "specification", "object": "1080p Full HD"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "60\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, WMA, MPEG4, DivX, MKV, JPEG"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi, WiDi, Miracast"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "1240x789x293 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "17.1 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "15.4 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430 \\u0442\\u0438\\u0442\\u0430\\u043d"}}]	10	2
+693	2019-01-07 08:43:40.111018+00	184	SAMSUNG UE 40 J 5200 smart	1	[{"added": {}}, {"added": {"name": "product image", "object": "SAMSUNG UE 40 J 5200 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 40 J 5200 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 40 J 5200 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 40 J 5200 smart"}}, {"added": {"name": "specification", "object": "SAMSUNG UE 40 J 5200 smart"}}, {"added": {"name": "specification", "object": "LED \\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "40\\" (101.6 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:09"}}, {"added": {"name": "specification", "object": "1920 x 1080(FullHD)"}}, {"added": {"name": "specification", "object": "Full HD"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, WMA, FLAC, OGG, ACC, WAV, APE, ALAC, JPEG, BMP, PNG, MPO, DivX, MPEG4, MKV, AVI, MP4, WMV, TS, MOV, VOB, ASF, FLV, 3GP, H.264, VC-1"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x2, USB"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "922.7x555.1x170.3 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "6.7 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "922.7x530.7x72.0 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "6.5 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "100 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "\\u0411\\u043e\\u043b\\u0430\\u043b\\u0430\\u0440\\u0434\\u0430\\u043d \\u04b3\\u0438\\u043c\\u043e\\u044f, \\u0420\\u0430\\u0441\\u043c \\u0438\\u0447\\u0438\\u0434\\u0430 \\u0440\\u0430\\u0441\\u043c, DVB-S2 \\u043d\\u0438 \\u049b\\u045e\\u043b\\u043b\\u0430\\u0431-\\u049b\\u0443\\u0432\\u0432\\u0430\\u0442\\u043b\\u0430\\u0448, DVB-T2 \\u043d\\u0438 \\u049b\\u045e\\u043b\\u043b\\u0430\\u0431-\\u049b\\u0443\\u0432\\u0432\\u0430\\u0442\\u043b\\u0430\\u0448, \\u0421\\u0442\\u0435\\u0440\\u0435\\u043e\\u0437\\u0432\\u0443\\u043a"}}]	10	2
+694	2019-01-07 08:53:40.820207+00	185	SAMSUNG UE 49 J 5300 smart	1	[{"added": {}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 J 5300 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 J 5300 smart"}}, {"added": {"name": "specification", "object": "SAMSUNG UE 49 J 5300 smart"}}, {"added": {"name": "specification", "object": "LED \\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "49\\" (101.6 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:09"}}, {"added": {"name": "specification", "object": "1920 x 1080(FullHD)"}}, {"added": {"name": "specification", "object": "1080p Full HD"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, WMA, MPEG4, MKV, JPEG"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x2, USB, Ethernet (RJ-45), Wi-Fi"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "1119x670x188 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "10.6 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1119x650x74 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "10.3 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "\\u0411\\u043e\\u043b\\u0430\\u043b\\u0430\\u0440\\u0434\\u0430\\u043d \\u04b3\\u0438\\u043c\\u043e\\u044f, \\u0420\\u0430\\u0441\\u043c \\u0438\\u0447\\u0438\\u0434\\u0430 \\u0440\\u0430\\u0441\\u043c, \\u049a\\u0443\\u0440\\u0448\\u0430\\u043b\\u0433\\u0430\\u043d \\u0442\\u043e\\u0432\\u0443\\u0448"}}, {"added": {"name": "specification", "object": "143 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+760	2019-01-08 07:37:34.606384+00	199	GWD 0220 BLK    (grill)	2	[{"added": {"name": "specification", "object": "1050\\u0412\\u0442"}}]	10	2
+696	2019-01-07 09:05:20.218255+00	187	SAMSUNG UE 49 M 6500 Curved	1	[{"added": {}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 6500 Curved"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 6500 Curved"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 6500 Curved"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 6500 Curved"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 6500 Curved"}}, {"added": {"name": "specification", "object": "SAMSUNG UE 49 M 6500 Curved"}}, {"added": {"name": "specification", "object": "LED \\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "49\\" (124 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:09"}}, {"added": {"name": "specification", "object": "1920 x 1080(FullHD)"}}, {"added": {"name": "specification", "object": "1080p Full HD"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "60\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, WMA, MPEG4, DivX, MKV, JPEG"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi, WiDi, Miracast"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "2"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "1105x712x293 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "13.9 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1105x646x89 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "12.4 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430 \\u0442\\u0438\\u0442\\u0430\\u043d"}}, {"added": {"name": "specification", "object": "\\u0401\\u0440\\u0438\\u0442\\u0438\\u0448 \\u0434\\u0430\\u0442\\u0447\\u0438\\u0433\\u0438, \\u0411\\u043e\\u043b\\u0430\\u043b\\u0430\\u0440\\u0434\\u0430\\u043d \\u04b3\\u0438\\u043c\\u043e\\u044f, \\u049a\\u0443\\u0440\\u0448\\u0430\\u043b\\u0433\\u0430\\u043d \\u0442\\u043e\\u0432\\u0443\\u0448, \\u0411\\u043e\\u0441\\u049b\\u0438\\u0447\\u0434\\u0430 \\u043a\\u045e\\u0440\\u0438\\u0448"}}, {"added": {"name": "specification", "object": "125 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+697	2019-01-07 09:07:16.741344+00	72	Экран эгрилиги	1	[{"added": {}}]	14	2
+698	2019-01-07 09:08:17.902268+00	187	SAMSUNG UE 49 M 6500 Curved	2	[{"added": {"name": "specification", "object": "4200R"}}]	10	2
+699	2019-01-07 09:21:41.715067+00	188	SAMSUNG UE 43 M 5500 smart	1	[{"added": {}}, {"added": {"name": "product image", "object": "SAMSUNG UE 43 M 5500 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 43 M 5500 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 43 M 5500 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 43 M 5500 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 43 M 5500 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 43 M 5500 smart"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 43 M 5500 smart"}}, {"added": {"name": "specification", "object": "4200R"}}, {"added": {"name": "specification", "object": "LED \\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "43\\" (108 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:09"}}, {"added": {"name": "specification", "object": "1920 x 1080(FullHD)"}}, {"added": {"name": "specification", "object": "1080p Full HD"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, WMA, MPEG4, DivX, MKV, JPEG"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi, WiDi, Miracast"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "973x635x251 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "10.5 \\u043a\\u0433"}}]	10	2
+700	2019-01-07 09:22:27.400437+00	189	SAMSUNG UE 49 M 5500	1	[{"added": {}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 5500"}}, {"added": {"name": "product image", "object": "SAMSUNG UE 49 M 5500"}}, {"added": {"name": "specification", "object": "SAMSUNG UE 49 M 5500"}}, {"added": {"name": "specification", "object": "LED \\u0442\\u0435\\u043b\\u0435\\u0432\\u0438\\u0437\\u043e\\u0440"}}, {"added": {"name": "specification", "object": "49\\" (123 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:09"}}, {"added": {"name": "specification", "object": "1920 x 1080(FullHD)"}}, {"added": {"name": "specification", "object": "1080p Full HD"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, WMA, MPEG4, DivX, MKV, JPEG"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi 802.11n, WiDi, Miracast"}}, {"added": {"name": "specification", "object": "\\u041e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "1106x710x294 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "14.6 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1106x645x55 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "13 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "98 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430 \\u0442\\u0438\\u0442\\u0430\\u043d"}}]	10	2
+701	2019-01-07 09:41:42.57557+00	7	Artel	1	[{"added": {}}]	7	2
+702	2019-01-07 10:35:27.486592+00	73	Video форматларини ATV  қўллаши	1	[{"added": {}}]	14	2
+703	2019-01-07 10:35:55.239863+00	74	Video форматларни DTV қўллаши	1	[{"added": {}}]	14	2
+704	2019-01-07 10:37:30.723714+00	75	PVR рақамли эфир ёзиш функцияси	1	[{"added": {}}]	14	2
+705	2019-01-07 10:38:01.782719+00	76	Taym Shift (Jonli pauza)	1	[{"added": {}}]	14	2
+706	2019-01-07 10:39:15.532403+00	77	Компазитли AV чиқиш жойи	1	[{"added": {}}]	14	2
+707	2019-01-07 10:40:34.127028+00	78	Digital Audio чиқиш жойи	1	[{"added": {}}]	14	2
+708	2019-01-07 10:40:44.194974+00	79	Ўрнатилган DTV тюнер	1	[{"added": {}}]	14	2
+709	2019-01-07 10:40:52.994168+00	80	Ўрнатилган спутник тюнери	1	[{"added": {}}]	14	2
+710	2019-01-07 10:41:12.653367+00	81	Ота-она назорати	1	[{"added": {}}]	14	2
+711	2019-01-07 10:41:31.203932+00	82	Қувват манбаи	1	[{"added": {}}]	14	2
+712	2019-01-07 10:43:52.694133+00	83	Кутиш режимида энергия истеъмоли	1	[{"added": {}}]	14	2
+713	2019-01-07 10:43:59.431053+00	84	Максимал энергия истеъмоли	1	[{"added": {}}]	14	2
+714	2019-01-07 11:18:07.405718+00	190	ART - LED 24/9000 (12volt)	1	[{"added": {}}, {"added": {"name": "specification", "object": "ART - LED 24/9000 (12volt)"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "28\\" (61 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:09"}}, {"added": {"name": "specification", "object": "HD 1366 x 768"}}, {"added": {"name": "specification", "object": "PAL / SECAM"}}, {"added": {"name": "specification", "object": "MPEG-2 H.264"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "mini AV"}}, {"added": {"name": "specification", "object": "DVB-T/T2/C"}}, {"added": {"name": "specification", "object": "DVB-S/S2"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "110-240 V 50/60 Hz"}}, {"added": {"name": "specification", "object": "0,5 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "30 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "337,4 \\u0445 559,2 \\u0445 54,8"}}, {"added": {"name": "specification", "object": "379 \\u0445 559,2 \\u0445 147"}}, {"added": {"name": "specification", "object": "3,7 \\u043a\\u0433"}}]	10	2
+715	2019-01-07 14:37:58.079502+00	191	ME83KRW-3/BW	1	[{"added": {}}, {"added": {"name": "product image", "object": "ME83KRW-3/BW"}}, {"added": {"name": "product image", "object": "ME83KRW-3/BW"}}, {"added": {"name": "product image", "object": "ME83KRW-3/BW"}}, {"added": {"name": "specification", "object": "23 \\u043b\\u0438\\u0442\\u0440"}}, {"added": {"name": "specification", "object": "1150 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "13 \\u043a\\u0433"}}]	10	2
+716	2019-01-08 05:59:31.793221+00	85	Энергия самарадорлик	1	[{"added": {}}]	14	2
+717	2019-01-08 06:01:12.713416+00	86	Таъминот манбааси	1	[{"added": {}}]	14	2
+718	2019-01-08 06:03:11.853565+00	87	Таймер	1	[{"added": {}}]	14	2
+719	2019-01-08 06:03:38.68662+00	88	Частота	1	[{"added": {}}]	14	2
+720	2019-01-08 06:04:21.254964+00	89	Шовқин даража	1	[{"added": {}}]	14	2
+721	2019-01-08 06:04:35.445284+00	90	Қувват даража	1	[{"added": {}}]	14	2
+722	2019-01-08 06:09:18.834038+00	192	ART-LED 9000/28	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-LED 9000/28"}}, {"added": {"name": "product image", "object": "ART-LED 9000/28"}}, {"added": {"name": "specification", "object": "ART-LED 9000/28"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "28\\" (71 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:9"}}, {"added": {"name": "specification", "object": "HD 1366 \\u0445 768"}}, {"added": {"name": "specification", "object": "PAL/SECAM"}}, {"added": {"name": "specification", "object": "MPEG-2H.264"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "mini AV"}}, {"added": {"name": "specification", "object": "SPDIF"}}, {"added": {"name": "specification", "object": "DVB-T /\\u04222 /C"}}, {"added": {"name": "specification", "object": "DVB-S/S2"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "110 \\u2014 240V 50 / 60 Hz"}}, {"added": {"name": "specification", "object": "0,5 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "35 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "389,1 \\u0445 644,9 \\u0445 83,6"}}, {"added": {"name": "specification", "object": "430,7 \\u0445 644,9 \\u0445 147"}}, {"added": {"name": "specification", "object": "3,8"}}]	10	2
+723	2019-01-08 06:11:38.704511+00	193	MWM 0120 WHT   (solo)	1	[{"added": {}}, {"added": {"name": "product image", "object": "MWM 0120 WHT   (solo)"}}, {"added": {"name": "product image", "object": "MWM 0120 WHT   (solo)"}}, {"added": {"name": "product image", "object": "MWM 0120 WHT   (solo)"}}, {"added": {"name": "product image", "object": "MWM 0120 WHT   (solo)"}}, {"added": {"name": "specification", "object": "MWM 0120 WHT   (solo)"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u041e\\u049b"}}, {"added": {"name": "specification", "object": "\\u043c\\u0435\\u0445\\u0430\\u043d\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "85%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "1050\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "100-700\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "35\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "256 \\u0445 438 \\u0445 360"}}, {"added": {"name": "specification", "object": "9.5\\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+724	2019-01-08 06:19:18.058485+00	194	MWD 0220 BLK   (solo)	1	[{"added": {}}, {"added": {"name": "product image", "object": "MWD 0220 BLK   (solo)"}}, {"added": {"name": "product image", "object": "MWD 0220 BLK   (solo)"}}, {"added": {"name": "product image", "object": "MWD 0220 BLK   (solo)"}}, {"added": {"name": "specification", "object": "MWD 0220 BLK   (solo)"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u0416\\u0438\\u0433\\u0430\\u0440\\u0440\\u0430\\u043d\\u0433"}}, {"added": {"name": "specification", "object": "\\u0440\\u0430\\u049b\\u0430\\u043c\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "85%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "95\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "100-700\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "258 \\u0445 442 \\u0445 354"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "1050\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "10.1\\u043a\\u0433"}}, {"added": {"name": "specification", "object": "20"}}]	10	2
+725	2019-01-08 06:20:26.559634+00	193	MWM 0120 WHT   (solo)	2	[{"added": {"name": "specification", "object": "20"}}]	10	2
+726	2019-01-08 06:21:10.153434+00	90	Қувват даража	3		14	2
+727	2019-01-08 06:22:21.854831+00	195	ART-LED 9000/32	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-LED 9000/32"}}, {"added": {"name": "product image", "object": "ART-LED 9000/32"}}, {"added": {"name": "specification", "object": "ART-LED 9000/32"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "32\\" (81 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:9"}}, {"added": {"name": "specification", "object": "HD 1366 \\u0445 768"}}, {"added": {"name": "specification", "object": "PAL/SECAM"}}, {"added": {"name": "specification", "object": "MPEG-2H.264"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "mini AV"}}, {"added": {"name": "specification", "object": "SPDIF"}}, {"added": {"name": "specification", "object": "DVB-T /\\u04222 /C"}}, {"added": {"name": "specification", "object": "DVB-S/S2"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "110 \\u2014 240V 50 / 60 Hz"}}, {"added": {"name": "specification", "object": "0,5 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "40 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "432,3 \\u0445 736 \\u0445 81"}}, {"added": {"name": "specification", "object": "475 \\u0445 736 \\u0445 197,8"}}, {"added": {"name": "specification", "object": "4,5"}}]	10	2
+728	2019-01-08 06:27:03.776317+00	196	MWD 0323 BLK   (solo)	1	[{"added": {}}, {"added": {"name": "product image", "object": "MWD 0323 BLK   (solo)"}}, {"added": {"name": "product image", "object": "MWD 0323 BLK   (solo)"}}, {"added": {"name": "specification", "object": "MWD 0323 BLK   (solo)"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u0416\\u0438\\u0433\\u0430\\u0440\\u0440\\u0430\\u043d\\u0433"}}, {"added": {"name": "specification", "object": "\\u0420\\u0430\\u049b\\u0430\\u043c\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "87%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "1250\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "100-800\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "95\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "23\\u043b"}}, {"added": {"name": "specification", "object": "292 \\u0445 490 \\u0445 400"}}, {"added": {"name": "specification", "object": "12.56\\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+729	2019-01-08 06:31:50.330126+00	197	MWD 0323 WHT   (solo)	1	[{"added": {}}, {"added": {"name": "product image", "object": "MWD 0323 WHT   (solo)"}}, {"added": {"name": "product image", "object": "MWD 0323 WHT   (solo)"}}, {"added": {"name": "specification", "object": "MWD 0323 WHT   (solo)"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u041e\\u049b"}}, {"added": {"name": "specification", "object": "\\u0420\\u0430\\u049b\\u0430\\u043c\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "87%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "1250\\u0412\\u0422"}}, {"added": {"name": "specification", "object": "100-800\\u0412\\u0422"}}, {"added": {"name": "specification", "object": "95\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "23"}}, {"added": {"name": "specification", "object": "292 \\u0445 490 \\u0445 400"}}, {"added": {"name": "specification", "object": "12.56\\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+730	2019-01-08 06:44:28.985621+00	192	ART-LED 9000/28	2	[{"changed": {"name": "specification", "object": "3,8 \\u041a\\u0433", "fields": ["info"]}}]	10	2
+731	2019-01-08 06:44:53.421324+00	195	ART-LED 9000/32	2	[{"changed": {"name": "specification", "object": "4,5 \\u041a\\u0433", "fields": ["info"]}}]	10	2
+761	2019-01-08 07:38:20.32105+00	208	23UX97 Сер	2	[{"added": {"name": "specification", "object": "1280\\u0412\\u0442"}}]	10	2
+732	2019-01-08 06:45:02.953706+00	198	ART-LED 32/9100	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-LED 32/9100"}}, {"added": {"name": "product image", "object": "ART-LED 32/9100"}}, {"added": {"name": "specification", "object": "ART-LED 32/9100"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "32\\" (81 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:9"}}, {"added": {"name": "specification", "object": "HD 1366 \\u0445 768"}}, {"added": {"name": "specification", "object": "PAL/SECAM"}}, {"added": {"name": "specification", "object": "MPEG-2H.264"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "SPDIF"}}, {"added": {"name": "specification", "object": "DVB-T /\\u04222/C"}}, {"added": {"name": "specification", "object": "DVB-S/S2"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "110 \\u2014 240V 50 / 60 Hz"}}, {"added": {"name": "specification", "object": "0,5 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "45 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "435 \\u0445 736 \\u0445 81"}}, {"added": {"name": "specification", "object": "475 \\u0445 736 \\u0445 180"}}, {"added": {"name": "specification", "object": "5 \\u041a\\u0433"}}]	10	2
+733	2019-01-08 06:48:07.098901+00	199	GWD 0220 BLK    (grill)	1	[{"added": {}}, {"added": {"name": "product image", "object": "GWD 0220 BLK    (grill)"}}, {"added": {"name": "product image", "object": "GWD 0220 BLK    (grill)"}}, {"added": {"name": "product image", "object": "GWD 0220 BLK    (grill)"}}, {"added": {"name": "specification", "object": "GWD 0220 BLK    (grill)"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u0416\\u0438\\u0433\\u0430\\u0440\\u0440\\u0430\\u043d\\u0433"}}, {"added": {"name": "specification", "object": "\\u0420\\u0430\\u049b\\u0430\\u043c\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "85%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "1000\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "100-700\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "95\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "20"}}, {"added": {"name": "specification", "object": "258 \\u0445 442 \\u0445 354"}}, {"added": {"name": "specification", "object": "10.8\\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+734	2019-01-08 06:49:36.888293+00	196	MWD 0323 BLK   (solo)	2	[{"changed": {"fields": ["image"]}}, {"added": {"name": "product image", "object": "MWD 0323 BLK   (solo)"}}, {"changed": {"name": "product image", "object": "MWD 0323 BLK   (solo)", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "MWD 0323 BLK   (solo)", "fields": ["image"]}}]	10	2
+735	2019-01-08 06:50:11.908287+00	197	MWD 0323 WHT   (solo)	2	[{"changed": {"fields": ["image"]}}, {"changed": {"name": "product image", "object": "MWD 0323 WHT   (solo)", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "MWD 0323 WHT   (solo)", "fields": ["image"]}}]	10	2
+736	2019-01-08 06:51:11.908557+00	199	GWD 0220 BLK    (grill)	2	[{"changed": {"fields": ["image"]}}, {"changed": {"name": "product image", "object": "GWD 0220 BLK    (grill)", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "GWD 0220 BLK    (grill)", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "GWD 0220 BLK    (grill)", "fields": ["image"]}}]	10	2
+737	2019-01-08 06:51:51.811745+00	194	MWD 0220 BLK   (solo)	2	[{"changed": {"fields": ["image"]}}, {"added": {"name": "product image", "object": "MWD 0220 BLK   (solo)"}}, {"changed": {"name": "product image", "object": "MWD 0220 BLK   (solo)", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "MWD 0220 BLK   (solo)", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "MWD 0220 BLK   (solo)", "fields": ["image"]}}]	10	2
+738	2019-01-08 06:53:11.094584+00	193	MWM 0120 WHT   (solo)	2	[{"changed": {"fields": ["image"]}}, {"changed": {"name": "product image", "object": "MWM 0120 WHT   (solo)", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "MWM 0120 WHT   (solo)", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "MWM 0120 WHT   (solo)", "fields": ["image"]}}, {"changed": {"name": "product image", "object": "MWM 0120 WHT   (solo)", "fields": ["image"]}}]	10	2
+739	2019-01-08 06:57:33.346871+00	200	GWD 0323 BLK    (grill)	1	[{"added": {}}, {"added": {"name": "product image", "object": "GWD 0323 BLK    (grill)"}}, {"added": {"name": "product image", "object": "GWD 0323 BLK    (grill)"}}, {"added": {"name": "specification", "object": "GWD 0323 BLK    (grill)"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u0416\\u0438\\u0433\\u0430\\u0440\\u0440\\u0430\\u043d\\u0433"}}, {"added": {"name": "specification", "object": "\\u0440\\u0430\\u049b\\u0430\\u043c\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "87%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "1000\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "100-800\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "95\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "23"}}, {"added": {"name": "specification", "object": "292 \\u0445 490 \\u0445 400"}}, {"added": {"name": "specification", "object": "13.6\\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+740	2019-01-08 07:00:54.946373+00	201	ART-LED 32/A9000 Smart	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-LED 32/A9000 Smart"}}, {"added": {"name": "specification", "object": "ART-LED 32/A9000 Smart"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "32\\" (81 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:9"}}, {"added": {"name": "specification", "object": "1366x768"}}, {"added": {"name": "specification", "object": "100 \\u0413\\u0446"}}, {"added": {"name": "specification", "object": "PAL, SECAM, NTSC"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4 (Uzdigital)"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "480i, 480p, 576i, 576p, 720p, 1080i, 1080p"}}, {"added": {"name": "specification", "object": "640x480, 800x600, 1024x768, 1360x768"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "MP3, MPEG4, JPEG"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x2, USB"}}, {"added": {"name": "specification", "object": "\\u043e\\u043f\\u0442\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u041c\\u0430\\u0432\\u0436\\u0443\\u0434, CI+ \\u043d\\u0438 \\u049b\\u045e\\u043b\\u043b\\u0430\\u0431-\\u049b\\u0443\\u0432\\u0432\\u0430\\u0442\\u043b\\u0430\\u0439\\u0434\\u0438"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "736x447x63 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "736x489x151 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "4.5 \\u043a\\u0433"}}]	10	2
+762	2019-01-08 07:39:09.546847+00	210	Avalon AVL-MW253V1	2	[{"changed": {"name": "specification", "object": "\\u0410\\u0432\\u0442\\u043e\\u0442\\u0430\\u0439\\u0451\\u0440\\u043b\\u0430\\u0448, \\u0401\\u0440\\u0438\\u0442\\u0438\\u0448 \\u0440\\u0435\\u0436\\u0438\\u043c\\u0438, \\u0422\\u0430\\u0439\\u043c\\u0435\\u0440, \\u0414\\u0438\\u0441\\u043f\\u043b\\u0435\\u0439, \\u041a\\u043e\\u043d\\u0432\\u0435\\u043a\\u0446\\u0438\\u044f", "fields": ["info"]}}]	10	2
+741	2019-01-08 07:01:20.652633+00	202	GWD 0323 WHT   (grill)	1	[{"added": {}}, {"added": {"name": "product image", "object": "GWD 0323 WHT   (grill)"}}, {"added": {"name": "product image", "object": "GWD 0323 WHT   (grill)"}}, {"added": {"name": "specification", "object": "GWD 0323 WHT   (grill)"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u041e\\u049b"}}, {"added": {"name": "specification", "object": "\\u0420\\u0430\\u049b\\u0430\\u043c\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "87%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "1000\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "100-800\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "95\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "23"}}, {"added": {"name": "specification", "object": "292 \\u0445 490 \\u0445 400"}}, {"added": {"name": "specification", "object": "13.6\\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+742	2019-01-08 07:07:06.668823+00	203	20MX63 Бел	1	[{"added": {}}, {"added": {"name": "product image", "object": "20MX63 \\u0411\\u0435\\u043b"}}, {"added": {"name": "product image", "object": "20MX63 \\u0411\\u0435\\u043b"}}, {"added": {"name": "product image", "object": "20MX63 \\u0411\\u0435\\u043b"}}, {"added": {"name": "product image", "object": "20MX63 \\u0411\\u0435\\u043b"}}, {"added": {"name": "specification", "object": "20MX63 \\u0411\\u0435\\u043b"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u041e\\u049b"}}, {"added": {"name": "specification", "object": "\\u043c\\u0435\\u0445\\u0430\\u043d\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "85%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "100-700\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "30\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "20"}}, {"added": {"name": "specification", "object": "256,5 \\u0445 451 \\u0445 342"}}, {"added": {"name": "specification", "object": "10.1\\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+743	2019-01-08 07:11:18.083297+00	204	20UX77 Сер	1	[{"added": {}}, {"added": {"name": "product image", "object": "20UX77 \\u0421\\u0435\\u0440"}}, {"added": {"name": "product image", "object": "20UX77 \\u0421\\u0435\\u0440"}}, {"added": {"name": "product image", "object": "20UX77 \\u0421\\u0435\\u0440"}}, {"added": {"name": "product image", "object": "20UX77 \\u0421\\u0435\\u0440"}}, {"added": {"name": "specification", "object": "20UX77 \\u0421\\u0435\\u0440"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u041a\\u0443\\u043b\\u0440\\u0430\\u043d\\u0433"}}, {"added": {"name": "specification", "object": "\\u0420\\u0430\\u049b\\u0430\\u043c\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "85%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "100-700"}}, {"added": {"name": "specification", "object": "60\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "20"}}, {"added": {"name": "specification", "object": "256,5 \\u0445 451 \\u0445 336"}}, {"added": {"name": "specification", "object": "10.4\\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+744	2019-01-08 07:14:38.433015+00	205	20UX84 Бел	1	[{"added": {}}, {"added": {"name": "product image", "object": "20UX84 \\u0411\\u0435\\u043b"}}, {"added": {"name": "product image", "object": "20UX84 \\u0411\\u0435\\u043b"}}, {"added": {"name": "product image", "object": "20UX84 \\u0411\\u0435\\u043b"}}, {"added": {"name": "product image", "object": "20UX84 \\u0411\\u0435\\u043b"}}, {"added": {"name": "product image", "object": "20UX84 \\u0411\\u0435\\u043b"}}, {"added": {"name": "product image", "object": "20UX84 \\u0411\\u0435\\u043b"}}, {"added": {"name": "specification", "object": "20UX84 \\u0411\\u0435\\u043b"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u041e\\u049b"}}, {"added": {"name": "specification", "object": "\\u0440\\u0430\\u049b\\u0430\\u043c\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "85%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "100-700\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "60\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "20"}}, {"added": {"name": "specification", "object": "256,5 \\u0445 451 \\u0445 354"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+745	2019-01-08 07:16:13.009353+00	206	ARTEL 43/A9000	1	[{"added": {}}, {"added": {"name": "product image", "object": "ARTEL 43/A9000"}}, {"added": {"name": "product image", "object": "ARTEL 43/A9000"}}, {"added": {"name": "specification", "object": "ARTEL 43/A9000"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "43\\" (109 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:9"}}, {"added": {"name": "specification", "object": "1920x1080"}}, {"added": {"name": "specification", "object": "1080p Full HD"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434, Edge LED"}}, {"added": {"name": "specification", "object": "PAL, SECAM, NTSC"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4 (Uzdigital)"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "480i, 480p, 576i, 576p, 720p, 1080i, 1080p"}}, {"added": {"name": "specification", "object": "640x480, 800x600, 1024x768, 1280x1024, 1360x768, 1920x1080"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10\\u00a0\\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "MP3, WMA, MPEG4, MKV, JPEG"}}, {"added": {"name": "specification", "object": "\\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043b\\u0438, HDMI x2, USB"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "75 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430"}}, {"added": {"name": "specification", "object": "7.6 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "624x977x220 \\u043c\\u043c"}}]	10	2
+746	2019-01-08 07:18:04.638869+00	207	23MX39 Бел	1	[{"added": {}}, {"added": {"name": "product image", "object": "23MX39 \\u0411\\u0435\\u043b"}}, {"added": {"name": "product image", "object": "23MX39 \\u0411\\u0435\\u043b"}}, {"added": {"name": "product image", "object": "23MX39 \\u0411\\u0435\\u043b"}}, {"added": {"name": "specification", "object": "23MX39 \\u0411\\u0435\\u043b"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u041e\\u049b"}}, {"added": {"name": "specification", "object": "\\u041c\\u0435\\u0445\\u0430\\u043d\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "85%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "100-800\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "30\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "23"}}, {"added": {"name": "specification", "object": "278,2 \\u0445 482,8 \\u0445 396,4"}}, {"added": {"name": "specification", "object": "12.4\\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+747	2019-01-08 07:21:35.520953+00	208	23UX97 Сер	1	[{"added": {}}, {"added": {"name": "product image", "object": "23UX97 \\u0421\\u0435\\u0440"}}, {"added": {"name": "product image", "object": "23UX97 \\u0421\\u0435\\u0440"}}, {"added": {"name": "product image", "object": "23UX97 \\u0421\\u0435\\u0440"}}, {"added": {"name": "specification", "object": "23UX97 \\u0421\\u0435\\u0440"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "\\u041a\\u0443\\u043b\\u0440\\u0430\\u043d\\u0433"}}, {"added": {"name": "specification", "object": "\\u0420\\u0430\\u049b\\u0430\\u043c\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "85%"}}, {"added": {"name": "specification", "object": "220\\u0412 / 50\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "100-800\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "60\\u043c\\u0438\\u043d"}}, {"added": {"name": "specification", "object": "2450\\u041c\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "23"}}, {"added": {"name": "specification", "object": "278,2 \\u0445 483 \\u0445 396"}}, {"added": {"name": "specification", "object": "12.1\\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+748	2019-01-08 07:24:40.815451+00	8	Avalon	1	[{"added": {}}]	7	2
+749	2019-01-08 07:25:17.970435+00	209	ARTEL 43/A9100	1	[{"added": {}}, {"added": {"name": "specification", "object": "ARTEL 43/A9100"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "43\\" (109 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "100 \\u0413\\u0446"}}, {"added": {"name": "specification", "object": "DVB-T MPEG4 (Uzdigital)"}}, {"added": {"name": "specification", "object": "DVB-C MPEG4"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10\\u00a0\\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "AV, \\u043a\\u043e\\u043c\\u043f\\u043e\\u043d\\u0435\\u043d\\u0442\\u043d\\u044b\\u0439, HDMI x2, USB x1"}}, {"added": {"name": "specification", "object": "976x637x288 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "\\u049b\\u043e\\u0440\\u0430"}}, {"added": {"name": "specification", "object": "8.8 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1"}}, {"added": {"name": "specification", "object": "75 \\u0412\\u0442"}}]	10	2
+750	2019-01-08 07:30:16.515712+00	210	Avalon AVL-MW253V1	1	[{"added": {}}, {"added": {"name": "product image", "object": "Avalon AVL-MW253V1"}}, {"added": {"name": "product image", "object": "Avalon AVL-MW253V1"}}, {"added": {"name": "product image", "object": "Avalon AVL-MW253V1"}}, {"added": {"name": "specification", "object": "Avalon AVL-MW253V1"}}, {"added": {"name": "specification", "object": "\\u049a\\u043e\\u0440\\u0430"}}, {"added": {"name": "specification", "object": "\\u0410\\u043b\\u043e\\u04b3\\u0438\\u0434\\u0430"}}, {"added": {"name": "specification", "object": "\\u044d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "25 \\u043b"}}, {"added": {"name": "specification", "object": "\\u0437\\u0430\\u043d\\u0433\\u043b\\u0430\\u043c\\u0430\\u0441 \\u043c\\u0435\\u0442\\u0430\\u043b\\u043b"}}, {"added": {"name": "specification", "object": "1200 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "1400 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "18.6 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "31\\u044551\\u044549 c\\u043c"}}, {"added": {"name": "specification", "object": "\\u0410\\u0432\\u0442\\u043e\\u0442\\u0430\\u0439\\u0451\\u0440\\u043b\\u0430\\u0448, \\u0401\\u0440\\u0438\\u0442\\u0438\\u0448 \\u0440\\u0435\\u0436\\u0438\\u043c\\u0438, \\u0422\\u0430\\u0439\\u043c\\u0435\\u0440, \\u0414\\u0438\\u0441\\u043f\\u043b\\u0435\\u0439,"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+751	2019-01-08 07:31:45.924277+00	91	Электр энергия талаби	1	[{"added": {}}]	14	2
+752	2019-01-08 07:32:35.160581+00	211	ART-LED 43/A9000 Smart	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-LED 43/A9000 Smart"}}, {"added": {"name": "product image", "object": "ART-LED 43/A9000 Smart"}}, {"added": {"name": "specification", "object": "ART-LED 43/A9000 Smart"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "49\\" (124 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "PAL / SECAM"}}, {"added": {"name": "specification", "object": "MPEG-2 H.264"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "mini AV"}}, {"added": {"name": "specification", "object": "DVB-T/T2/C"}}, {"added": {"name": "specification", "object": "DVB-S/S2"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "110-240 V 50/60 Hz"}}, {"added": {"name": "specification", "object": "0,5 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "75 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "624 \\u0445 977 \\u0445 215"}}, {"added": {"name": "specification", "object": "7,6"}}]	10	2
+753	2019-01-08 07:32:35.691886+00	207	23MX39 Бел	2	[{"added": {"name": "specification", "object": "1280\\u0412\\u0442"}}]	10	2
+754	2019-01-08 07:32:56.980325+00	211	ART-LED 43/A9000 Smart	2	[{"changed": {"name": "specification", "object": "7,6 \\u043a\\u0433", "fields": ["info"]}}]	10	2
+755	2019-01-08 07:33:20.440927+00	205	20UX84 Бел	2	[{"added": {"name": "specification", "object": "1150\\u0412\\u0442"}}]	10	2
+756	2019-01-08 07:33:56.503295+00	204	20UX77 Сер	2	[{"added": {"name": "specification", "object": "1150\\u0412\\u0442"}}]	10	2
+757	2019-01-08 07:34:33.140572+00	203	20MX63 Бел	2	[{"added": {"name": "specification", "object": "1150\\u0412\\u0442"}}]	10	2
+758	2019-01-08 07:36:25.349343+00	202	GWD 0323 WHT   (grill)	2	[{"added": {"name": "specification", "object": "1250\\u0412\\u0442"}}]	10	2
+759	2019-01-08 07:37:01.378332+00	200	GWD 0323 BLK    (grill)	2	[{"added": {"name": "specification", "object": "1250\\u0412\\u0442"}}]	10	2
+763	2019-01-08 07:43:05.715262+00	212	ART-LED 49/9000	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-LED 49/9000"}}, {"added": {"name": "product image", "object": "ART-LED 49/9000"}}, {"added": {"name": "specification", "object": "ART-LED 49/9000"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "49\\" (124 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "PAL/SECAM"}}, {"added": {"name": "specification", "object": "MPEG-2H.264"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "mini AV"}}, {"added": {"name": "specification", "object": "DVB-T/T2/C"}}, {"added": {"name": "specification", "object": "DVB-S/S2"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434"}}, {"added": {"name": "specification", "object": "110-240 \\u0412; 50/ 60 \\u0413\\u0446"}}, {"added": {"name": "specification", "object": "0,5 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "90 \\u0412\\u0442"}}, {"added": {"name": "specification", "object": "695 \\u0445 1115 \\u0445 235"}}, {"added": {"name": "specification", "object": "12 \\u043a\\u0433"}}]	10	2
+764	2019-01-08 07:50:28.409486+00	210	AVL-MW253V1	2	[{"changed": {"fields": ["title"]}}]	10	2
+765	2019-01-08 07:50:52.497206+00	92	Wi-Fi, LAN қўлланиши	1	[{"added": {}}]	14	2
+766	2019-01-08 07:56:21.296543+00	213	ART-LED 49/9100	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-LED 49/9100"}}, {"added": {"name": "product image", "object": "ART-LED 49/9100"}}, {"added": {"name": "specification", "object": "ART-LED 49/9100"}}, {"added": {"name": "specification", "object": "\\u040e\\u0437\\u0431\\u0435\\u043a\\u0438\\u0441\\u0442\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "49\\" (124 \\u0441\\u043c)"}}, {"added": {"name": "specification", "object": "16:9"}}, {"added": {"name": "specification", "object": "\\u043c\\u0430\\u0432\\u0436\\u0443\\u0434,\\u00a0 LED"}}, {"added": {"name": "specification", "object": "PAL, SECAM"}}, {"added": {"name": "specification", "object": "DVB-T / T2 / C, DVB-S / S2"}}, {"added": {"name": "specification", "object": "\\u0438\\u043a\\u043a\\u0438 \\u0434\\u0438\\u043d\\u0430\\u043c\\u0438\\u043a\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "20 \\u0412\\u0442 (2x10 \\u0412\\u0442)"}}, {"added": {"name": "specification", "object": "HDMI \\u0445 2, USB \\u0445 2, mini AV"}}, {"added": {"name": "specification", "object": "MP3, WMA, MPEG4, JPEG"}}, {"added": {"name": "specification", "object": "692 \\u0445 1115 \\u0445 195 \\u043c\\u043c"}}, {"added": {"name": "specification", "object": "12 \\u043a\\u0433"}}]	10	2
+767	2019-01-08 09:01:31.161855+00	214	AVL- VCA 1620	1	[{"added": {}}, {"added": {"name": "product image", "object": "AVL- VCA 1620"}}, {"added": {"name": "product image", "object": "AVL- VCA 1620"}}, {"added": {"name": "product image", "object": "AVL- VCA 1620"}}, {"added": {"name": "product image", "object": "AVL- VCA 1620"}}, {"added": {"name": "specification", "object": "AVL- VCA 1620"}}, {"added": {"name": "specification", "object": "\\u0431\\u0430\\u0440\\u0434\\u043e\\u0432\\u0438\\u0439"}}, {"added": {"name": "specification", "object": "89dB (A)"}}, {"added": {"name": "specification", "object": "1600W"}}, {"added": {"name": "specification", "object": "220 \\u0412 / 50 \\u0413\\u0446"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "6\\u043c"}}, {"added": {"name": "specification", "object": "4L"}}]	10	2
+768	2019-01-08 09:02:24.593851+00	93	Сўриш кучи	1	[{"added": {}}]	14	2
+769	2019-01-08 09:02:31.769667+00	94	Вакуум	1	[{"added": {}}]	14	2
+770	2019-01-08 09:03:03.063023+00	95	Чанг баки тўлиши индикатори	1	[{"added": {}}]	14	2
+771	2019-01-08 09:10:00.756391+00	214	AVL- VCA 1620	2	[{"added": {"name": "specification", "object": "23 \\u043a\\u041f\\u0430"}}, {"added": {"name": "specification", "object": "200W"}}]	10	2
+772	2019-01-08 09:15:29.193739+00	215	AVL-VCC2245R	1	[{"added": {}}, {"added": {"name": "product image", "object": "AVL-VCC2245R"}}, {"added": {"name": "product image", "object": "AVL-VCC2245R"}}, {"added": {"name": "product image", "object": "AVL-VCC2245R"}}, {"added": {"name": "product image", "object": "AVL-VCC2245R"}}, {"added": {"name": "specification", "object": "AVL-VCC2245R"}}, {"added": {"name": "specification", "object": "\\u049a\\u0438\\u0437\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "2200\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "450\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "220 B / 50\\u00a0\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "\\u0426\\u0438\\u043a\\u043b\\u043e\\u043d\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "76\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "3\\u041b"}}, {"added": {"name": "specification", "object": "5\\u041c"}}, {"added": {"name": "specification", "object": "437 x 275 x 333\\u041c\\u043c"}}, {"added": {"name": "specification", "object": "7.5\\u041a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+773	2019-01-08 09:16:25.181166+00	215	AVL-VCC2245R	2	[{"added": {"name": "specification", "object": "Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448,"}}]	10	2
+774	2019-01-08 09:22:26.428022+00	216	AVL-VCC2245F	1	[{"added": {}}, {"added": {"name": "product image", "object": "AVL-VCC2245F"}}, {"added": {"name": "product image", "object": "AVL-VCC2245F"}}, {"added": {"name": "product image", "object": "AVL-VCC2245F"}}, {"added": {"name": "product image", "object": "AVL-VCC2245F"}}, {"added": {"name": "product image", "object": "AVL-VCC2245F"}}, {"added": {"name": "specification", "object": "AVL-VCC2245F"}}, {"added": {"name": "specification", "object": "\\u041a\\u045e\\u043a"}}, {"added": {"name": "specification", "object": "2200\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "450\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "220 B / 50\\u00a0\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "\\u0426\\u0438\\u043a\\u043b\\u043e\\u043d\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "76\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "3\\u041b"}}, {"added": {"name": "specification", "object": "5\\u041c"}}, {"added": {"name": "specification", "object": "437 x 275 x 333\\u041c\\u043c"}}, {"added": {"name": "specification", "object": "7.5\\u041a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448,  Maxi Turbo \\u0422\\u0443\\u0440\\u0431\\u043e \\u0449\\u0435\\u0442\\u043aa\\u0441\\u0438, \\u041f\\u0430\\u0440\\u043a\\u0435\\u0442 \\u0443\\u0447\\u0443\\u043d \\u0449\\u0435\\u0442\\u043a\\u0430"}}]	10	2
+775	2019-01-08 09:22:50.446898+00	215	AVL-VCC2245R	2	[{"changed": {"name": "specification", "object": "Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448", "fields": ["info"]}}]	10	2
+776	2019-01-08 09:28:59.476027+00	217	ART-VCB 0316E	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-VCB 0316E"}}, {"added": {"name": "product image", "object": "ART-VCB 0316E"}}, {"added": {"name": "specification", "object": "ART-VCB 0316E"}}, {"added": {"name": "specification", "object": "\\u041e\\u049b"}}, {"added": {"name": "specification", "object": "1600\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "320\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "220 V/\\u00a050 Hz"}}, {"added": {"name": "specification", "object": "\\u0425\\u0430\\u043b\\u0442\\u0430\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "\\u041c\\u0435\\u0445\\u0430\\u043d\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "79\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "2\\u041b"}}, {"added": {"name": "specification", "object": "5\\u041c"}}, {"added": {"name": "specification", "object": "250 \\u0445 362 \\u0445 281\\u041c\\u043c"}}, {"added": {"name": "specification", "object": "Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448"}}, {"added": {"name": "specification", "object": "3.7\\u041a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+777	2019-01-08 09:36:35.161429+00	218	ART-VCB 0316E	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-VCB 0316E"}}, {"added": {"name": "specification", "object": "ART-VCB 0316E"}}, {"added": {"name": "specification", "object": "\\u049a\\u043e\\u0440\\u0430"}}, {"added": {"name": "specification", "object": "1600\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "2\\u041b"}}, {"added": {"name": "specification", "object": "79\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "5\\u041c"}}, {"added": {"name": "specification", "object": "3.7\\u041a\\u0433"}}, {"added": {"name": "specification", "object": "250 \\u0445 362 \\u0445 281\\u041c\\u043c"}}, {"added": {"name": "specification", "object": "Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448"}}, {"added": {"name": "specification", "object": "\\u0425\\u0430\\u043b\\u0442\\u0430\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "320\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "\\u041c\\u0435\\u0445\\u0430\\u043d\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "220 V/\\u00a050 Hz"}}]	10	2
+778	2019-01-08 09:37:32.839275+00	214	AVL- VCA 1620	2	[{"deleted": {"name": "specification", "object": "23 \\u043a\\u041f\\u0430"}}]	10	2
+779	2019-01-08 09:38:32.119485+00	94	Вакуум	3		14	2
+780	2019-01-08 09:44:17.804627+00	219	ART-VCB 0316E	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-VCB 0316E"}}, {"added": {"name": "product image", "object": "ART-VCB 0316E"}}, {"added": {"name": "specification", "object": "ART-VCB 0316E"}}, {"added": {"name": "specification", "object": "\\u049a\\u0438\\u0437\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "250 \\u0445 362 \\u0445 281"}}, {"added": {"name": "specification", "object": "Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448"}}, {"added": {"name": "specification", "object": "3.7\\u041a\\u0433"}}, {"added": {"name": "specification", "object": "1600\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "2\\u041b"}}, {"added": {"name": "specification", "object": "79\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "5\\u041c"}}, {"added": {"name": "specification", "object": "\\u0425\\u0430\\u043b\\u0442\\u0430\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "320\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "\\u041c\\u0435\\u0445\\u0430\\u043d\\u0438\\u043a"}}, {"added": {"name": "specification", "object": "220 V/\\u00a050 Hz"}}]	10	2
+781	2019-01-08 09:49:06.276127+00	220	ART-VCB 01-20	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-VCB 01-20"}}, {"added": {"name": "product image", "object": "ART-VCB 01-20"}}, {"added": {"name": "specification", "object": "ART-VCB 01-20"}}, {"added": {"name": "specification", "object": "5.7\\u041a\\u0433"}}, {"added": {"name": "specification", "object": "Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438"}}, {"added": {"name": "specification", "object": "230 \\u0445 428 \\u0445 315"}}, {"added": {"name": "specification", "object": "\\u041a\\u0443\\u043b\\u0440\\u0430\\u043d\\u0433"}}, {"added": {"name": "specification", "object": "2000\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "3.5\\u041b"}}, {"added": {"name": "specification", "object": "80\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "6\\u041c"}}, {"added": {"name": "specification", "object": "\\u0425\\u0430\\u043b\\u0442\\u0430\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "220 B / 50\\u00a0\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "450\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}]	10	2
+782	2019-01-08 09:50:19.972584+00	220	ART-VCB 01-20	2	[{"changed": {"name": "specification", "object": "Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448", "fields": ["info"]}}]	10	2
+783	2019-01-08 10:00:25.314134+00	221	ART-VCB 01-20	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-VCB 01-20"}}, {"added": {"name": "product image", "object": "ART-VCB 01-20"}}, {"added": {"name": "specification", "object": "ART-VCB 01-20"}}, {"added": {"name": "specification", "object": "\\u041e\\u049b"}}, {"added": {"name": "specification", "object": "2000\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "450\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "220 V/\\u00a050 Hz"}}, {"added": {"name": "specification", "object": "\\u0425\\u0430\\u043b\\u0442\\u0430\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "80\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "3.5\\u041b"}}, {"added": {"name": "specification", "object": "6\\u041c"}}, {"added": {"name": "specification", "object": "230 \\u0445428 \\u0445 315\\u041c\\u043c"}}, {"added": {"name": "specification", "object": "5.7\\u041a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "Maxi Turbo \\u0422\\u0443\\u0440\\u0431\\u043e \\u0449\\u0435\\u0442\\u043aa\\u0441\\u0438, Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448"}}]	10	2
+784	2019-01-08 10:05:25.628346+00	222	ART- VCC 01-20	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART- VCC 01-20"}}, {"added": {"name": "product image", "object": "ART- VCC 01-20"}}, {"added": {"name": "specification", "object": "ART- VCC 01-20"}}, {"added": {"name": "specification", "object": "\\u041e\\u0447 \\u043a\\u045e\\u043a"}}, {"added": {"name": "specification", "object": "2000\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "420\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "220 B / 50\\u00a0\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "\\u041a\\u043e\\u043d\\u0442\\u0435\\u0439\\u043d\\u0435\\u0440\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "78\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "1.7\\u041b"}}, {"added": {"name": "specification", "object": "6\\u041c"}}, {"added": {"name": "specification", "object": "230 \\u0445 428 \\u0445 315\\u041c\\u043c"}}, {"added": {"name": "specification", "object": "Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448"}}, {"added": {"name": "specification", "object": "6.25\\u041a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+785	2019-01-08 10:09:28.650133+00	223	ART VCC0120RED	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART VCC0120RED"}}, {"added": {"name": "product image", "object": "ART VCC0120RED"}}, {"added": {"name": "specification", "object": "ART VCC0120RED"}}, {"added": {"name": "specification", "object": "\\u049a\\u0438\\u0437\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "2000\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "420\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "220 V/\\u00a050 Hz"}}, {"added": {"name": "specification", "object": "\\u041a\\u043e\\u043d\\u0442\\u0435\\u0439\\u043d\\u0435\\u0440\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "78\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "6\\u041c"}}, {"added": {"name": "specification", "object": "1.7\\u041b"}}, {"added": {"name": "specification", "object": "230 \\u0445428 \\u0445 315\\u041c\\u043c"}}, {"added": {"name": "specification", "object": "6.25\\u041a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}, {"added": {"name": "specification", "object": "Maxi Turbo \\u0422\\u0443\\u0440\\u0431\\u043e \\u0449\\u0435\\u0442\\u043aa\\u0441\\u0438, Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448"}}]	10	2
+786	2019-01-08 10:13:34.996317+00	224	ART-VCC 0220	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART-VCC 0220"}}, {"added": {"name": "product image", "object": "ART-VCC 0220"}}, {"added": {"name": "product image", "object": "ART-VCC 0220"}}, {"added": {"name": "product image", "object": "ART-VCC 0220"}}, {"added": {"name": "specification", "object": "ART-VCC 0220"}}, {"added": {"name": "specification", "object": "\\u041a\\u0443\\u043b\\u0440\\u0430\\u043d\\u0433"}}, {"added": {"name": "specification", "object": "2000\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "430\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "220 B / 50\\u00a0\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "\\u0426\\u0438\\u043a\\u043b\\u043e\\u043d\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "80\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "2.5\\u041b"}}, {"added": {"name": "specification", "object": "6\\u041c"}}, {"added": {"name": "specification", "object": "Maxi Turbo \\u0422\\u0443\\u0440\\u0431\\u043e \\u0449\\u0435\\u0442\\u043aa\\u0441\\u0438, Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448"}}, {"added": {"name": "specification", "object": "360 \\u0445 390 \\u0445 300\\u041c\\u043c"}}, {"added": {"name": "specification", "object": "5.1\\u041a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+787	2019-01-08 10:24:39.409808+00	224	ART-VCC 02-20	2	[{"changed": {"fields": ["title"]}}]	10	2
+788	2019-01-08 10:25:18.972358+00	223	ART VCC 01-20	2	[{"changed": {"fields": ["title"]}}]	10	2
+789	2019-01-08 10:28:38.33381+00	225	ART- VCC 0220 Vinous	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART- VCC 0220 Vinous"}}, {"added": {"name": "product image", "object": "ART- VCC 0220 Vinous"}}, {"added": {"name": "product image", "object": "ART- VCC 0220 Vinous"}}, {"added": {"name": "product image", "object": "ART- VCC 0220 Vinous"}}, {"added": {"name": "product image", "object": "ART- VCC 0220 Vinous"}}, {"added": {"name": "specification", "object": "ART- VCC 0220"}}, {"added": {"name": "specification", "object": "\\u0411\\u043e\\u0440\\u0434\\u043e\\u0432\\u044b\\u0439"}}, {"added": {"name": "specification", "object": "2000\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "430\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "220 B / 50\\u00a0\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "\\u0426\\u0438\\u043a\\u043b\\u043e\\u043d\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "2.5\\u041b"}}, {"added": {"name": "specification", "object": "80\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "6\\u041c"}}, {"added": {"name": "specification", "object": "Maxi Turbo \\u0422\\u0443\\u0440\\u0431\\u043e \\u0449\\u0435\\u0442\\u043aa\\u0441\\u0438, Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448"}}, {"added": {"name": "specification", "object": "360 \\u0445 390 \\u0445 300\\u041c\\u043c"}}, {"added": {"name": "specification", "object": "5.1 \\u043a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+790	2019-01-08 10:39:23.188366+00	226	ART VCC 02-20	1	[{"added": {}}, {"added": {"name": "product image", "object": "ART VCC 02-20"}}, {"added": {"name": "specification", "object": "ART VCC 02-20"}}, {"added": {"name": "specification", "object": "\\u041e\\u0447 \\u043a\\u045e\\u043a"}}, {"added": {"name": "specification", "object": "2000\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "430\\u0412\\u0442"}}, {"added": {"name": "specification", "object": "220 B / 50\\u00a0\\u0413\\u0446"}}, {"added": {"name": "specification", "object": "\\u0426\\u0438\\u043a\\u043b\\u043e\\u043d\\u043b\\u0438"}}, {"added": {"name": "specification", "object": "\\u042d\\u043b\\u0435\\u043a\\u0442\\u0440\\u043e\\u043d"}}, {"added": {"name": "specification", "object": "80\\u0414\\u0431"}}, {"added": {"name": "specification", "object": "2.5\\u041b"}}, {"added": {"name": "specification", "object": "6\\u041c"}}, {"added": {"name": "specification", "object": "Maxi Turbo \\u0422\\u0443\\u0440\\u0431\\u043e \\u0449\\u0435\\u0442\\u043aa\\u0441\\u0438, Extra All Floors \\u0441\\u0442\\u0430\\u043d\\u0434\\u0430\\u0440\\u0442 \\u0449\\u0435\\u0442\\u043a\\u0430\\u0441\\u0438, \\u041a\\u043e\\u0440\\u043f\\u0443\\u0441\\u043d\\u0438 \\u0431\\u043e\\u0448\\u049b\\u0430\\u0440\\u0438\\u0448"}}, {"added": {"name": "specification", "object": "360 \\u0445 390 \\u0445 300\\u041c\\u043c"}}, {"added": {"name": "specification", "object": "5.1\\u041a\\u0433"}}, {"added": {"name": "specification", "object": "1 \\u0439\\u0438\\u043b"}}]	10	2
+791	2019-01-08 10:40:08.652273+00	223	ART-VCC 01-20	2	[{"changed": {"fields": ["title"]}}]	10	2
+792	2019-01-08 10:41:03.071394+00	225	ART- VCC 02-20	2	[{"changed": {"fields": ["title", "image"]}}]	10	2
+793	2019-01-08 10:41:35.473434+00	225	ART-VCC 02-20	2	[{"changed": {"fields": ["title"]}}]	10	2
+794	2019-01-08 10:42:03.439435+00	226	ART-VCC 02-20	2	[{"changed": {"fields": ["title"]}}]	10	2
+795	2019-01-08 10:42:23.092377+00	222	ART-VCC 01-20	2	[{"changed": {"fields": ["title"]}}]	10	2
 \.
 
 
@@ -1884,7 +2065,7 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 678, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 795, true);
 
 
 --
@@ -1909,6 +2090,7 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 15	app	content
 16	store	order
 17	store	cartitem
+18	app	profile
 \.
 
 
@@ -1916,7 +2098,7 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 -- Name: django_content_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.django_content_type_id_seq', 17, true);
+SELECT pg_catalog.setval('public.django_content_type_id_seq', 18, true);
 
 
 --
@@ -1948,6 +2130,11 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 22	app	0005_auto_20181226_1908	2018-12-26 19:57:58.973378+00
 23	store	0003_auto_20181227_2047	2019-01-02 13:08:43.571273+00
 24	store	0004_auto_20190101_1719	2019-01-02 13:08:43.619322+00
+25	app	0006_profile	2019-01-04 06:59:05.707476+00
+26	store	0005_order_created_at	2019-01-04 06:59:05.721815+00
+27	store	0006_auto_20190108_2020	2019-01-08 20:59:54.38993+00
+28	store	0007_auto_20190108_2029	2019-01-08 20:59:54.408499+00
+29	store	0008_auto_20190108_2039	2019-01-08 20:59:54.428665+00
 \.
 
 
@@ -1955,7 +2142,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 24, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 29, true);
 
 
 --
@@ -1980,6 +2167,14 @@ kab60qpvsh76lei501rui7xsqq99bdhb	ZTNiZmEyYWU0MzZlZTU1ZmEwYjVlOWJlYTgzODY5MGI0Yjk
 xon2sgzys3hx9xmkf2sz5lwu5e55la3m	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2019-01-09 09:12:07.12942+00
 ncyqx8wcmqpvqbo2b373by9bps76g3hy	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2019-01-09 09:13:00.509148+00
 puvhyerb2oqh0cs81obpbd0uvvzgddna	ZTNiZmEyYWU0MzZlZTU1ZmEwYjVlOWJlYTgzODY5MGI0YjkzYmRhMjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiI4ZWRjZGZlODMyZmFiYTc1M2IwNzRmNmY0MTU1ZmQwNjU4NDZmOWVlIn0=	2019-01-16 10:18:25.919235+00
+h8h25cjk59329zu26jzf0xf3119qvdqd	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2019-01-17 11:36:39.08818+00
+2ygskoy4xmk759o77cm5u6w8setfq12r	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2019-01-19 04:27:17.33493+00
+hk6c54cr650x4bp83i24ng6ii436ss9y	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2019-01-21 06:29:38.013436+00
+7npbz172j9tkofjip8uyp8k646hd00xt	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2019-01-21 13:19:24.696685+00
+g6atd5tez8nis82k0yrl41q6v8i52g78	ZTNiZmEyYWU0MzZlZTU1ZmEwYjVlOWJlYTgzODY5MGI0YjkzYmRhMjp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiI4ZWRjZGZlODMyZmFiYTc1M2IwNzRmNmY0MTU1ZmQwNjU4NDZmOWVlIn0=	2019-01-21 20:11:15.131446+00
+g4hxzijfijkj4ffwf883e4u1vht6adxe	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2019-01-22 04:37:46.473526+00
+x1q1hopua4t47fou8598sify1pveoc63	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2019-01-22 11:10:24.537169+00
+p2lj2z6spuesy4kcohvmopxuut9rmbgk	NDI0OGQ5YWY4ODk3ZDM5ZDJlZmZiYjFkNGMzMmE1NjZiYTJhZWUxZTp7Il9hdXRoX3VzZXJfaWQiOiIyIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJjYTUwZThlMmQ0NDgyY2UyNTIwMWMwZGFmYjE3Mzg4ZTMxZjdjYjdiIn0=	2019-01-23 10:34:44.424122+00
 \.
 
 
@@ -2018,10 +2213,10 @@ SELECT pg_catalog.setval('public.store_cartitem_id_seq', 16, true);
 -- Data for Name: store_order; Type: TABLE DATA; Schema: public; Owner: bozorcom
 --
 
-COPY public.store_order (id, total_price, additional_info, order_status, customer_id, customer_full_name, customer_phone) FROM stdin;
-1	996005	info	pending	1	\N	\N
-2	996005	info	pending	1	\N	\N
-3	996006	info	pending	1	\N	\N
+COPY public.store_order (id, total_price, additional_info, order_status, customer_id, customer_full_name, customer_phone, created_at) FROM stdin;
+1	996005	info	pending	1	\N	\N	\N
+2	996005	info	pending	1	\N	\N	\N
+3	996006	info	pending	1	\N	\N	\N
 \.
 
 
@@ -2037,113 +2232,142 @@ SELECT pg_catalog.setval('public.store_order_id_seq', 3, true);
 --
 
 COPY public.store_product (id, title, price, image, slug, description, quantity, featured, new, top_rated, brand_id, category_id) FROM stdin;
-59	Redmi note 5 64 gb black	1595000	0_ey0HmPx.jpg	xiaomi-Redmi-note-5-64 gb-black		100	f	f	f	3	17
-116	Tab A 7 8 gb 4G SM-T285 black	1595000	1_DXE9geW.jpg	samsung-galaxy-tab-7-8 gb-4g-sm-t285-black		1	f	f	f	2	18
+59	Redmi note 5 64 gb black	1595000	0_ey0HmPx.jpg	xiaomi-redmi-note-5-64-gb-black		100	f	f	f	3	17
+112	Ipad wi-fi 2017 128 gb gold	1595000	e53083945de2aecb757febb0565384ff.jpg	ipad-new-wi-fi-2017-128-gb-gold		1	t	t	f	1	19
+88	Iphone 8 256 gb \tgrey	1595000	iphone8-plus-spgray-select-2017_1_M2bS61x.jpg	iphone-8-256-gb-grey		100	f	f	f	1	19
+174	ME83KRW-1K/BW	1500000	1_oGNtYy5.jpg	me83krw-1kbw		1	f	f	f	2	3
+183	SAMSUNG UE 55 M 6500 Curved	1500000	1_PvcEyHl.jpg	samsung-ue-55-m-6500-curved		1	f	f	f	2	7
+191	ME83KRW-3/BW	850000	ru-microwave-oven-solo-me83krw-3-me83krw-3-bw-001-front-white.jpg	me83krw-3bw		1	f	f	f	2	3
+207	23MX39 Бел	1500000	1_0ariOzh.jpg	23mx39-bel		1	f	f	f	7	3
+199	GWD 0220 BLK    (grill)	1500000	AgVUc8ZwJgf6rbSEsDU0gGGeEpdg4U8i_oohXyku.jpg	gwd-0220-blk-grill		1	f	f	f	7	3
+215	AVL-VCC2245R	1500000	lbuNSwJX2_kzDXigrcycbz4Q4FoDawqC.png	avl-vcc2245r		1	f	f	f	8	4
+223	ART-VCC 01-20	1500000	image-by-item-and-alias_1_4dX8wEK.jpg	art-vcc0120red		1	f	f	f	7	4
+175	MS23F301TAWKBW	1500000	1_YvOJ9V4.jpg	ms23f301tawkbw		1	f	f	f	2	3
+116	Tab A 7 8 gb 4G SM-T285 black	1595000	1_DXE9geW.jpg	samsung-galaxy-tab-7-8-gb-4g-sm-t285-black		1	f	f	f	2	18
+184	SAMSUNG UE 40 J 5200 smart	1500000	1_ILyLmsW.jpg	samsung-ue-40-j-5200-smart		1	f	f	f	2	7
+192	ART-LED 9000/28	1500000	0_4hhEKg9.jpg	art-led-900028		1	f	f	f	7	7
+200	GWD 0323 BLK    (grill)	1500000	Idhvw0GcZ_4BwebYCU-Q-MUJwlGnbGmH_urde3nn.jpg	gwd-0323-blk-grill		1	f	f	f	7	3
+208	23UX97 Сер	1500000	1_wuQrLOr.jpg	23ux97-ser		1	f	f	f	7	3
+216	AVL-VCC2245F	1500000	84cMJvQ8WNDOmlOyFdBw7xG-jMDQ6zZO.png	avl-vcc2245f		1	f	f	f	8	4
+224	ART-VCC 02-20	1500000	rASrYI5GXV7OKzd7vekqviLx2EGsNR6E.png	art-vcc-0220		1	f	f	f	7	4
 167	ME83ARW-K/BW	1595000	1_eyQNGmr.jpg	mikrotlinli-pech-samsung-me83arw-kbw		1	f	f	f	2	3
 166	 ME81ARW-K/BW	1595000	1_7F0s25a.jpg	mikrotlinli-pech-samsung-me81arw-kbw		1	f	f	f	2	3
 165	MC28H5013AW/BW	1595000	1.webp	mc28h5013awbw		1	f	f	f	2	3
 164	VC18M21A0SB/EV	1595000	1_26lnI7x.jpg	changyutgich-samsung-vc18m21a0sbev		1	f	t	f	2	4
 163	VC18M21B0S2/EV	1595000	ru-vc18m21d0vg-vc18m21b0s2-ev-rperspectiveblue-63683120.jpg	changyutkich-samsung-vc18m21b0s2ev		1	f	t	f	2	4
 162	T3 LTE /10 black	1595000	1_HMD7dDp.jpg	huawei-t3-lte-10-black		1	f	f	f	5	22
-161	M700 (Q6) 3/32 gb black	1595000	large_01-min.jpg	lg-m700-q6-332 gb-black		1	f	f	f	6	20
+161	M700 (Q6) 3/32 gb black	1595000	large_01-min.jpg	lg-m700-q6-332-gb-black		1	f	f	f	6	20
 160	T3/7 black	1595000	1_h70FZG5.jpg	huawei-t37-black		1	f	f	f	5	22
 159	Y5/2 black	1595000	1_WQGcRN5.jpg	huawei-y52-black		1	f	f	f	5	22
 158	H930 V30 black	1595000	lg_lgh930ds_acisbk_images_2757781535.jpg	lg-h930-v30-black		1	f	f	f	6	20
 157	Y5/2 gold	1595000	DSC_0050-770x481.jpg	huawei-y52-gold		1	f	f	f	5	22
-173	ME83KRS-1K BW	1595000	1_feNj251.jpg	mikrotlinli-pech-samsung-me83krs-1k-bw		1	f	f	f	2	3
+176	MS23F302TASKBW	1500000	1_cMudEsl.jpg	ms23f302taskbw		1	f	f	f	2	3
+185	SAMSUNG UE 49 J 5300 smart	1500000	1_OWAGAw1.jpg	samsung-ue-49-j-5300-smart		1	f	f	f	2	7
+193	MWM 0120 WHT   (solo)	1500000	1_oSfgWOn.jpg	mwm-0120-wht-solo		1	f	f	f	7	3
+201	ART-LED 32/A9000 Smart	1500000	1_vHQqc7c.jpg	art-led-32a9000-smart		1	f	f	f	7	7
+209	ARTEL 43/A9100	1500000	artel-43-9100-650x489.jpg	artel-43a9100		1	f	f	f	7	7
+217	ART-VCB 0316E	1500000	image-by-item-and-alias_R1d1Ixc.jpg	art-vcb-0316e		1	f	f	f	7	4
+225	ART-VCC 02-20	1500000	image-by-item-and-alias_oJVRfUp.jpg	art-vcc-0220-vinous		1	f	f	f	7	4
 172	UE32M4000 Jedi	1595000	32M4000_111-650x489_1.jpg	televizor-samsung-ue-32m-4000-jedi		1	f	f	f	2	7
-171	ME81KRW-1K BW	1595000	1_6H5IqYf.jpg	mikrotlinli-pech-samsung-me81krw-1k-bw		1	f	f	f	2	3
 170	GE83ARW-K/BW	1595000	1_QOdQHSZ.jpg	mikrotlinli-pech-samsung-ge83arw-kbw		1	f	f	f	2	3
 169	GE81ARW-K/BW	1595000	1_w1uxqDF.jpg	mikrotlinli-pech-samsung-ge81arw-kbw		1	f	f	f	2	3
-168	Redmi 6A gold (eu)	1595000	1_wCeVCuZ.jpg	Redmi-6a-black-(eu)	Xiaomi Redmi 6А.\r\nИшлаб чиқарувчанлик ва мавжудликнинг уйғунлиги Сизнингча, флагмани хусусиятларга эга бюджетли смартфонлар йўқми? Xiaomi стереотипларни бузади. Redmi 6А инноватцион технологиялар, катта ёрқин экран, юқори сифатли процессор ва ажойиб камералар билан ёрқин таассурот қолдиради. Юпқа корпус ва нозик хошиялар туфайли сиз Xiaomi Redmi 6А ни қўлингиздан чиқаришни хоҳламайсиз.	1	f	f	f	3	17
-142	P20 lite blue	1595000	1_9mo1(eu)d.png	huawei-p-20-lite-blue		1	f	f	f	5	22
+168	Redmi 6A gold (eu)	1595000	1_wCeVCuZ.jpg	redmi-6a-black-eu	Xiaomi Redmi 6А.\r\nИшлаб чиқарувчанлик ва мавжудликнинг уйғунлиги Сизнингча, флагмани хусусиятларга эга бюджетли смартфонлар йўқми? Xiaomi стереотипларни бузади. Redmi 6А инноватцион технологиялар, катта ёрқин экран, юқори сифатли процессор ва ажойиб камералар билан ёрқин таассурот қолдиради. Юпқа корпус ва нозик хошиялар туфайли сиз Xiaomi Redmi 6А ни қўлингиздан чиқаришни хоҳламайсиз.	1	f	f	f	3	17
 141	P20 lite black	1595000	1_0m7bwHl.jpg	huawei-p-20-lite-black		1	f	f	f	5	22
 140	P smart gold	1595000	1_KM0a0hG.jpg	huawei-p-smart-gold		1	f	f	f	5	22
 139	P smart black	1595000	1_eT0UjBi.jpg	huawei-p-smart-black		1	f	f	f	5	22
 138	VC18M2130SR/EV	1595000	1_2q7x5Dy.jpg	changyutkich-samsung-vc18m2130srev		1	f	f	f	2	4
-137	VC18M21A0S1/EV	1595000	1_H5C7pJu.jpg	chang-yutkich-samsung-vc18m21a0s1ev		1	f	f	f	2	4
 136	X240 (K8)\t gold	1595000	1_CPYLGMZ.jpg	lg-x240-k8-gold		1	t	t	t	6	20
 135	X240 (K8)\t black	1595000	1_BkRvDcI.jpg	lg-x240-k8-black		1	f	f	f	6	20
 134	M250 (K10) black	1595000	1_N8w0jrf.jpg	lg-m250-k10-black		1	f	f	f	6	20
 133	M250 (K10) Titan	1595000	1_W2mJhFj.jpg	lg-m250-k10-titan		1	f	f	f	6	20
 132	K430 (K10 LTE) black	1595000	1_kas7AiE.jpg	lg-k430-k10-lte-black		1	f	f	f	6	20
 131	X230 (K4) brown	1595000	1_DQoigUP.jpg	lg-x230-k4-brown		1	f	f	f	6	20
+171	ME81KRW-1K/BW	1595000	1_6H5IqYf.jpg	mikrotlinli-pech-samsung-me81krw-1k-bw		1	f	f	f	2	3
+173	ME83KRS-1K/BW	1595000	1_feNj251.jpg	mikrotlinli-pech-samsung-me83krs-1k-bw		1	f	f	f	2	3
+177	MS23F302TAKKBW	1500000	1_1hT25zr.jpg	ms23f302takkbw		1	f	f	f	2	3
+142	P20 lite blue	1595000	1_YCoEh86.png	huawei-p-20-lite-blue		1	f	f	f	5	22
+186	SAMSUNG UE 55 M 5500	1500000	1_qXw9xD6.jpg	samsung-ue-55-m-5500		1	f	f	f	2	7
+194	MWD 0220 BLK   (solo)	1500000	IEr97a0nizLQi7LgHPtNUyCNr77nz2-a.jpg	mwd-0220-blk-solo		1	f	f	f	7	3
+202	GWD 0323 WHT   (grill)	1500000	V8MSamJOkNqyUck2SMdP5SxqST8ixZaz_ckoCxBk.jpg	gwd-0323-wht-grill		1	f	f	f	7	3
+210	AVL-MW253V1	1500000	1_KakdxnJ.jpg	avalon-avl-mw253v1		1	f	f	f	8	3
+218	ART-VCB 0316E	15000000	sqg-TIYUH4cYnjE9jjqKj_PQcBSlyebR.jpeg	art-vcb-0316e		1	f	f	f	7	4
+137	VC18M21A0S1/EV	1595000	1_H5C7pJu.jpg	chang-yutkich-samsung-vc18m21a0s1ev		1	f	f	f	2	4
 130	X230 (K4) titan	1595000	1_QX8PN1B.jpg	lg-x230-k4-titan		1	f	f	f	6	20
-129	PRO 7 4/64 gb red	1595000	1_poEQ0DM.jpg	meizu-pro-7-464 gb-red		1	f	f	f	4	21
-128	PRO 7 4/64 gb black	1595000	1_6GgNwEs.jpg	meizu-pro-7-464 gb-black		1	f	f	f	4	21
-127	M6s 3/32 gb black	1595000	1_Ks8czO3.jpg	meizu-m6s-332 gb-black		1	f	f	f	4	21
-126	M6 Note 4/64 gb black	1595000	1_EDE gb3f.jpg	meizu-m6-note-464 gb-black		1	f	f	f	4	21
-125	M6 Note 3/32 gb black	1595000	1_EmkVhev.jpg	meizu-m6-note-332 gb-black		1	f	f	f	4	21
-124	M6 Note 3/16 gb black	1595000	1_yBf1Dby.jpg	meizu-m6-note-316 gb-black		1	f	f	f	4	21
-123	M6s 3/32 gb black	1595000	1_1REyZn3.jpg	meizu-m6s-332 gb-black		1	f	t	t	4	21
-122	M6 3/32 gb black	1595000	copy_meizu_m6_216_black_(eu)_5a6a0614c5abb_images_2682688919.jpg	meizu-m6-332 gb-black		1	f	f	f	4	21
-121	M6s 2/16 gb black	1595000	1_cBGFQ9X.jpg	meizu-m6s-216 gb-black		1	f	f	f	4	21
-120	M5s 3/16 gb gold	1595000	1_UdSmMz3.jpg	meizu-m5s-316 gb-gold		1	f	f	f	4	21
-119	Tab A 7 8 gb 4G SM-T285 White	1595000	1_kcMQW5X.jpg	samsung-galaxy-tab-7-8 gb-4g-sm-t285-white		1	f	f	f	2	18
-118	Ipad 4G 2017 32 gb grey	1595000	screenshot_1_193_153_1.jpg	ipad-new-4g-2017-32 gb-grey		1	f	f	f	1	19
-117	Tab A 7 8 gb 4G SM-T285 silver	1595000	1_MP6LosC.jpg	samsung-galaxy-tab-7-8 gb-4g-sm-t285-silver		1	f	f	f	2	18
+129	PRO 7 4/64 gb red	1595000	1_poEQ0DM.jpg	meizu-pro-7-464-gb-red		1	f	f	f	4	21
+128	PRO 7 4/64 gb black	1595000	1_6GgNwEs.jpg	meizu-pro-7-464-gb-black		1	f	f	f	4	21
+127	M6s 3/32 gb black	1595000	1_Ks8czO3.jpg	meizu-m6s-332-gb-black		1	f	f	f	4	21
+126	M6 Note 4/64 gb black	1595000	1_EDE gb3f.jpg	meizu-m6-note-464-gb-black		1	f	f	f	4	21
+125	M6 Note 3/32 gb black	1595000	1_EmkVhev.jpg	meizu-m6-note-332-gb-black		1	f	f	f	4	21
+124	M6 Note 3/16 gb black	1595000	1_yBf1Dby.jpg	meizu-m6-note-316-gb-black		1	f	f	f	4	21
+123	M6s 3/32 gb black	1595000	1_1REyZn3.jpg	meizu-m6s-332-gb-black		1	f	t	t	4	21
+122	M6 3/32 gb black	1595000	copy_meizu_m6_216_black_(eu)_5a6a0614c5abb_images_2682688919.jpg	meizu-m6-332-gb-black		1	f	f	f	4	21
+121	M6s 2/16 gb black	1595000	1_cBGFQ9X.jpg	meizu-m6s-216-gb-black		1	f	f	f	4	21
+120	M5s 3/16 gb gold	1595000	1_UdSmMz3.jpg	meizu-m5s-316-gb-gold		1	f	f	f	4	21
+119	Tab A 7 8 gb 4G SM-T285 White	1595000	1_kcMQW5X.jpg	samsung-galaxy-tab-7-8-gb-4g-sm-t285-white		1	f	f	f	2	18
+118	Ipad 4G 2017 32 gb grey	1595000	screenshot_1_193_153_1.jpg	ipad-new-4g-2017-32-gb-grey		1	f	f	f	1	19
+117	Tab A 7 8 gb 4G SM-T285 silver	1595000	1_MP6LosC.jpg	samsung-galaxy-tab-7-8-gb-4g-sm-t285-silver		1	f	f	f	2	18
 115	Tab A 8.0 LTE SM-T385 gold	1595000	1_ORXxnRx.jpg	samsung-galaxy-tab-80-lte-sm-t385-gold		1	f	f	f	2	18
-114	Ipad wi-fi 2017 128 gb grey	1595000	9a09478449eaec2c07c38a1887987ef7.jpg	ipad-new-wi-fi-2017-128 gb-grey		1	f	f	f	1	19
+114	Ipad wi-fi 2017 128 gb grey	1595000	9a09478449eaec2c07c38a1887987ef7.jpg	ipad-new-wi-fi-2017-128-gb-grey		1	f	f	f	1	19
 113	Tab A 8.0 LTE SM-T385 black	1595000	1_6MVuqqN.jpg	samsung-galaxy-tab-80-lte-sm-t385-black		1	f	f	f	2	18
-112	Ipad wi-fi 2017 128 gb gold	1595000	e53083945de2aecb757febb0565384ff.jpg	ipad-new-wi-fi-2017-128 gb-gold		1	t	t	f	1	19
+226	ART-VCC 02-20	1500000	image-by-item-and-alias_3.jpg	art-vcc-02-20		1	f	f	f	7	4
+178	SAMSUNG UE 40M 5070 Jedi	1500000	2_VjguOai.jpg	samsung-ue-40m-5070-jedi		1	f	f	f	2	7
 111	Tab E (SM-T561) Brown	1595000	1_P6BG3K0.jpg	samsung-galaxy-tab-e-sm-t561-brown		1	f	f	f	2	18
-110	Ipad wi-fi 2017 128 gb silver	1595000	9c090312d462edcbeb924c3841a6f15b.jpg	ipad-new-wi-fi-2017-128 gb-silver		1	f	f	f	1	19
+110	Ipad wi-fi 2017 128 gb silver	1595000	9c090312d462edcbeb924c3841a6f15b.jpg	ipad-new-wi-fi-2017-128-gb-silver		1	f	f	f	1	19
 109	Tab E (SM-T561) black	1595000	1_zhic6nw.jpg	samsung-galaxy-tab-e-sm-t561-black		1	f	f	f	2	18
-108	Ipad wi-fi 2017 32 gb \tgold	1595000	f2919e49336397654546d142a6deab1e.jpg	ipad-new-wi-fi-2017-32 gb-gold		1	f	f	f	1	19
-107	Ipad wi-fi 2017 32 gb \tsilver	1595000	03790bdd4af5cf77c82426e2a41dab67.jpg	ipad-new-wi-fi-2017-32 gb-silver		1	f	f	f	1	19
+108	Ipad wi-fi 2017 32 gb \tgold	1595000	f2919e49336397654546d142a6deab1e.jpg	ipad-new-wi-fi-2017-32-gb-gold		1	f	f	f	1	19
+107	Ipad wi-fi 2017 32 gb \tsilver	1595000	03790bdd4af5cf77c82426e2a41dab67.jpg	ipad-new-wi-fi-2017-32-gb-silver		1	f	f	f	1	19
 106	Tab S2 8.0 [SM-T719] gold	1595000	1_dtQLmY2.jpg	samsung-galaxy-tab-s2-80-sm-t719-gold		1	f	f	f	2	18
 105	Tab S2 8.0 [SM-T719] black	1595000	1_xGoaQfU.jpg	samsung-galaxy-tab-s2-80-sm-t719-black		1	f	f	f	2	18
 104	Tab S3 SM-T825 silver	1595000	1_0bToUAy.jpg	samsung-galaxy-tab-s3-sm-t825-silver		1	f	f	f	2	18
 103	Tab S3 SM-T825 black	1595000	1_4zsarSZ.jpg	samsung-galaxy-tab-s3-sm-t825-black		1	f	f	f	2	18
-102	Ipad mini 4 128 gb WiFi+4G gold	1595000	00675971b0c380026b5568fe23f6c0d7.jpg	ipad-mini-4-128 gb-wifi4g-gold		1	f	f	f	1	19
-101	Ipad mini 4 128 gb WiFi+4G grey	1595000	10e0766b0549a9ca686b94aa3b3802da.jpg	ipad-mini-4-128 gb-wifi4g-grey		1	f	f	f	1	19
-100	Ipad mini 4 128 gb WiFi+4G silver	1595000	c78c549a4e77e4377a63851b5f96efec.jpg	ipad-mini-4-128 gb-wifi4g-silver		1	f	f	f	1	1
+102	Ipad mini 4 128 gb WiFi+4G gold	1595000	00675971b0c380026b5568fe23f6c0d7.jpg	ipad-mini-4-128-gb-wifi4g-gold		1	f	f	f	1	19
+101	Ipad mini 4 128 gb WiFi+4G grey	1595000	10e0766b0549a9ca686b94aa3b3802da.jpg	ipad-mini-4-128-gb-wifi4g-grey		1	f	f	f	1	19
+100	Ipad mini 4 128 gb WiFi+4G silver	1595000	c78c549a4e77e4377a63851b5f96efec.jpg	ipad-mini-4-128-gb-wifi4g-silver		1	f	f	f	1	1
 99	N950 Note 8 gold	1595000	3_guASVES.jpg	samsung-galaxy-n950-note-8-gold		1	f	f	f	2	18
 98	N950 Note 8 black	1595000	1_jnDIL6C.jpg	samsung-galaxy-n950-note-8-black		1	f	f	f	2	18
-97	Iphone 8 plus 256 gb red	1595000	2_UN5yHQs.jpg	iphone-8-plus-256 gb-red		1	f	f	f	1	19
-96	Iphone 8 plus 256 gb grey	1595000	30030155b.jpg	iphone-8-plus-256 gb-grey		1	f	f	f	1	19
+97	Iphone 8 plus 256 gb red	1595000	2_UN5yHQs.jpg	iphone-8-plus-256-gb-red		1	f	f	f	1	19
+96	Iphone 8 plus 256 gb grey	1595000	30030155b.jpg	iphone-8-plus-256-gb-grey		1	f	f	f	1	19
 95	J730 (J7) gold	1595000	1_wi70z6p.jpg	samsung-galaxy-j730-j7-gold		1	f	f	f	2	18
 94	J730 (J7) black	1595000	1_4kMVbym.jpg	samsung-galaxy-j730-j7-black		100	f	f	f	2	18
-93	Iphone 8 plus 64 gb \tsilver	1595000	0_SOvMvfP.jpeg	iphone-8-plus-64 gb-silver		100	f	f	f	1	19
-92	Iphone 8 plus 64 gb grey	1595000	0_2XbCY6y.jpg	iphone-8-plus-64 gb-grey		100	f	f	f	1	19
+93	Iphone 8 plus 64 gb \tsilver	1595000	0_SOvMvfP.jpeg	iphone-8-plus-64-gb-silver		100	f	f	f	1	19
+92	Iphone 8 plus 64 gb grey	1595000	0_2XbCY6y.jpg	iphone-8-plus-64-gb-grey		100	f	f	f	1	19
 91	J530 (J5 ) gold	1595000	1_BVskbCj.jpg	samsung-galaxy-j530-j5-gold		100	f	f	f	2	18
-90	Iphone 8 256 gb \tred	1595000	1_2gD59Ch.jpg	iphone-8-256 gb-red		100	f	f	f	1	19
+90	Iphone 8 256 gb \tred	1595000	1_2gD59Ch.jpg	iphone-8-256-gb-red		100	f	f	f	1	19
 89	J530 (J5 ) black	1595000	1_Gm5Vlzh.jpg	samsung-galaxy-j530-j5-black		100	f	f	f	2	18
-88	Iphone 8 256 gb \tgrey	1595000	iphone8-plus-spgray-select-2017_1_M2bS61x.jpg	iphone-8-256 gb-grey		100	f	f	f	1	19
 87	J330 (J3) gold	1595000	1_qjeQY5g.jpg	samsung-galaxy-j330-j3-gold		100	f	f	f	2	18
 86	J330 (J3) black	1595000	1_4FlBwMH.jpg	samsung-galaxy-j330-j3-black		100	f	f	f	2	18
-85	Iphone 8 64 gb red	1595000	1_j89THmU.jpg	iphone-8-64 gb-red		100	f	f	f	1	19
+85	Iphone 8 64 gb red	1595000	1_j89THmU.jpg	iphone-8-64-gb-red		100	f	f	f	1	19
 84	J701 (J7) gold	1595000	1_uIY0FIv.jpg	samsung-galaxy-j701-j7-gold		100	f	f	f	2	18
-83	Iphone 8 64 gb silver	1595000	apple_iphone_8_silver_3_1_1_1.jpeg	iphone-8-64 gb-silver		100	f	f	f	1	19
+83	Iphone 8 64 gb silver	1595000	apple_iphone_8_silver_3_1_1_1.jpeg	iphone-8-64-gb-silver		100	f	f	f	1	19
 82	J701 (J7) black	1595000	1_BSPNb50.jpg	samsung-galaxy-j701-j7-black		100	f	f	f	2	18
-81	Iphone 8 64 gb gold	1595000	3_306_19_1.jpg	iphone-8-64 gb-gold		100	f	f	f	1	19
-80	Iphone 8 64 gb \tgrey	1595000	iphone8-plus-spgray-select-2017_1.jpg	iphone-8-64 gb-grey		100	f	f	f	1	19
-79	Iphone 7 plus 32 gb \tgold	1595000	apple_iphone_7_plus_gold_1_2.jpg	iphone-7-plus-32 gb-gold		100	f	f	f	1	19
-78	Iphone 7 plus 32 gb black	1595000	apple_iphone_7_plus_black_1_2.jpg	iphone-7-plus-32 gb-black		100	f	f	f	1	19
-77	Iphone 7 128 gb \tred	1595000	1_563_11.jpg	iphone-7-128 gb-red		100	f	f	f	1	19
-76	Iphone 7 128 gb silver	1595000	apple_iphone_7_silver_0_1.jpg	iphone-7-128 gb-silver		100	f	f	f	1	19
-75	Iphone 7 128 gb rose gold	1595000	apple_iphone_7_rose_1_3_pzmt1oD.jpg	iphone-7-128 gb-rosegold		100	f	f	f	1	19
-74	Iphone 7 128 gb gold	1595000	apple_iphone_7_gold_1_3_BnS7qbS.jpg	iphone-7-128 gb-gold		100	t	t	t	1	19
-73	Iphone 7 32 gb rose gold	1595000	apple_iphone_7_rose_1_3.jpg	iphone-7-32 gb-rosegold		100	f	f	f	1	19
-72	Iphone 7 32 gb gold	1595000	apple_iphone_7_gold_1_3.jpg	iphone-7-32 gb-gold		100	f	f	f	1	19
+81	Iphone 8 64 gb gold	1595000	3_306_19_1.jpg	iphone-8-64-gb-gold		100	f	f	f	1	19
+80	Iphone 8 64 gb \tgrey	1595000	iphone8-plus-spgray-select-2017_1.jpg	iphone-8-64-gb-grey		100	f	f	f	1	19
+79	Iphone 7 plus 32 gb \tgold	1595000	apple_iphone_7_plus_gold_1_2.jpg	iphone-7-plus-32-gb-gold		100	f	f	f	1	19
+78	Iphone 7 plus 32 gb black	1595000	apple_iphone_7_plus_black_1_2.jpg	iphone-7-plus-32-gb-black		100	f	f	f	1	19
+77	Iphone 7 128 gb \tred	1595000	1_563_11.jpg	iphone-7-128-gb-red		100	f	f	f	1	19
+76	Iphone 7 128 gb silver	1595000	apple_iphone_7_silver_0_1.jpg	iphone-7-128-gb-silver		100	f	f	f	1	19
+75	Iphone 7 128 gb rose gold	1595000	apple_iphone_7_rose_1_3_pzmt1oD.jpg	iphone-7-128-gb-rosegold		100	f	f	f	1	19
+74	Iphone 7 128 gb gold	1595000	apple_iphone_7_gold_1_3_BnS7qbS.jpg	iphone-7-128-gb-gold		100	t	t	t	1	19
+73	Iphone 7 32 gb rose gold	1595000	apple_iphone_7_rose_1_3.jpg	iphone-7-32-gb-rosegold		100	f	f	f	1	19
+72	Iphone 7 32 gb gold	1595000	apple_iphone_7_gold_1_3.jpg	iphone-7-32-gb-gold		100	f	f	f	1	19
 71	J320 (J3) gold	1595000	1_rpA24Yu.jpg	samsung-galaxy-j320-j3-gold		100	f	f	f	2	18
-70	Iphone 7 32 gb black	1595000	0_AxUmjhR.jpg	iphone-7-32 gb-black		100	f	f	f	1	19
-69	Iphone 6 32 gb grey	1595000	1_vmNlSZa.jpg	iphone-6-32 gb-grey		100	f	f	f	1	19
-68	Iphone SE 32 gb gold	1595000	1_y4DRmHa.jpg	iphone-se-32 gb-gold		100	f	f	f	1	19
+70	Iphone 7 32 gb black	1595000	0_AxUmjhR.jpg	iphone-7-32-gb-black		100	f	f	f	1	19
+69	Iphone 6 32 gb grey	1595000	1_vmNlSZa.jpg	iphone-6-32-gb-grey		100	f	f	f	1	19
+68	Iphone SE 32 gb gold	1595000	1_y4DRmHa.jpg	iphone-se-32-gb-gold		100	f	f	f	1	19
 67	J250M (J2 Pro) gold	1595000	1_1I1s16r.jpg	samsung-galaxy-j250m-j2-pro-gold		100	f	f	f	2	18
-66	Iphone X 256 gb grey	1595000	0_macW3cN.jpg	iphone-x-256 gb-grey		100	f	f	f	1	19
+66	Iphone X 256 gb grey	1595000	0_macW3cN.jpg	iphone-x-256-gb-grey		100	f	f	f	1	19
 65	J250M (J2 Pro) black	1595000	1_MUBf7dI.jpg	samsung-galaxy-j250m-j2-pro-black		100	f	f	f	2	18
-64	Iphone X 256 gb silver	1595000	0_OO1TAOm.jpg	iphone-x-256 gb-silver		100	f	f	f	1	19
-63	Iphone X 64 gb grey	1595000	0_WfWAUM7.jpg	iphone-x-64 gb-grey		100	f	f	f	1	19
+64	Iphone X 256 gb silver	1595000	0_OO1TAOm.jpg	iphone-x-256-gb-silver		100	f	f	f	1	19
+63	Iphone X 64 gb grey	1595000	0_WfWAUM7.jpg	iphone-x-64-gb-grey		100	f	f	f	1	19
 62	J200 (J2) gold	1595000	1_jFuLaxA.jpg	samsung-galaxy-j200-j2-gold		100	f	f	f	2	18
 61	J200 (J2) black	1595000	1_5(eu)STcN.jpg	samsung-galaxy-j200-j2-black		100	f	f	f	2	18
-60	Redmi 6 6/64 gb black	1595000	xiaomi_mi6_664_blk_images_2027581644_Nwo27WH.jpg	xiaomi-mi-6-664 gb-black		100	f	f	f	3	17
+60	Redmi 6 6/64 gb black	1595000	xiaomi_mi6_664_blk_images_2027581644_Nwo27WH.jpg	xiaomi-mi-6-664-gb-black		100	f	f	f	3	17
 58	J110 (J1 Ace) White	1595000	1_PJx5r6B.jpg	samsung-galaxy-j110-j1-ace-white		100	f	f	f	2	18
-57	Redmi Note 5 32 gb gold	1595000	0_zkFJrix.jpg	xiaomi-Redmi-note-5-32 gb-gold		100	f	f	f	3	17
+57	Redmi Note 5 32 gb gold	1595000	0_zkFJrix.jpg	xiaomi-redmi-note-5-32-gb-gold		100	f	f	f	3	17
 56	J110 (J1 Ace) black	1595000	1_81uBtKp.jpg	samsung-galaxy-j110-j1-ace-black		100	f	f	f	2	18
-55	Redmi note 5 32 gb black	1595000	1_OnZZbKj.jpg	xiaomi-Redmi-note-5-32 gb-black		100	f	f	f	3	17
+55	Redmi note 5 32 gb black	1595000	1_OnZZbKj.jpg	xiaomi-redmi-note-5-32-gb-black		100	f	f	f	3	17
 54	J105 (J1 mini) black	1595000	1_QqTDawy.jpg	samsung-galaxy-j105-j1-mini-black		100	f	f	f	2	18
-53	Redmi S2 64 gb gold	1595000	_-_-_-001_1.jpg	xiaomi-Redmi-s2-64 gb-gold		100	f	f	f	3	17
+53	Redmi S2 64 gb gold	1595000	_-_-_-001_1.jpg	xiaomi-redmi-s2-64-gb-gold		100	f	f	f	3	17
 52	G965 256 gb (S9+) Purple	1595000	1_4IWxQXR.jpg	samsung-galaxy-g965256-s9-purple		100	f	f	f	2	18
 156	Y3 2017\tgold	1595000	1_E2UTqQa.jpg	huawei-y3-2017-gold		1	f	f	f	5	22
 155	P8lite White	1595000	1_doKLLfk.jpg	huawei-p8lite-white		1	f	f	f	5	22
@@ -2155,51 +2379,75 @@ COPY public.store_product (id, title, price, image, slug, description, quantity,
 149	P8lite 2017 black	1595000	1_lYKSM6Q.jpg	huawei-p8lite-2017-black		1	f	f	f	5	22
 148	GT3 White	1595000	1.jpeg	huawei-gt3-white		1	f	f	f	5	22
 147	HONOR 6A black	1595000	1_TKVYHpo.jpg	huawei-honor-6a-black		1	f	f	f	5	22
-146	M700 (Q6) 2 gb /16 gb gold	1595000	1_JRpGxwU.jpg	lg-m700-q6-2 gb16 gb-black		1	f	f	f	6	20
+146	M700 (Q6) 2 gb /16 gb gold	1595000	1_JRpGxwU.jpg	lg-m700-q6-2-gb16-gb-black		1	f	f	f	6	20
 145	P 20\tBlue	1595000	1_cZX9WeN.jpg	huawei-p-20-blue		1	f	f	f	5	22
-144	M700 (Q6) 2 gb /16 gb black	1595000	1_PBLiGTX.jpg	lg-m700-q6-2 gb16 gb-black		1	f	f	f	6	20
+144	M700 (Q6) 2 gb /16 gb black	1595000	1_PBLiGTX.jpg	lg-m700-q6-2-gb16-gb-black		1	f	f	f	6	20
 143	P20 \tblack	1595000	1_v9HGYR8.jpg	huawei-p-20-black		1	f	f	f	5	22
-51	Redmi S2 64 gb grey	1595000	0_Tra6fcM.jpg	xiaomi-Redmi-s2-64 gb-grey		100	f	f	f	3	17
-50	G965 256 gb (S9+) grey	1595000	1_2OsaV21.jpg	samsung-galaxy-g965256-s9-grey		100	f	f	f	2	18
-49	Redmi S2 32 gb gold	1595000	0_GWePBbD.jpg	xiaomi-Redmi-s2-32 gb-gold		100	f	f	f	3	17
-48	G965 256 gb (S9+) black	1595000	1_e9OGgNn.jpg	samsung-galaxy-g965256-s9-black		100	f	f	f	2	18
-47	Redmi S2 32 gb grey	1595000	0_xQ8y5W3.jpg	xiaomi-Redmi-s2-32 gb-grey		100	f	f	f	3	17
-46	Redmi 5 plus 64 gb black	1595000	0.jpeg	xiaomi-Redmi-5-plus-64 gb-black		100	f	f	f	3	17
-45	Redmi 5 plus 64 gb gold	1595000	0000.png	xiaomi-Redmi-5-plus-64 gb-gold		100	f	f	f	3	17
-44	Redmi 5 plus 32 gb black	1595000	0_yFYg836.jpg	xiaomi-Redmi-5-plus-32 gb-black		100	f	f	f	3	17
-43	Redmi 5 plus 32 gb gold	1595000	0_1TO4rUy.jpg	xiaomi-Redmi-5-plus-32 gb-gold		100	f	f	f	3	17
+44	Redmi 5 plus 32 gb black	1595000	0_yFYg836.jpg	xiaomi-redmi-5-plus-32-gb-black		100	f	f	f	3	17
+43	Redmi 5 plus 32 gb gold	1595000	0_1TO4rUy.jpg	xiaomi-redmi-5-plus-32-gb-gold		100	f	f	f	3	17
 42	G965 (S9+) grey	1595000	1.JPG	samsung-galaxy-g965-s9-grey		100	f	f	f	2	18
-41	Redmi 5 32 gb gold	1595000	0_OQgTrBg.jpg	xiaomi-Redmi-5-32 gb-gold		100	f	f	f	3	17
-40	Redmi 5 32 gb black	1595000	0_5Dx3e4a.jpg	xiaomi-Redmi-5-32 gb-black		100	f	f	f	3	17
+41	Redmi 5 32 gb gold	1595000	0_OQgTrBg.jpg	xiaomi-redmi-5-32-gb-gold		100	f	f	f	3	17
+40	Redmi 5 32 gb black	1595000	0_5Dx3e4a.jpg	xiaomi-redmi-5-32-gb-black		100	f	f	f	3	17
 39	G965 (S9+) black	1595000	1_87QJRGt.jpg	samsung-galaxy-g965-s9-black		100	f	f	f	2	18
-38	Redmi 5 16 gb gold	1595000	0_DN7eDnd.jpg	xiaomi-Redmi-5-16 gb-gold		100	f	f	f	3	17
+38	Redmi 5 16 gb gold	1595000	0_DN7eDnd.jpg	xiaomi-redmi-5-16-gb-gold		100	f	f	f	3	17
 37	G960 (S9) grey	1595000	1_BZneRxy.jpg	samsung-galaxy-g960-s9-grey		100	f	f	f	2	18
 36	G960 (S9) purple	1595000	1_rA0HwOy.jpg	samsung-galaxy-g960-s9-purple		100	t	t	t	2	18
-35	Redmi 5 16 gb black	1595000	0_XMTmvIY.jpg	xiaomi-Redmi-5-16 gb-black		100	f	f	f	3	17
+35	Redmi 5 16 gb black	1595000	0_XMTmvIY.jpg	xiaomi-redmi-5-16-gb-black		100	f	f	f	3	17
 34	G960 (S9) black	1595000	1_DTBCznu.jpg	samsung-galaxy-g960-s9-black		100	f	f	f	2	18
-33	Redmi 5A 32 gb black	1595000	00_klNv3w3.jpeg	xiaomi-Redmi-5a-32- gb-black		100	f	f	f	3	17
+33	Redmi 5A 32 gb black	1595000	00_klNv3w3.jpeg	xiaomi-redmi-5a-32-gb-black		100	f	f	f	3	17
 32	G950 (S8) red	1595000	1_3BXgrSb.jpg	samsung-galaxy-g950-s8-red		100	f	f	f	2	18
 31	G950 (S8) gold	1595000	1_fi9Cr4Y.jpg	samsung-galaxy-g950-s8-gold		100	f	f	f	2	18
+179	SAMSUNG UE 49M 5070 Jedi	1500000	Без_названия_1_k9SPrm5.jpg	samsung-ue-49m-5070-jedi		1	f	f	f	2	7
+187	SAMSUNG UE 49 M 6500 Curved	1500000	1_LsRk3we.jpg	samsung-ue-49-m-6500-curved		1	f	f	f	2	7
+195	ART-LED 9000/32	1500000	1_XguHKgW.png	art-led-900032		1	f	f	f	7	7
+211	ART-LED 43/A9000 Smart	1500000	1_Wpq96ey.jpg	art-led-43a9000-smart		1	f	f	f	7	7
+203	20MX63 Бел	1500000	20MX63_Бел._111-650x489_1.jpg	20mx63-bel		1	f	f	f	7	3
+219	ART-VCB 0316E	1500000	WNY87Ygn4EeVAr9OGcf6SOTU6q40kO0t.jpg	art-vcb-0316e		1	f	f	f	7	4
+51	Redmi S2 64 gb grey	1595000	0_Tra6fcM.jpg	xiaomi-redmi-s2-64-gb-grey		100	f	f	f	3	17
+50	G965 256 gb (S9+) grey	1595000	1_2OsaV21.jpg	samsung-galaxy-g965256-s9-grey		100	f	f	f	2	18
+49	Redmi S2 32 gb gold	1595000	0_GWePBbD.jpg	xiaomi-redmi-s2-32-gb-gold		100	f	f	f	3	17
+48	G965 256 gb (S9+) black	1595000	1_e9OGgNn.jpg	samsung-galaxy-g965256-s9-black		100	f	f	f	2	18
+47	Redmi S2 32 gb grey	1595000	0_xQ8y5W3.jpg	xiaomi-redmi-s2-32-gb-grey		100	f	f	f	3	17
+46	Redmi 5 plus 64 gb black	1595000	0.jpeg	xiaomi-redmi-5-plus-64-gb-black		100	f	f	f	3	17
+45	Redmi 5 plus 64 gb gold	1595000	0000.png	xiaomi-redmi-5-plus-64-gb-gold		100	f	f	f	3	17
 30	G950 (S8) black	1595000	1_6MYunr9.jpg	samsung-galaxy-g950-s8-black		100	f	f	f	2	18
-29	Redmi 5A 16 gb black	1595000	0_2Jc1JjG.jpg	xiaomi-Redmi-5a-16- gb-black		100	f	f	f	3	17
+29	Redmi 5A 16 gb black	1595000	0_2Jc1JjG.jpg	xiaomi-redmi-5a-16-gb-black		100	f	f	f	3	17
 28	G570 (J5 prime) gold	1595000	1_GDpqXZv.jpg	samsung-galaxy-g570-j5-prime-gold		100	f	f	f	2	18
 27	G570 (J5 prime) black	1595000	1_yyMsBLz.jpg	samsung-galaxy-g570-j5-prime-black		100	f	f	f	2	18
-26	Redmi A1/64 gold	1595000	0.png	xiaomi-Redmi-a164-gold		100	f	f	f	3	17
-25	Redmi A1/64 black	1595000	0_kRXdEbm.jpg	xiaomi-Redmi-a164		100	f	f	f	3	17
-24	Redmi 5 Plus 4/64 gold	1595000	2_8t9F824.png	xiaomi-Redmi-5-464-gold		100	f	f	f	3	17
+26	Redmi A1/64 gold	1595000	0.png	xiaomi-redmi-a164-gold		100	f	f	f	3	17
+180	UE 40K 5100	1500000	1_CMiR7hn.jpg	ue-40k-5100		1	f	f	f	2	7
+188	SAMSUNG UE 43 M 5500 smart	1500000	1_U3wELGI.jpg	samsung-ue-43-m-5500-smart		1	f	f	f	2	7
+196	MWD 0323 BLK   (solo)	1500000	1_yGhod8H.jpg	mwd-0323-blk-solo		1	f	f	f	7	3
+204	20UX77 Сер	1500000	7byDvumu76dEevIximx0Typ7yLAGnvKD.jpg	20ux77-ser		1	f	f	f	7	3
+212	ART-LED 49/9000	1500000	1_4vxbi4U.jpg	art-led-499000		1	f	f	f	7	7
+220	ART-VCB 01-20	1500000	image-by-item-and-alias_jY0Fqh8.jpg	art-vcb-01-20		1	f	f	f	7	4
+181	UE 32M 5500	1500000	1_kB4bYW2.jpg	ue-32m-5500		1	f	f	f	2	7
+189	SAMSUNG UE 49 M 5500	1500000	1_XesuCPY.jpg	samsung-ue-49-m-5500		1	f	f	f	2	7
+197	MWD 0323 WHT   (solo)	1500000	1_gXxMZHd.jpg	mwd-0323-wht-solo		1	f	f	f	7	3
+205	20UX84 Бел	1500000	01_J48Z7YG.jpg	20ux84-bel		1	f	f	f	7	3
+213	ART-LED 49/9100	1500000	1_SsfZJOe.jpg	art-led-499100		1	f	f	f	7	7
+221	ART-VCB 01-20	1500000	image-by-item-and-alias_Un1AFot.jpg	art-vcb-01-20		1	f	f	f	7	4
+182	SAMSUNG UE 32 J 4500 smart	1500000	1_ZtpTns4.jpg	samsung-ue-32-j-4500-smart		1	f	f	f	2	7
+190	ART - LED 24/9000 (12volt)	1500000	1_yKykHdD.jpg	art-led-249000-12volt		1	f	f	f	7	7
+25	Redmi A1/64 black	1595000	0_kRXdEbm.jpg	xiaomi-redmi-a164		100	f	f	f	3	17
+24	Redmi 5 Plus 4/64 gold	1595000	2_8t9F824.png	xiaomi-redmi-5-464-gold		100	f	f	f	3	17
 23	G532 (J2 Prime) gold	1595000	1_6txTnW8.jpg	samsung-galaxy-g532-j2-prime-gold		100	f	f	f	2	18
 22	G532 (J2 Prime) black	1595000	1_vlU2dc7.jpg	samsung-galaxy-g532-j2-prime-black		100	f	f	f	2	18
-21	Redmi 5 Plus 4/64 black	1595000	2_QoDpfc5.jpg	xiaomi-Redmi-5-464-black		100	f	f	f	3	17
+21	Redmi 5 Plus 4/64 black	1595000	2_QoDpfc5.jpg	xiaomi-redmi-5-464-black		100	f	f	f	3	17
 20	A710 gold	1595000	0_MCyEG0L.jpg	samsung-galaxy-a710-gold		100	f	f	f	2	18
-19	Redmi 5 3/32 gold	1595000	5_wX06r4q.jpg	xiaomi-Redmi-5-332-gold		100	f	f	f	3	17
+19	Redmi 5 3/32 gold	1595000	5_wX06r4q.jpg	xiaomi-redmi-5-332-gold		100	f	f	f	3	17
 18	A710 black	1595000	0_sU9Gd2K.jpg	samsung-galaxy-a710-black		100	f	f	f	2	18
-17	Redmi 5 3/32 black	1595000	7_WlGsF85.jpg	xiaomi-Redmi-5-332-black		100	f	f	f	3	17
+17	Redmi 5 3/32 black	1595000	7_WlGsF85.jpg	xiaomi-redmi-5-332-black		100	f	f	f	3	17
 16	A520 (A5) gold	1595000	1_idkkTPK.jpg	samsung-galaxy-a520-a5gold		100	f	f	f	2	18
 15	A520 (A5) black	1595000	1_3tJ4jA6.jpg	samsung-galaxy-a520-a5black		100	f	f	f	2	18
-14	Redmi 5 2/16 black	1595000	5_BHK4nEE.jpg	xiaomi-Redmi-5-216black		100	f	f	f	3	17
+14	Redmi 5 2/16 black	1595000	5_BHK4nEE.jpg	xiaomi-redmi-5-216black		100	f	f	f	3	17
 13	A320 (A3) gold	1595000	1_Tp2kOaA.jpg	samsung-galaxy-a320-a3-gold		100	f	f	f	2	18
 12	A320 (A3) black	1595000	1_TB5soJQ.jpg	samsung-galaxy-a320-a3-black		100	f	f	f	2	18
 11	A730 (A8 plus) grey	1595000	0.jpg	samsung-galaxy-730-a8-plus-grey		100	f	f	f	2	18
+198	ART-LED 32/9100	1500000	1_o1TyqZ5.jpg	art-led-329100		1	f	f	f	7	7
+206	ARTEL 43/A9000	1500000	1_3cEX0MX.jpg	artel-43a9000		1	f	f	f	7	7
+214	AVL- VCA 1620	1500000	NtV38WVa5TGZu5ZuJGAsKQxRM2jtuIrN.png	avl-vca-1620		1	f	f	f	8	4
+222	ART-VCC 01-20	1500000	image-by-item-and-alias_WBWJbzg.jpg	art-vcc-01-20		1	f	f	f	7	4
 10	A730 (A8 plus) gold	1595000	ru-galaxy-a8-a730-sm-a730fzddser-frontgold-87027407.jpg	samsung-galaxy-730-a8-plus-gold		100	f	f	f	2	18
 9	A730 (A8 plus) black	1595000	1_9WDwak5.jpg	samsung-galaxy-730-a8-plus-black		100	f	f	f	2	18
 8	A530 (A8) grey	1595000	1_q6L5Mnw.jpg	samsung-galaxy-a530-a8-grey		100	f	f	f	2	18
@@ -2208,7 +2456,7 @@ COPY public.store_product (id, title, price, image, slug, description, quantity,
 5	A600 gold	1595000	1_emUuR6t.jpg	samsung-galaxy-a600-gold		100	f	f	f	2	18
 4	A605 black	1595000	1_SzwWvRc.jpg	samsung-galaxy-a605-black		100	f	f	f	2	18
 3	A600 black	1595000	1_M2nxtHc.jpg	samsung-galaxy-a600-black		100	f	f	f	2	18
-2	Redmi 5 2/16 gb gold	1595000	00.jpg	xiaomi-mi-5-16 gb-gold		100	f	t	f	3	17
+2	Redmi 5 2/16 gb gold	1595000	00.jpg	xiaomi-mi-5-16-gb-gold		100	f	t	f	3	17
 \.
 
 
@@ -2216,7 +2464,7 @@ COPY public.store_product (id, title, price, image, slug, description, quantity,
 -- Name: store_product_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.store_product_id_seq', 173, true);
+SELECT pg_catalog.setval('public.store_product_id_seq', 226, true);
 
 
 --
@@ -2991,10 +3239,6 @@ COPY public.store_productimage (id, image, product_id) FROM stdin;
 775	3_Y5lp35J.jpg	141
 776	2_Ezll9iZ.jpg	141
 777	4_2piquQi.jpg	141
-778	1_hQgQFLQ.png	142
-779	3_Ated2Zr.jpg	142
-780	2_sfI5Ynm.jpg	142
-781	4_s7sJjtF.jpg	142
 782	1_xOZeJYr.jpg	143
 783	1_TZJDvvu.png	143
 784	3.jpeg	143
@@ -3080,6 +3324,9 @@ COPY public.store_productimage (id, image, product_id) FROM stdin;
 867	3_x2Rrrpy.jpg	162
 868	ru-vc18m21d0vg-vc18m21b0s2-ev-rperspectiveblue-63683120_DwDkG4U.jpg	163
 869	ru-vc18m21d0vg-vc18m21b0s2-ev-rightblue-63683121.jpg	163
+778	1_PDlfOrd.png	142
+779	2_kdkLLyH.jpg	142
+780	3_0nTSkN7.jpg	142
 870	ru-vc18m21d0vg-vc18m21b0s2-ev-frontblue-63683149.jpg	163
 871	ru-vc18m21d0vg-vc18m21b0s2-ev-dynamicblue-63683127.jpg	163
 872	ru-vc18m21d0vg-vc18m21b0s2-ev-dynamicblue-63683126.jpg	163
@@ -3149,6 +3396,183 @@ COPY public.store_productimage (id, image, product_id) FROM stdin;
 933	1_uSENTCq.jpg	173
 934	2_zyfOeGO.jpg	173
 935	3_KQNGeUl.jpg	173
+936	1_JVgCp2i.jpg	174
+937	2_N5vGylQ.jpg	174
+938	3_1vO5vt8.jpg	174
+939	4_oVLwoj3.jpg	174
+940	1_W7oeFYY.jpg	175
+941	2_Bk5V7sL.jpg	175
+942	3_S9me0kT.jpg	175
+943	4_ydv8B12.jpg	175
+944	5_PFuCWYo.jpg	175
+945	1_6gGJJ5f.jpg	176
+946	2_oxKP6ip.jpg	176
+947	3_4PU93hJ.jpg	176
+948	4_coxOVAc.jpg	176
+949	1_e0pz0vo.jpg	177
+950	2_991FGGY.jpg	177
+951	3_3dTLKA9.jpg	177
+952	4_d5q8YVX.jpg	177
+953	_SAMSUNG_ART_UE40М5070_FULL_HD_4-650x489.jpg	178
+954	2_pZsUDyx.jpg	178
+955	3_NZRS8Lq.jpg	178
+956	4_xi9CehM.jpg	178
+957	Без_названия_1_F7lUp38.jpg	179
+958	Без_названия_2_YaiL9Ge.jpg	179
+959	Без_названия_JWnyqB3.jpg	179
+960	1_tEl1yrX.jpg	180
+961	2_Jg6ezZF.jpg	180
+962	3_b5Uih0O.jpg	180
+963	4_rHsMcX6.jpg	180
+964	5_WfKaJRz.jpg	180
+965	6_EDUBBEc.jpg	180
+966	7_z3AWxFI.jpg	180
+781	4_3acnXca.jpg	142
+967	1_P8vBmyl.jpg	181
+968	3_rJK4vZ0.jpg	181
+969	4_DMRo657.jpg	181
+970	2_5KD2OIC.jpg	181
+971	7_IpQVSoR.jpg	181
+972	8_sZb8Svk.jpg	181
+973	9_LtauGPs.jpg	181
+974	1_LZOsgcy.jpg	182
+975	2_Cr7bSaj.jpg	182
+976	3_SqCVPSy.jpg	182
+977	4_3aZdmKj.jpg	182
+978	2_MqRG6kw.jpg	183
+979	3_YDKupvk.jpg	183
+980	4_qamZA1F.jpg	183
+981	10_Dmanzue.jpg	183
+982	1_hLKAVJO.jpg	184
+983	2_gPVUmJY.jpg	184
+984	4_839Vgxn.jpg	184
+985	3_vuGpK4o.jpg	184
+986	1_l0zopoT.jpg	185
+987	2_zY2Yd7j.jpg	185
+988	2_nNJgvnX.jpg	186
+989	3_hRtpfUH.jpg	186
+990	4_A4AP3Fo.jpg	186
+991	6_OBlwTxA.jpg	186
+992	7_AWfOFkO.jpg	186
+993	8_RzflsCw.jpg	186
+994	9_SOcBDWp.jpg	186
+995	1_rTopKKA.jpg	187
+996	3_VzPGyW0.jpg	187
+997	5_xGPO9q1.jpg	187
+998	7_fqhmz5H.jpg	187
+999	2_5YlF6Bt.jpg	187
+1000	4_g4l6QrP.jpg	188
+1001	5_OVyBEkq.jpg	188
+1002	6_bNSXqot.jpg	188
+1003	8_ShsheoG.jpg	188
+1004	9_STQ4wqE.jpg	188
+1005	2_o3BRRgm.jpg	188
+1006	10_72zErgG.jpg	188
+1007	2_b3QrSge.jpg	189
+1008	3_rF4Ze1E.jpg	189
+1009	4_zT0sbCS.jpg	189
+1010	5_KXTeJqC.jpg	189
+1011	6_EhOr4Ev.jpg	189
+1012	7_yXH0s7g.jpg	189
+1013	8_HpYm0XP.jpg	189
+1014	9_SmWRoGl.jpg	189
+1015	ru-microwave-oven-solo-me83krw-3-me83krw-3-bw-002-r-perspective-white.jpg	191
+1016	ru-microwave-oven-solo-me83krw-3-me83krw-3-bw-003-top-white.jpg	191
+1017	ru-microwave-oven-solo-me83krw-3-me83krw-3-bw-004-dynamic-white.jpg	191
+1018	1_RrqIyhN.jpg	192
+1019	04bb9b032b9e650d00792f1ac630df2f.png	192
+1027	2_CVHAxXj.png	195
+1028	3_QRMKGlA.png	195
+1033	3_1DJVlAS.jpg	198
+1034	2_z4CQwGZ.jpg	198
+1029	2_AkhCMtq.jpg	196
+1030	1_EvDRxzN.jpg	196
+1038	EYlDkbSxc7Wgb9RNJew786z4zUXjMr85.jpg	196
+1031	1_qXp1VqA.jpg	197
+1032	2_37k2ZbD.jpg	197
+1035	L9LR66lA2awfHCIASk2Vs0wnxZoaIRhD_usZi4O0.jpg	199
+1036	UYcxthJZN2OTQTBxkgSWbM2k6Lmg3b19_N8CXCUI.jpg	199
+1037	AgVUc8ZwJgf6rbSEsDU0gGGeEpdg4U8i_UQhAuTw.jpg	199
+1024	IEr97a0nizLQi7LgHPtNUyCNr77nz2-a_OTDp5nd.jpg	194
+1025	image-by-item-and-alias_1.jpg	194
+1026	image-by-item-and-alias_2.jpg	194
+1039	image-by-item-and-alias.jpg	194
+1020	1_wu86Pg1.jpg	193
+1021	2_fj8qG0f.jpg	193
+1022	3_ZxuQkpK.jpg	193
+1023	TyyP1WjQh4W_5OoyPEfRk9hInO_rpppb_mSjGX9E.jpg	193
+1040	Idhvw0GcZ_4BwebYCU-Q-MUJwlGnbGmH_SoaKTky.jpg	200
+1041	WHUxNZbrI9xkH10frD1hKysXiyfTjHX4_ATAHMt2.jpg	200
+1042	2_pNcHVCl.jpg	201
+1043	V8MSamJOkNqyUck2SMdP5SxqST8ixZaz_CYUOHVX.jpg	202
+1044	VaM6qMj8OW36zOtP2lopeWyafQc-nNb6_JPoZiWZ.jpg	202
+1045	20MX63_Бел._111-650x489_1_ccGtzv9.jpg	203
+1046	20MX63_Бел._111-650x489.jpg	203
+1047	20MX63_Бел._222-650x489.jpg	203
+1048	20MX63_Бел._333-650x489.jpg	203
+1049	7byDvumu76dEevIximx0Typ7yLAGnvKD_pIVysvN.jpg	204
+1050	9LiM0RpN7B6-aNJe7FHDSiatWo1s1639_1.jpg	204
+1051	9LiM0RpN7B6-aNJe7FHDSiatWo1s1639.jpg	204
+1052	rwoK-LBV5aAaoOtFDTAIkmA1_pSYCGHr.jpg	204
+1053	01_kEWsbYw.jpg	205
+1054	1_yLVFftc.jpg	205
+1055	2_hlqjxLY.jpg	205
+1056	3_cq36C2W.jpg	205
+1057	11_r7S7jnd.jpg	205
+1058	22_Du0dgL0.jpg	205
+1059	2_fc4Urq2.jpg	206
+1060	3_kTz2RNh.jpg	206
+1061	1_3XWkikV.jpg	207
+1062	2_Uq3PJoc.jpg	207
+1063	3_i7a3NxK.jpg	207
+1064	1_XJsKdC7.jpg	208
+1065	2_4WmEAuG.jpg	208
+1066	3_67ymVdD.jpg	208
+1067	1_e2KtliY.jpg	210
+1068	2_t7MTO0l.jpg	210
+1069	3_tNLxzCz.jpg	210
+1070	p_T3rjH1mXLPRtSjoTMOfq3TN_Y0CvPY.jpg	211
+1071	uhFXXFn6N2DgToRLKIy6fgdd2T8Uyih0_1.jpg	211
+1072	gk7O6nNcOKrKglPMxX4z94Zj_54uUY2b.jpg	212
+1073	L4GMLrcC3hW6ZSRk0acXa11_Yc46I6bZ.jpg	212
+1074	eDicoI-g4L4dewwQXdg0SDipMi7tCnOP.jpg	213
+1075	Z1zdvjo3GhheeKbZ9xCMDql5tNKAyQbd.jpg	213
+1076	NtV38WVa5TGZu5ZuJGAsKQxRM2jtuIrN_k06yEJn.png	214
+1077	Avalon_VACUUm_3.png	214
+1078	G1of_NJfoWa8QXFuJcIEigIltdshZ_m8.png	214
+1079	lfesB7TKCayGQCbIIQ5JLPQy11PO2V2U.png	214
+1080	lbuNSwJX2_kzDXigrcycbz4Q4FoDawqC_zsnH4RP.png	215
+1081	B217xp4R08zJFRFHyNKVj_AwuHzkbM2A.png	215
+1082	AVL_VCC_2245_Red.png	215
+1083	UjG6Xq9VQ31caKr3uUgx0sp8p8-z15xh.png	215
+1084	84cMJvQ8WNDOmlOyFdBw7xG-jMDQ6zZO_sLOD44J.png	216
+1085	OVx7su4J0LO-gvWgH7wrYl6R_vwWOnL-.png	216
+1086	AVL_VCC_2245_Blue.png	216
+1087	rFm9PQ3hvIOZ4VQ6ALk6FscfeQYehuCG.png	216
+1088	UF5YhCXkpCNGEj5PrRXmapu_LQgsLdQq.png	216
+1089	image-by-item-and-alias_vnIoCO6.jpg	217
+1090	ERCuLZIgcsf_wrPgvgnXOiNkVGbWoou9_1.jpg	217
+1091	sqg-TIYUH4cYnjE9jjqKj_PQcBSlyebR_RYpTrV4.jpeg	218
+1092	WNY87Ygn4EeVAr9OGcf6SOTU6q40kO0t_PukFGFY.jpg	219
+1093	mquuLE75zykBQCR8E68ULf9Mw4WTlh8U.jpg	219
+1094	image-by-item-and-alias_Y3oZa9y.jpg	220
+1095	image-by-item-and-alias_1_O81N7DR.jpg	220
+1096	image-by-item-and-alias_EVugFQw.jpg	221
+1097	ERCuLZIgcsf_wrPgvgnXOiNkVGbWoou9_1_hoToAgC.jpg	221
+1098	image-by-item-and-alias_5eYb0Rd.jpg	222
+1099	image-by-item-and-alias_1_BLc7rpv.jpg	222
+1100	image-by-item-and-alias_1_F1cEHpC.jpg	223
+1101	image-by-item-and-alias_2_32ebuSY.jpg	223
+1102	image-by-item-and-alias_5.jpg	224
+1103	rASrYI5GXV7OKzd7vekqviLx2EGsNR6E_sRP7430.png	224
+1104	image-by-item-and-alias_1_p327LGq.jpg	224
+1105	image-by-item-and-alias_2_FqVuTGe.jpg	224
+1106	cuA8iosw7ZPOHMCh8DUpU--pvRGOoNgJ_HkoTuVo.jpg	225
+1107	image-by-item-and-alias_mpZMfBr.jpg	225
+1108	uAjJW61pggDQ88QlRSr9JXybUR86p8dn.jpg	225
+1109	image-by-item-and-alias_4.jpg	225
+1110	VF_aMChmGQJgJYe0VlZ5HhB1CNGa8g10.jpg	225
+1111	image-by-item-and-alias_3_DCxajGk.jpg	226
 \.
 
 
@@ -3156,7 +3580,7 @@ COPY public.store_productimage (id, image, product_id) FROM stdin;
 -- Name: store_productimage_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.store_productimage_id_seq', 935, true);
+SELECT pg_catalog.setval('public.store_productimage_id_seq', 1111, true);
 
 
 --
@@ -5719,6 +6143,928 @@ COPY public.store_specification (id, info, product_id, specification_type_id) FR
 2539	800 Вт	173	41
 2540	1150 Вт	173	17
 2541	1 йил	173	42
+2542	ME83KRW-1K/BW	174	16
+2543	Ўзбекистон	174	37
+2544	Оқ	174	15
+2545	Оддий (соло)	174	38
+2546	Электрон	174	24
+2547	28 х 49 х 36 см	174	12
+2548	11.5 кг	174	10
+2549	23 л	174	39
+2550	Биокерамик эмаль	174	40
+2551	Болалардан ҳимоя, Таймер, Соат, Дисплей	174	11
+2552	800 Вт	174	41
+2553	1150 Вт	174	17
+2554	1 йил	174	42
+2555	MS23F301TAWKBW	175	16
+2556	Ўзбекистон	175	37
+2557	Оқ	175	15
+2558	Оддий (соло)	175	38
+2559	Электрон	175	24
+2560	38 х 49 х 28 см	175	12
+2561	11.5 кг	175	10
+2562	23 л	175	39
+2563	Биокерамик эмаль	175	40
+2564	800 Вт	175	41
+2565	Болалардан ҳимоя, Таймер, Дисплей	175	11
+2566	1 йил	175	42
+2567	MS23F302TASKBW	176	16
+2568	Ўзбекистон	176	37
+2569	Бинафшаранг/Кулранг	176	15
+2570	Оддий (соло)	176	38
+2571	Электрон	176	24
+2572	21 х 33 х 32.4 см	176	12
+2573	12 кг	176	10
+2574	23 л	176	39
+2575	Биокерамик эмаль	176	40
+2576	Товушли сигнал, Таймер, Соат, Дисплей	176	11
+2577	800 Вт	176	41
+2578	1150 Вт	176	17
+2579	1 йил	176	42
+2580	MS23F302TAKKBW	177	16
+2581	Ўзбекистон	177	37
+2582	Бинафшаранг/Кулранг	177	15
+2583	Оддий (соло)	177	38
+2584	Электрон	177	24
+2585	21 х 33 х 32 см	177	12
+2586	11.5 кг	177	10
+2587	23 л	177	39
+2588	Биокерамик эмаль	177	40
+2589	Таймер, Дисплей	177	11
+2590	800 Вт	177	41
+2591	800 Вт	177	17
+2592	1 йил	177	42
+2593	SAMSUNG UE 40M 5070 Jedi	178	16
+2594	ЖК-телевизор	178	38
+2595	40" (102 см)	178	45
+2596	16:09	178	46
+2597	1920x1080	178	47
+2598	1080p Full HD мавжуд, Edge LED	178	48
+2599	мавжуд, Edge LED	178	49
+2600	мавжуд	178	50
+2601	50Гц	178	51
+2602	DVB-T MPEG4	178	53
+2603	DVB-C MPEG4	178	54
+2604	20 Вт (2x10 Вт)	178	58
+2605	икки динамик	178	59
+2606	MP3, WMA, MPEG4, DivX, MKV, JPEG	178	62
+2607	AV, компонентный, HDMI x2, USB	178	63
+2608	Оптик	178	64
+2609	қора	178	15
+2610	мавжуд	178	69
+2611	923x553x170 мм	178	70
+2612	7.2 кг	178	71
+2613	7 кг	178	10
+2614	105 Вт	178	17
+2615	1 йил	178	42
+2616	923x531x73 мм	178	12
+2617	мавжуд	178	55
+2618	мавжуд	178	60
+2619	2	178	67
+2620	SAMSUNG UE 49M 5070 Jedi	179	16
+2621	LED телевизор	179	38
+2622	48.5" (123 см)	179	45
+2623	16:09	179	46
+2624	1920x1080 (FullHD)	179	47
+2625	1080p Full HD	179	48
+2626	мавжуд, Edge LED	179	49
+2627	мавжуд	179	50
+2628	50Гц	179	51
+2629	DVB-T MPEG4	179	53
+2630	DVB-C MPEG4	179	54
+2631	мавжуд	179	55
+2632	мавжуд	179	60
+2633	20 Вт (2x10 Вт)	179	58
+2634	икки динамик	179	59
+2635	мавжуд	179	61
+2636	MP3, WMA, JPEG, DivX, MPEG4, MKV	179	62
+2637	AV, компонентный, HDMI x2, USB	179	63
+2638	Оптик	179	64
+2639	қора	179	15
+2640	1	179	67
+2641	мавжуд	179	69
+2642	1119 x 670 x 188 мм	179	70
+2643	10.6 кг	179	71
+2644	1119 x 650 x 74 мм	179	12
+2645	10.3 кг	179	10
+2646	128 Вт	179	17
+2647	1 йил	179	42
+2648	UE 40K 5100	180	16
+2649	LED телевизор	180	38
+2650	40" (102 см)	180	45
+2651	16:09	180	46
+2652	1920x1080 (FullHD)	180	47
+2653	1080p Full HD	180	48
+2654	мавжуд, Edge LED	180	49
+2655	мавжуд	180	50
+2656	DVB-T MPEG4	180	53
+2657	DVB-C MPEG4	180	54
+2658	мавжуд	180	55
+2659	20 Вт (2x10 Вт)	180	58
+2660	икки динамик	180	59
+2661	мавжуд	180	60
+2662	MP3, WMA, MPEG4, MKV, JPEG	180	62
+2663	AV, компонентный, HDMI x2, USB	180	63
+2664	Оптик	180	64
+2665	1	180	67
+2666	қора	180	15
+2667	мавжуд	180	69
+2668	901 x 621 x 191 мм	180	70
+2669	8.2 кг	180	71
+2670	901 x 557 x 78 мм	180	12
+2671	8.1 кг	180	10
+2672	1 йил	180	42
+2673	DVB-T2 ни қўллаб-қувватлаш, DVB-S2 ни қўллаб-қувватлаш, Расм ичида расм, Кутиш таймери	180	11
+2674	UE 32M 5500	181	16
+2675	LED телевизор	181	38
+2676	31.5" (80 см)	181	45
+2677	16:09	181	46
+2678	1920x1080 (FullHD)	181	47
+2679	1080p Full HD	181	48
+2680	мавжуд, Edge LED	181	49
+2681	мавжуд	181	50
+2682	DVB-T MPEG4	181	53
+2683	DVB-C MPEG4	181	54
+2684	мавжуд	181	55
+2685	20 Вт (2x10 Вт)	181	58
+2686	икки динамик	181	59
+2687	мавжуд	181	60
+2688	MP3, WMA, MPEG4, DivX, MKV, JPEG	181	62
+2689	AV, компонентный, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi 802.11n, WiDi, Miracast	181	63
+2690	Оптик	181	64
+2691	2	181	67
+2692	темный титан	181	15
+2693	мавжуд	181	69
+2694	730 x 488 x 208 мм	181	70
+2695	9.5 кг	181	71
+2696	730 x 434 x 55 мм	181	12
+2697	6.2 кг	181	10
+2698	50Гц	181	51
+2699	65 Вт	181	17
+2700	1 йил	181	42
+2701	Ёритиш датчиги, Болалардан ҳимоя, Кутиш таймери, Қуршалган товуш, NICAM стереозвукини қўллаш	181	11
+2702	SAMSUNG UE 32 J 4500 smart	182	16
+2703	LED телевизор	182	38
+2704	32" (81 см)	182	45
+2705	0.672916667	182	46
+2706	1366x768 (FullHD)	182	47
+2707	мавжуд, Edge LED	182	49
+2708	мавжуд	182	50
+2709	50Гц	182	51
+2710	DVB-T MPEG4	182	53
+2711	DVB-C MPEG4	182	54
+2712	мавжуд	182	55
+2713	10 Вт (2x5 Вт)	182	58
+2714	икки динамик	182	59
+2715	мавжуд	182	60
+2716	MP3, WMA, FLAC, OGG, ACC, WAV, APE, ALAC, JPEG, BMP, PNG, MPO, DivX, MPEG4, MKV, AVI, MP4, WMV, TS, MOV, VOB, ASF, FLV, 3GP, H.264, VC-1	182	62
+2717	AV, компонентный, HDMI x2, USB	182	63
+2718	Оптик	182	64
+2719	қора	182	15
+2720	мавжуд	182	69
+2721	745.4x464.6x150.5 мм	182	70
+2722	4.0 кг	182	71
+2723	745.4x442.2x69.0 мм	182	12
+2724	3.91 кг	182	10
+2725	59 Вт	182	17
+2726	1 йил	182	42
+2727	Расм ичида расм, DVB-T2 ни қўллаб-қувватлаш, Smart TV ни қўллаб-қувватлаш	182	11
+2728	SAMSUNG UE 55 M 6500 Curved	183	16
+2729	LED телевизор	183	38
+2730	55" (140 см)	183	45
+2731	16:09	183	46
+2732	1920 x 1080(FullHD)	183	47
+2733	1080p Full HD	183	48
+2734	мавжуд, Edge LED	183	49
+2735	мавжуд	183	50
+2736	60Гц	183	51
+2737	мавжуд	183	11
+2738	DVB-T MPEG4	183	53
+2739	DVB-C MPEG4	183	54
+2740	мавжуд	183	55
+2741	20 Вт (2x10 Вт)	183	58
+2742	икки динамик	183	59
+2743	мавжуд	183	60
+2744	мавжуд	183	61
+2745	MP3, WMA, MPEG4, DivX, MKV, JPEG	183	62
+2746	AV, компонентный, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi, WiDi, Miracast	183	63
+2747	Оптик	183	64
+2748	2	183	67
+2749	мавжуд	183	68
+2750	мавжуд	183	69
+2751	1240x789x293 мм	183	70
+2752	17.1 кг	183	71
+2753	15.4 кг	183	10
+2754	қора титан	183	15
+2755	SAMSUNG UE 40 J 5200 smart	184	16
+2756	LED телевизор	184	38
+2757	40" (101.6 см)	184	45
+2758	16:09	184	46
+2759	1920 x 1080(FullHD)	184	47
+2760	Full HD	184	48
+2761	мавжуд, Edge LED	184	49
+2762	мавжуд	184	50
+2763	50Гц	184	51
+2764	DVB-C MPEG4	184	54
+2765	мавжуд	184	55
+2766	20 Вт (2x10 Вт)	184	58
+2767	икки динамик	184	59
+2768	мавжуд	184	60
+2769	MP3, WMA, FLAC, OGG, ACC, WAV, APE, ALAC, JPEG, BMP, PNG, MPO, DivX, MPEG4, MKV, AVI, MP4, WMV, TS, MOV, VOB, ASF, FLV, 3GP, H.264, VC-1	184	62
+2770	AV, компонентный, HDMI x2, USB	184	63
+2771	Оптик	184	64
+2772	1	184	67
+2773	қора	184	15
+2774	мавжуд	184	69
+2775	922.7x555.1x170.3 мм	184	70
+2776	6.7 кг	184	71
+2777	922.7x530.7x72.0 мм	184	12
+2778	6.5 кг	184	10
+2779	100 Вт	184	17
+2780	1 йил	184	42
+2781	Болалардан ҳимоя, Расм ичида расм, DVB-S2 ни қўллаб-қувватлаш, DVB-T2 ни қўллаб-қувватлаш, Стереозвук	184	11
+2782	SAMSUNG UE 49 J 5300 smart	185	16
+2783	LED телевизор	185	38
+2784	49" (101.6 см)	185	45
+2785	16:09	185	46
+2786	1920 x 1080(FullHD)	185	47
+2787	1080p Full HD	185	48
+2788	мавжуд, Edge LED	185	49
+2789	мавжуд	185	50
+2790	50Гц	185	51
+2791	DVB-T MPEG4	185	53
+2792	DVB-C MPEG4	185	54
+2793	мавжуд	185	55
+2794	20 Вт (2x10 Вт)	185	58
+2795	икки динамик	185	59
+2796	мавжуд	185	60
+2797	мавжуд	185	61
+2798	MP3, WMA, MPEG4, MKV, JPEG	185	62
+2799	AV, компонентный, HDMI x2, USB, Ethernet (RJ-45), Wi-Fi	185	63
+2800	Оптик	185	64
+2801	2	185	67
+2802	мавжуд	185	68
+2803	мавжуд	185	69
+2804	1119x670x188 мм	185	70
+2805	10.6 кг	185	71
+2806	1119x650x74 мм	185	12
+2807	10.3 кг	185	10
+2808	Болалардан ҳимоя, Расм ичида расм, Қуршалган товуш	185	11
+2809	143 Вт	185	17
+2810	қора	185	15
+2811	1 йил	185	42
+2812	SAMSUNG UE 55 M 5500	186	16
+2813	LED телевизор	186	38
+2814	55" (139 см)	186	45
+2815	1920 x 1080(FullHD)	186	47
+2816	1080p Full HD	186	48
+2817	мавжуд, Edge LED	186	49
+2818	мавжуд	186	50
+2819	50Гц	186	51
+2820	мавжуд	186	11
+2821	DVB-T MPEG4	186	53
+2822	DVB-C MPEG4	186	54
+2823	мавжуд	186	55
+2824	20 Вт (2x10 Вт)	186	58
+2825	икки динамик	186	59
+2826	мавжуд	186	60
+2827	мавжуд	186	61
+2828	MP3, WMA, MPEG4, DivX, MKV, JPEG	186	62
+2829	AV, компонентный, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi 802.11n, WiDi, Miracast	186	63
+2830	Оптик	186	64
+2831	1	186	67
+2832	мавжуд	186	68
+2833	мавжуд	186	69
+2834	1242x786x294 мм	186	70
+2835	17.6 кг	186	71
+2836	1242x721x55 мм	186	12
+2837	16 кг	186	10
+2838	108 Вт	186	17
+2839	қора титан	186	15
+2840	SAMSUNG UE 49 M 6500 Curved	187	16
+2841	LED телевизор	187	38
+2842	49" (124 см)	187	45
+2843	16:09	187	46
+2844	1920 x 1080(FullHD)	187	47
+2845	1080p Full HD	187	48
+2846	мавжуд, Edge LED	187	49
+2847	мавжуд	187	50
+2848	60Гц	187	51
+2849	DVB-T MPEG4	187	53
+2850	DVB-C MPEG4	187	54
+2851	мавжуд	187	55
+2852	20 Вт (2x10 Вт)	187	58
+2853	икки динамик	187	59
+2854	мавжуд	187	60
+2855	мавжуд	187	61
+2856	MP3, WMA, MPEG4, DivX, MKV, JPEG	187	62
+2857	AV, компонентный, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi, WiDi, Miracast	187	63
+2858	Оптик	187	64
+2859	2	187	67
+2860	мавжуд	187	68
+2861	мавжуд	187	69
+2862	1105x712x293 мм	187	70
+2863	13.9 кг	187	71
+2864	1105x646x89 мм	187	12
+2865	12.4 кг	187	10
+2866	қора титан	187	15
+2867	Ёритиш датчиги, Болалардан ҳимоя, Қуршалган товуш, Босқичда кўриш	187	11
+2868	125 Вт	187	17
+2869	1 йил	187	42
+2870	4200R	187	72
+2871	4200R	188	16
+2872	LED телевизор	188	38
+2873	43" (108 см)	188	45
+2874	16:09	188	46
+2875	1920 x 1080(FullHD)	188	47
+2876	1080p Full HD	188	48
+2877	мавжуд, Edge LED	188	49
+2878	мавжуд	188	50
+2879	50Гц	188	51
+2880	DVB-T MPEG4	188	53
+2881	DVB-C MPEG4	188	54
+2882	мавжуд	188	55
+2883	20 Вт (2x10 Вт)	188	58
+2884	икки динамик	188	59
+2885	мавжуд	188	60
+2886	мавжуд	188	61
+2887	MP3, WMA, MPEG4, DivX, MKV, JPEG	188	62
+2888	AV, компонентный, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi, WiDi, Miracast	188	63
+2889	Оптик	188	64
+2890	1	188	67
+2891	мавжуд	188	68
+2892	мавжуд	188	69
+2893	973x635x251 мм	188	70
+2894	10.5 кг	188	71
+2895	SAMSUNG UE 49 M 5500	189	16
+2896	LED телевизор	189	38
+2897	49" (123 см)	189	45
+2898	16:09	189	46
+2899	1920 x 1080(FullHD)	189	47
+2900	1080p Full HD	189	48
+2901	мавжуд, Edge LED	189	49
+2902	мавжуд	189	50
+2903	50Гц	189	51
+2904	DVB-T MPEG4	189	53
+2905	DVB-C MPEG4	189	54
+2906	мавжуд	189	55
+2907	20 Вт (2x10 Вт)	189	58
+2908	икки динамик	189	59
+2909	мавжуд	189	60
+2910	мавжуд	189	61
+2911	MP3, WMA, MPEG4, DivX, MKV, JPEG	189	62
+2912	AV, компонентный, HDMI x3, USB x2, Ethernet (RJ-45), Bluetooth, Wi-Fi 802.11n, WiDi, Miracast	189	63
+2913	Оптик	189	64
+2914	1	189	67
+2915	мавжуд	189	68
+2916	мавжуд	189	69
+2917	1106x710x294 мм	189	70
+2918	14.6 кг	189	71
+2919	1106x645x55 мм	189	12
+2920	13 кг	189	10
+2921	98 Вт	189	17
+2922	қора титан	189	15
+2923	ART - LED 24/9000 (12volt)	190	16
+2924	Ўзбекистон	190	37
+2925	28" (61 см)	190	45
+2926	16:09	190	46
+2927	HD 1366 x 768	190	47
+2928	PAL / SECAM	190	73
+2929	MPEG-2 H.264	190	74
+2930	мавжуд	190	75
+2931	мавжуд	190	76
+2932	mini AV	190	77
+2933	DVB-T/T2/C	190	79
+2934	DVB-S/S2	190	80
+2935	мавжуд	190	81
+2936	110-240 V 50/60 Hz	190	82
+2937	0,5 Вт	190	83
+2938	30 Вт	190	84
+2939	337,4 х 559,2 х 54,8	190	12
+2940	379 х 559,2 х 147	190	70
+2941	3,7 кг	190	10
+2942	23 литр	191	20
+2943	1150 Вт	191	17
+2944	13 кг	191	34
+2945	ART-LED 9000/28	192	16
+2946	Ўзбекистон	192	37
+2947	28" (71 см)	192	45
+2948	16:9	192	46
+2949	HD 1366 х 768	192	47
+2950	PAL/SECAM	192	73
+2951	MPEG-2H.264	192	74
+2952	мавжуд	192	75
+2953	мавжуд	192	76
+2954	mini AV	192	77
+2955	SPDIF	192	78
+2956	DVB-T /Т2 /C	192	79
+2957	DVB-S/S2	192	80
+2958	мавжуд	192	81
+2959	110 — 240V 50 / 60 Hz	192	82
+2960	0,5 Вт	192	83
+2961	35 Вт	192	84
+2962	389,1 х 644,9 х 83,6	192	12
+2963	430,7 х 644,9 х 147	192	70
+2965	MWM 0120 WHT   (solo)	193	16
+2966	Ўзбекистон	193	37
+2967	Оқ	193	15
+2968	механик	193	24
+2969	85%	193	85
+2970	220В / 50Гц	193	86
+2971	1050Вт	193	44
+2972	100-700Вт	193	41
+2973	35мин	193	87
+2974	2450МГц	193	88
+2975	256 х 438 х 360	193	12
+2976	9.5кг	193	10
+2977	1 йил	193	42
+2978	MWD 0220 BLK   (solo)	194	16
+2979	Ўзбекистон	194	37
+2980	Жигарранг	194	15
+2981	рақамли	194	24
+2982	85%	194	85
+2983	220В / 50Гц	194	86
+2984	95мин	194	87
+2985	2450МГц	194	88
+2987	258 х 442 х 354	194	12
+2988	1 йил	194	42
+2989	1050Вт	194	44
+2990	10.1кг	194	10
+2991	20	194	39
+2992	20	193	39
+2993	ART-LED 9000/32	195	16
+2994	Ўзбекистон	195	37
+2995	32" (81 см)	195	45
+2996	16:9	195	46
+2997	HD 1366 х 768	195	47
+2998	PAL/SECAM	195	73
+2999	MPEG-2H.264	195	74
+3000	мавжуд	195	75
+3001	мавжуд	195	76
+3002	mini AV	195	77
+3003	SPDIF	195	78
+3004	DVB-T /Т2 /C	195	79
+3005	DVB-S/S2	195	80
+3006	мавжуд	195	81
+3007	110 — 240V 50 / 60 Hz	195	82
+3008	0,5 Вт	195	83
+3009	40 Вт	195	84
+3010	432,3 х 736 х 81	195	12
+3011	475 х 736 х 197,8	195	70
+3013	MWD 0323 BLK   (solo)	196	16
+3014	Ўзбекистон	196	37
+3015	Жигарранг	196	15
+3016	Рақамли	196	24
+3017	87%	196	85
+3018	220В / 50Гц	196	86
+3019	1250Вт	196	44
+3020	100-800Вт	196	89
+3021	95мин	196	87
+3022	2450МГц	196	88
+3023	23л	196	39
+3024	292 х 490 х 400	196	12
+3025	12.56кг	196	10
+3026	1 йил	196	42
+3027	MWD 0323 WHT   (solo)	197	16
+3028	Ўзбекистон	197	37
+3029	Оқ	197	15
+3030	Рақамли	197	24
+3031	87%	197	85
+3032	220В / 50Гц	197	86
+3033	1250ВТ	197	44
+3034	100-800ВТ	197	41
+3035	95мин	197	87
+3036	2450МГц	197	88
+3037	23	197	39
+3038	292 х 490 х 400	197	12
+3039	12.56кг	197	10
+3040	1 йил	197	42
+2964	3,8 Кг	192	10
+3012	4,5 Кг	195	10
+3041	ART-LED 32/9100	198	16
+3042	Ўзбекистон	198	37
+3043	32" (81 см)	198	45
+3044	16:9	198	46
+3045	HD 1366 х 768	198	47
+3046	PAL/SECAM	198	73
+3047	MPEG-2H.264	198	74
+3048	мавжуд	198	75
+3049	мавжуд	198	76
+3050	мавжуд	198	77
+3051	SPDIF	198	78
+3052	DVB-T /Т2/C	198	79
+3053	DVB-S/S2	198	80
+3054	мавжуд	198	81
+3055	110 — 240V 50 / 60 Hz	198	82
+3056	0,5 Вт	198	83
+3057	45 Вт	198	84
+3058	435 х 736 х 81	198	12
+3059	475 х 736 х 180	198	70
+3060	5 Кг	198	10
+3061	GWD 0220 BLK    (grill)	199	16
+3062	Ўзбекистон	199	37
+3063	Жигарранг	199	15
+3064	Рақамли	199	24
+3065	85%	199	85
+3066	220В / 50Гц	199	86
+3067	1000Вт	199	44
+3068	100-700Вт	199	41
+3069	95мин	199	87
+3070	2450МГц	199	88
+3071	20	199	39
+3072	258 х 442 х 354	199	12
+3073	10.8кг	199	10
+3074	1 йил	199	42
+3075	GWD 0323 BLK    (grill)	200	16
+3076	Ўзбекистон	200	37
+3077	Жигарранг	200	15
+3078	рақамли	200	24
+3079	87%	200	85
+3080	220В / 50Гц	200	86
+3081	1000Вт	200	44
+3082	100-800Вт	200	41
+3083	95мин	200	87
+3084	2450МГц	200	88
+3085	23	200	39
+3086	292 х 490 х 400	200	12
+3087	13.6кг	200	10
+3088	1 йил	200	42
+3089	ART-LED 32/A9000 Smart	201	16
+3090	Ўзбекистон	201	37
+3091	32" (81 см)	201	45
+3092	16:9	201	46
+3093	1366x768	201	47
+3094	100 Гц	201	51
+3095	PAL, SECAM, NTSC	201	52
+3096	DVB-T MPEG4 (Uzdigital)	201	53
+3097	DVB-C MPEG4	201	54
+3098	480i, 480p, 576i, 576p, 720p, 1080i, 1080p	201	56
+3099	640x480, 800x600, 1024x768, 1360x768	201	57
+3100	икки динамикли	201	59
+3101	мавжуд	201	60
+3102	MP3, MPEG4, JPEG	201	62
+3103	AV, компонентный, HDMI x2, USB	201	63
+3104	оптик	201	64
+3105	мавжуд	201	65
+3106	Мавжуд, CI+ ни қўллаб-қувватлайди	201	66
+3107	1	201	67
+3108	736x447x63 мм	201	12
+3109	736x489x151 мм	201	70
+3110	4.5 кг	201	10
+3111	GWD 0323 WHT   (grill)	202	16
+3112	Ўзбекистон	202	37
+3113	Оқ	202	15
+3114	Рақамли	202	24
+3115	87%	202	85
+3116	220В / 50Гц	202	86
+3117	1000Вт	202	44
+3118	100-800Вт	202	41
+3119	95мин	202	87
+3120	2450МГц	202	88
+3121	23	202	39
+3122	292 х 490 х 400	202	12
+3123	13.6кг	202	10
+3124	1 йил	202	42
+3125	20MX63 Бел	203	16
+3126	Ўзбекистон	203	37
+3127	Оқ	203	15
+3128	механик	203	24
+3129	85%	203	85
+3130	220В / 50Гц	203	86
+3131	100-700Вт	203	41
+3132	30мин	203	87
+3133	2450МГц	203	88
+3134	20	203	39
+3135	256,5 х 451 х 342	203	12
+3136	10.1кг	203	10
+3137	1 йил	203	42
+3138	20UX77 Сер	204	16
+3139	Ўзбекистон	204	37
+3140	Кулранг	204	15
+3141	Рақамли	204	24
+3142	85%	204	85
+3143	220В / 50Гц	204	86
+3144	100-700	204	89
+3145	60мин	204	87
+3146	2450МГц	204	88
+3147	20	204	39
+3148	256,5 х 451 х 336	204	12
+3149	10.4кг	204	10
+3150	1 йил	204	42
+3151	20UX84 Бел	205	16
+3152	Ўзбекистон	205	37
+3153	Оқ	205	15
+3154	рақамли	205	24
+3155	85%	205	85
+3156	220В / 50Гц	205	86
+3157	100-700Вт	205	41
+3158	60мин	205	87
+3159	2450МГц	205	88
+3160	20	205	39
+3161	256,5 х 451 х 354	205	12
+3162	1 йил	205	42
+3163	ARTEL 43/A9000	206	16
+3164	Ўзбекистон	206	37
+3165	43" (109 см)	206	45
+3166	16:9	206	46
+3167	1920x1080	206	47
+3168	1080p Full HD	206	48
+3169	мавжуд, Edge LED	206	49
+3170	PAL, SECAM, NTSC	206	52
+3171	DVB-T MPEG4 (Uzdigital)	206	53
+3172	DVB-C MPEG4	206	54
+3173	480i, 480p, 576i, 576p, 720p, 1080i, 1080p	206	56
+3174	640x480, 800x600, 1024x768, 1280x1024, 1360x768, 1920x1080	206	57
+3175	20 Вт (2x10 Вт)	206	58
+3176	икки динамик	206	59
+3177	MP3, WMA, MPEG4, MKV, JPEG	206	62
+3178	компонентли, HDMI x2, USB	206	63
+3179	1	206	67
+3180	75 Вт	206	84
+3181	қора	206	15
+3182	7.6 кг	206	10
+3183	624x977x220 мм	206	70
+3184	23MX39 Бел	207	16
+3185	Ўзбекистон	207	37
+3186	Оқ	207	15
+3187	Механик	207	24
+3188	85%	207	85
+3189	220В / 50Гц	207	86
+3190	100-800Вт	207	41
+3191	30мин	207	87
+3192	2450МГц	207	88
+3193	23	207	39
+3194	278,2 х 482,8 х 396,4	207	12
+3195	12.4кг	207	10
+3196	1 йил	207	42
+3197	23UX97 Сер	208	16
+3198	Ўзбекистон	208	37
+3199	Кулранг	208	15
+3200	Рақамли	208	24
+3201	85%	208	84
+3202	220В / 50Гц	208	86
+3203	100-800Вт	208	41
+3204	60мин	208	87
+3205	2450МГц	208	88
+3206	23	208	39
+3207	278,2 х 483 х 396	208	12
+3208	12.1кг	208	10
+3209	1 йил	208	42
+3210	ARTEL 43/A9100	209	16
+3211	Ўзбекистон	209	37
+3212	43" (109 см)	209	45
+3213	100 Гц	209	51
+3214	DVB-T MPEG4 (Uzdigital)	209	53
+3215	DVB-C MPEG4	209	54
+3216	20 Вт (2x10 Вт)	209	58
+3217	икки динамикли	209	59
+3218	AV, компонентный, HDMI x2, USB x1	209	63
+3219	976x637x288 мм	209	70
+3220	қора	209	15
+3221	8.8 кг	209	10
+3222	1	209	67
+3223	75 Вт	209	84
+3224	Avalon AVL-MW253V1	210	16
+3225	Қора	210	15
+3226	Алоҳида	210	38
+3227	электрон	210	24
+3228	25 л	210	39
+3229	зангламас металл	210	40
+3230	1200 Вт	210	44
+3231	1400 Вт	210	41
+3232	18.6 кг	210	10
+3233	31х51х49 cм	210	12
+3235	1 йил	210	42
+3236	ART-LED 43/A9000 Smart	211	16
+3237	Ўзбекистон	211	37
+3238	49" (124 см)	211	45
+3239	PAL / SECAM	211	73
+3240	MPEG-2 H.264	211	74
+3241	мавжуд	211	75
+3242	мавжуд	211	76
+3243	mini AV	211	77
+3244	DVB-T/T2/C	211	79
+3245	DVB-S/S2	211	80
+3246	мавжуд	211	81
+3247	110-240 V 50/60 Hz	211	82
+3248	0,5 Вт	211	83
+3249	75 Вт	211	84
+3250	624 х 977 х 215	211	70
+3252	1280Вт	207	91
+3251	7,6 кг	211	10
+3253	1150Вт	205	91
+3254	1150Вт	204	91
+3255	1150Вт	203	91
+3256	1250Вт	202	91
+3257	1250Вт	200	91
+3258	1050Вт	199	91
+3259	1280Вт	208	91
+3234	Автотайёрлаш, Ёритиш режими, Таймер, Дисплей, Конвекция	210	11
+3260	ART-LED 49/9000	212	16
+3261	Ўзбекистон	212	37
+3262	49" (124 см)	212	45
+3263	PAL/SECAM	212	73
+3264	MPEG-2H.264	212	74
+3265	мавжуд	212	76
+3266	mini AV	212	77
+3267	DVB-T/T2/C	212	79
+3268	DVB-S/S2	212	80
+3269	мавжуд	212	81
+3270	110-240 В; 50/ 60 Гц	212	82
+3271	0,5 Вт	212	83
+3272	90 Вт	212	84
+3273	695 х 1115 х 235	212	70
+3274	12 кг	212	10
+3275	ART-LED 49/9100	213	16
+3276	Ўзбекистон	213	37
+3277	49" (124 см)	213	45
+3278	16:9	213	46
+3279	мавжуд,  LED	213	49
+3280	PAL, SECAM	213	52
+3281	DVB-T / T2 / C, DVB-S / S2	213	67
+3282	икки динамикли	213	59
+3283	20 Вт (2x10 Вт)	213	58
+3284	HDMI х 2, USB х 2, mini AV	213	63
+3285	MP3, WMA, MPEG4, JPEG	213	62
+3286	692 х 1115 х 195 мм	213	70
+3287	12 кг	213	10
+3288	AVL- VCA 1620	214	16
+3289	бардовий	214	15
+3290	89dB (A)	214	21
+3291	1600W	214	17
+3292	220 В / 50 Гц	214	88
+3293	1 йил	214	42
+3294	6м	214	22
+3295	4L	214	20
+3297	200W	214	93
+3298	AVL-VCC2245R	215	16
+3299	Қизил	215	15
+3300	2200Вт	215	17
+3301	450Вт	215	93
+3302	220 B / 50 Гц	215	86
+3303	Циклонли	215	38
+3304	Электрон	215	95
+3305	76Дб	215	21
+3306	3Л	215	20
+3307	5М	215	22
+3308	437 x 275 x 333Мм	215	12
+3309	7.5Кг	215	10
+3310	1 йил	215	42
+3312	AVL-VCC2245F	216	16
+3313	Кўк	216	15
+3314	2200Вт	216	17
+3315	450Вт	216	93
+3316	220 B / 50 Гц	216	86
+3317	Циклонли	216	38
+3318	Электрон	216	95
+3319	76Дб	216	21
+3320	3Л	216	20
+3321	5М	216	22
+3322	437 x 275 x 333Мм	216	12
+3323	7.5Кг	216	10
+3324	1 йил	216	42
+3325	Extra All Floors стандарт щеткаси, Корпусни бошқариш,  Maxi Turbo Турбо щеткaси, Паркет учун щетка	216	11
+3311	Extra All Floors стандарт щеткаси, Корпусни бошқариш	215	11
+3326	ART-VCB 0316E	217	16
+3327	Оқ	217	15
+3328	1600Вт	217	17
+3329	320Вт	217	93
+3330	220 V/ 50 Hz	217	86
+3331	Халтали	217	38
+3332	Механик	217	95
+3333	79Дб	217	21
+3334	2Л	217	20
+3335	5М	217	22
+3336	250 х 362 х 281Мм	217	12
+3337	Extra All Floors стандарт щеткаси, Корпусни бошқариш	217	11
+3338	3.7Кг	217	10
+3339	1 йил	217	42
+3340	ART-VCB 0316E	218	16
+3341	Қора	218	15
+3342	1600Вт	218	17
+3343	2Л	218	20
+3344	79Дб	218	21
+3345	5М	218	22
+3346	3.7Кг	218	10
+3347	250 х 362 х 281Мм	218	12
+3348	Extra All Floors стандарт щеткаси, Корпусни бошқариш	218	11
+3349	Халтали	218	38
+3350	1 йил	218	42
+3351	320Вт	218	93
+3352	Механик	218	95
+3353	220 V/ 50 Hz	218	86
+3354	ART-VCB 0316E	219	16
+3355	Қизил	219	15
+3356	250 х 362 х 281	219	12
+3357	Extra All Floors стандарт щеткаси, Корпусни бошқариш	219	11
+3358	3.7Кг	219	10
+3359	1600Вт	219	17
+3360	2Л	219	20
+3361	79Дб	219	21
+3362	5М	219	22
+3363	Халтали	219	38
+3364	1 йил	219	42
+3365	320Вт	219	93
+3366	Механик	219	95
+3367	220 V/ 50 Hz	219	86
+3368	ART-VCB 01-20	220	16
+3369	5.7Кг	220	10
+3371	230 х 428 х 315	220	12
+3372	Кулранг	220	15
+3373	2000Вт	220	17
+3374	3.5Л	220	20
+3375	80Дб	220	21
+3376	6М	220	22
+3377	Халтали	220	38
+3378	1 йил	220	42
+3379	220 B / 50 Гц	220	86
+3380	450Вт	220	93
+3370	Extra All Floors стандарт щеткаси, Корпусни бошқариш	220	11
+3381	Электрон	220	95
+3382	ART-VCB 01-20	221	16
+3383	Оқ	221	15
+3384	2000Вт	221	17
+3385	450Вт	221	93
+3386	220 V/ 50 Hz	221	86
+3387	Халтали	221	38
+3388	Электрон	221	95
+3389	80Дб	221	21
+3390	3.5Л	221	20
+3391	6М	221	22
+3392	230 х428 х 315Мм	221	12
+3393	5.7Кг	221	10
+3394	1 йил	221	42
+3395	Maxi Turbo Турбо щеткaси, Extra All Floors стандарт щеткаси, Корпусни бошқариш	221	11
+3396	ART- VCC 01-20	222	16
+3397	Оч кўк	222	15
+3398	2000Вт	222	17
+3399	420Вт	222	93
+3400	220 B / 50 Гц	222	86
+3401	Контейнерли	222	38
+3402	Электрон	222	95
+3403	78Дб	222	21
+3404	1.7Л	222	20
+3405	6М	222	22
+3406	230 х 428 х 315Мм	222	12
+3407	Extra All Floors стандарт щеткаси, Корпусни бошқариш	222	11
+3408	6.25Кг	222	10
+3409	1 йил	222	42
+3410	ART VCC0120RED	223	16
+3411	Қизил	223	15
+3412	2000Вт	223	17
+3413	420Вт	223	93
+3414	220 V/ 50 Hz	223	86
+3415	Контейнерли	223	38
+3416	Электрон	223	95
+3417	78Дб	223	21
+3418	6М	223	22
+3419	1.7Л	223	20
+3420	230 х428 х 315Мм	223	12
+3421	6.25Кг	223	10
+3422	1 йил	223	42
+3423	Maxi Turbo Турбо щеткaси, Extra All Floors стандарт щеткаси, Корпусни бошқариш	223	11
+3424	ART-VCC 0220	224	16
+3425	Кулранг	224	15
+3426	2000Вт	224	17
+3427	430Вт	224	93
+3428	220 B / 50 Гц	224	86
+3429	Циклонли	224	38
+3430	Электрон	224	95
+3431	80Дб	224	21
+3432	2.5Л	224	20
+3433	6М	224	22
+3434	Maxi Turbo Турбо щеткaси, Extra All Floors стандарт щеткаси, Корпусни бошқариш	224	11
+3435	360 х 390 х 300Мм	224	12
+3436	5.1Кг	224	10
+3437	1 йил	224	42
+3438	ART- VCC 0220	225	16
+3439	Бордовый	225	15
+3440	2000Вт	225	17
+3441	430Вт	225	93
+3442	220 B / 50 Гц	225	86
+3443	Циклонли	225	38
+3444	Электрон	225	95
+3445	2.5Л	225	20
+3446	80Дб	225	21
+3447	6М	225	22
+3448	Maxi Turbo Турбо щеткaси, Extra All Floors стандарт щеткаси, Корпусни бошқариш	225	11
+3449	360 х 390 х 300Мм	225	12
+3450	5.1 кг	225	10
+3451	1 йил	225	42
+3452	ART VCC 02-20	226	16
+3453	Оч кўк	226	15
+3454	2000Вт	226	17
+3455	430Вт	226	93
+3456	220 B / 50 Гц	226	86
+3457	Циклонли	226	38
+3458	Электрон	226	95
+3459	80Дб	226	21
+3460	2.5Л	226	20
+3461	6М	226	22
+3462	Maxi Turbo Турбо щеткaси, Extra All Floors стандарт щеткаси, Корпусни бошқариш	226	11
+3463	360 х 390 х 300Мм	226	12
+3464	5.1Кг	226	10
+3465	1 йил	226	42
 \.
 
 
@@ -5726,7 +7072,7 @@ COPY public.store_specification (id, info, product_id, specification_type_id) FR
 -- Name: store_specification_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.store_specification_id_seq', 2541, true);
+SELECT pg_catalog.setval('public.store_specification_id_seq', 3465, true);
 
 
 --
@@ -5803,6 +7149,28 @@ COPY public.store_specificationtype (id, name) FROM stdin;
 69	Деворга ўрнатиш имконияти
 70	Таглик билан бирга ўлчамлари (ШxВxГ)
 71	Таглик билан вазни
+72	Экран эгрилиги
+73	Video форматларини ATV  қўллаши
+74	Video форматларни DTV қўллаши
+75	PVR рақамли эфир ёзиш функцияси
+76	Taym Shift (Jonli pauza)
+77	Компазитли AV чиқиш жойи
+78	Digital Audio чиқиш жойи
+79	Ўрнатилган DTV тюнер
+80	Ўрнатилган спутник тюнери
+81	Ота-она назорати
+82	Қувват манбаи
+83	Кутиш режимида энергия истеъмоли
+84	Максимал энергия истеъмоли
+85	Энергия самарадорлик
+86	Таъминот манбааси
+87	Таймер
+88	Частота
+89	Шовқин даража
+91	Электр энергия талаби
+92	Wi-Fi, LAN қўлланиши
+93	Сўриш кучи
+95	Чанг баки тўлиши индикатори
 \.
 
 
@@ -5810,7 +7178,7 @@ COPY public.store_specificationtype (id, name) FROM stdin;
 -- Name: store_specificationtype_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bozorcom
 --
 
-SELECT pg_catalog.setval('public.store_specificationtype_id_seq', 71, true);
+SELECT pg_catalog.setval('public.store_specificationtype_id_seq', 95, true);
 
 
 --
@@ -5835,6 +7203,22 @@ ALTER TABLE ONLY public.app_category
 
 ALTER TABLE ONLY public.app_content
     ADD CONSTRAINT app_content_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: app_profile app_profile_pkey; Type: CONSTRAINT; Schema: public; Owner: bozorcom
+--
+
+ALTER TABLE ONLY public.app_profile
+    ADD CONSTRAINT app_profile_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: app_profile app_profile_user_id_key; Type: CONSTRAINT; Schema: public; Owner: bozorcom
+--
+
+ALTER TABLE ONLY public.app_profile
+    ADD CONSTRAINT app_profile_user_id_key UNIQUE (user_id);
 
 
 --
@@ -6296,6 +7680,14 @@ ALTER TABLE ONLY public.app_brand
 
 ALTER TABLE ONLY public.app_category
     ADD CONSTRAINT app_category_parent_id_8ce0344c_fk_app_category_id FOREIGN KEY (parent_id) REFERENCES public.app_category(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: app_profile app_profile_user_id_87d292a0_fk_auth_user_id; Type: FK CONSTRAINT; Schema: public; Owner: bozorcom
+--
+
+ALTER TABLE ONLY public.app_profile
+    ADD CONSTRAINT app_profile_user_id_87d292a0_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES public.auth_user(id) DEFERRABLE INITIALLY DEFERRED;
 
 
 --
