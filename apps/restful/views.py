@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, Http404
-from rest_framework import generics, filters, views, response, permissions
+from django.contrib.auth.models import User
+from rest_framework import generics, filters, views, response, permissions, status
 import django_filters
 
 from apps.app import models as app_models
@@ -129,8 +130,33 @@ class OrdersView(generics.ListCreateAPIView):
 
 
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated, ]
     serializer_class = restful_serializer.OrderSerializer
+    queryset = store_models.Order.objects.all()
 
-    def get_queryset(self):
-        return store_models.Order.objects.filter(customer=self.request.user)
+
+class ProductAvailableListView(views.APIView):
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        return response.Response(request.data)
+
+
+class UserRegisterView(views.APIView):
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        data = request.data
+        username = data.get('username')
+        if username and data.get('password'):
+            if User.objects.filter(username=username).exists():
+                return response.Response('Бундай фойдаланувчи мавжуд', status=status.HTTP_409_CONFLICT)
+            else:
+                user = User()
+                user.username = data.get('username')
+                user.set_password(data.get('password'))
+                user.save()
+                if data.get('phone'):
+                    app_models.Profile(phone_number=data.get('phone'), user=user).save()
+                return response.Response('Мувоффаққиятли рўйхатдан ўтилди', status=status.HTTP_201_CREATED)
+
+        return response.Response('Хатолик')

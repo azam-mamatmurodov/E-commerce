@@ -116,6 +116,14 @@ class Order(models.Model):
         (DELIVERED, 'Delivered'),
         (CANCELLED, 'Cancelled'),
     )
+
+    WITHIN_ONE_DAY = 'within_one_day'
+    EXPRESS_DELIVERY = 'express_delivery'
+
+    DELIVERY_TYPES = (
+        (WITHIN_ONE_DAY, '24 соат ичида'),
+        (EXPRESS_DELIVERY, 'Тезкор етказиб бериш'),
+    )
     customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', null=True, blank=True)
     customer_full_name = models.CharField(max_length=250, null=True, blank=True)
     customer_phone = models.CharField(max_length=60, null=True, blank=True)
@@ -123,6 +131,7 @@ class Order(models.Model):
     additional_info = models.TextField()
     order_status = models.CharField(choices=ORDER_STATUS, default=PENDING, max_length=30)
     created_at = models.DateTimeField(null=True, blank=True)
+    delivery_type = models.CharField(choices=DELIVERY_TYPES, max_length=120, default=WITHIN_ONE_DAY)
 
     def get_order_status(self, status_key):
         status_value = status_key

@@ -174,7 +174,9 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         cart_items = validated_data.pop('cart_items')
-        validated_data['customer'] = self.context['request'].user
+        if self.context['request'].user.id:
+            print(self.context['request'].user)
+            validated_data['customer'] = self.context['request'].user
         order = store_models.Order.objects.create(**validated_data)
         for cart_item in cart_items:
             store_models.CartItem.objects.create(**cart_item, order=order)
