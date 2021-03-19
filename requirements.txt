@@ -13,7 +13,7 @@ django-import-export==1.1.0
 django-js-asset==1.1.0
 django-mptt==0.9.1
 django-rest-swagger==0.3.10
-djangorestframework==3.9.0
+djangorestframework==3.11.2
 djangorestframework-recursive==0.1.2
 djangorestframework-simplejwt==3.3
 drf-tweaks==0.8.0
